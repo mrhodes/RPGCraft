@@ -1,0 +1,37 @@
+name: RPGCraft
+version: 0.4.2
+main: net.tigerstudios.RPGCraft.RPGCraft
+depend: [Spout]
+
+commands:
+    rpg:
+        description: 
+        usage: Type /rpg help for usage instructions
+    bal:
+        description: Retreive your currency balance
+        usage: /bal
+    balance:
+        description: Retreive your currency balance
+        usage: /balance
+    givecoin:
+        description: Use this command to give coin to another player
+        usage: /givecoin <gold> <silver> <copper> <player>
+    deposit:
+        description: Deposit money into the bank
+        usage: /deposit <gold> <silver> <copper>
+    withdraw:
+        description: Withdraw coins from your rpg account
+        usage: /withdrawl <gold> <silver> <copper>
+    banker:
+        description:
+        usage:   
+    givexp:
+        description: Give amount of xp to a player
+        usage: /givexp <levels> <player>
+    getxp:
+        description: Display your total amount of experience.
+        usage: /getxp
+    addxp:
+        description: Adds exp to player.  Admin only
+        usage: /addxp <amount> <player>
+        

@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Sealed: true
+Class-Path: ../sqlite-jdbc-3.7.2.jar
+
