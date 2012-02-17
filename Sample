@@ -1,8 +1,0 @@
-DropRates:
-	Creature:
-		Zombie:
-			cp: 10
-			sp: 10
-			gp: 10
-		Skeleton:
-		
