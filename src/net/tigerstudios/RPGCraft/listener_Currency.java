@@ -7,6 +7,7 @@ import java.util.List;
 import net.tigerstudios.RPGCraft.utils.PropertiesFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.Command;
@@ -78,6 +79,16 @@ public class listener_Currency implements Listener {
 				return true;				
 			} // if(!(RPGCraft.Permissions.has(p, "rpgcraft.money")))			
 			
+			
+			if(p.getGameMode() == GameMode.CREATIVE)
+			{
+				p.sendMessage("[§2RPG§f] Nice try " + p.getDisplayName() + ". ");
+				p.sendMessage("[§2RPG§f] This attempt will be logged, and admins will");
+				p.sendMessage("[§2RPG§f] be notified.");
+				return true;
+			} // if(p.getGameMode() == GameMode.CREATIVE)
+			
+			
 			p.sendMessage("[§2RPG§f] To use the Deposit command please \"Use\" the");
 			p.sendMessage("[§2RPG§f] coin you want to deposit.");
 			
@@ -99,6 +110,13 @@ public class listener_Currency implements Listener {
 				p.sendMessage("[§2RPG§f] commands. Speak to a server admin to gain access.");
 				return true;				
 			} // if(!(RPGCraft.Permissions.has(p, "rpgcraft.money")))
+			
+			if(p.getGameMode() == GameMode.CREATIVE)
+			{
+				p.sendMessage("[§2RPG§f] Sorry, but no withdraws allowed while");
+				p.sendMessage("[§2RPG§f] in creative mode.");
+				return true;
+			} // if(p.getGameMode() == GameMode.CREATIVE)
 			
 			if(cmd.length == 0 || cmd.length > 3)
 			{	// TODO: Give a more detailed help description
