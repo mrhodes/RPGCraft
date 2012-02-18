@@ -2,7 +2,9 @@
 <projectDescription>
 	<name>RPGCraft</name>
 	<comment></comment>
-	<projects></projects>
+	<projects>
+		<project>bukkit</project>
+	</projects>
 	<buildSpec>
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
