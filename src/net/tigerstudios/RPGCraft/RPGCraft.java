@@ -194,68 +194,8 @@ public class RPGCraft extends JavaPlugin{
 		if(currencyListener.currencyProcessor(sender, command, label, args))
 			return true;
 		
-		if(command.getName().equalsIgnoreCase("givexp"))
-		{
-			if(args.length != 2)
-			{	sender.sendMessage("Usage: /givexp <exp> <player>");
-				return true;
-			}
-			
-			Player receiver = mcServer.getPlayer(args[1]);
-			Player p = (Player) sender;
-			
-			int pExp = p.getTotalExperience();
-			int sellingExp = Integer.parseInt(args[0]);
-			
-			if(pExp >= sellingExp)
-			{
-				p.giveExp(-sellingExp);
-				p.sendMessage("[§2RPG§f] You now have " + p.getTotalExperience() + " experience.");
-				p.sendMessage("[§2RPG§f] You have just sold " + sellingExp + " experience to " + receiver.getName());
-				receiver.giveExp(sellingExp);
-				receiver.sendMessage("[§2RPG§f] You have just received " + sellingExp+ " experience  from " + p.getName());
-			} // if(pExp >= sellingExp)
-			return true;			
-		} // if(command.getName().equalsIgnoreCase("givexp"))
-			
-		if(command.getName().equalsIgnoreCase("getxp"))
-		{
-			Player p = (Player)sender;
-			p.sendMessage("[§2RPG§f] You have §2" + p.getTotalExperience() + " §fexperience.");
-			return true;
-		}
-		
-		
-		
-		if(command.getName().equalsIgnoreCase("addxp"))
-		{
-			if(args.length == 1)
-			{
-				Player p = (Player)sender;
-				p.giveExp(Integer.parseInt(args[0]));
-				p.sendMessage("You have been given " + Integer.parseInt(args[0]) + " experience.");
-				return true;
-			}
-			if(args.length == 2)
-			{
-				Player p = mcServer.getPlayer(args[1]);
-				if(p == null)
-				{ 	sender.sendMessage("Player " + args[1] + " does not exist.  Did you get the name wrong?");
-					return true; 
-				} // if(p == null)
-				
-				p.giveExp(Integer.parseInt(args[0]));
-				p.sendMessage("You just received "+Integer.parseInt(args[0])+" exp from "+sender.getName()+".");
-				sender.sendMessage(p.getName()+" was given "+Integer.parseInt(args[0])+" experience.");
-				return true;			
-			} // if(args.length == 2)
-			return false;			
-		} // if(command.getName().equalsIgnoreCase("addxp"))
-		
 		return false;
-	} // public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)
-
-		
+	} // public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)			
 	
 	public void setupPermissions() {
 		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
@@ -287,26 +227,26 @@ public class RPGCraft extends JavaPlugin{
 		config.addDefault("DropRates.monsters", 80);
 		
 		// Set Defaults rates for Animals
-		config.addDefault(path + ".Chicken", 30);
-		config.addDefault(path + ".Cow", 30);
-		config.addDefault(path + ".MushroomCow", 30);
-		config.addDefault(path + ".Pig", 30);
-		config.addDefault(path + ".Sheep", 30);
-		config.addDefault(path + ".Squid", 55);
-		config.addDefault(path + ".Wolf", 55);		
+		config.addDefault(path + ".Chicken", 20);
+		config.addDefault(path + ".Cow", 20);
+		config.addDefault(path + ".MushroomCow", 20);
+		config.addDefault(path + ".Pig", 20);
+		config.addDefault(path + ".Sheep", 20);
+		config.addDefault(path + ".Squid", 30);
+		config.addDefault(path + ".Wolf", 30);		
 		
 		// Set Defaults rates for Monsters
-		config.addDefault(path + ".Blaze", 80);
+		config.addDefault(path + ".Blaze", 75);
 		config.addDefault(path + ".CaveSpider", 65);
-		config.addDefault(path + ".Creeper", 75);
+		config.addDefault(path + ".Creeper", 70);
 		config.addDefault(path + ".EnderDragon", 100);
 		config.addDefault(path + ".EnderMan", 8);
-		config.addDefault(path + ".Ghast", 85);
+		config.addDefault(path + ".Ghast", 75);
 		config.addDefault(path + ".Giant", 80);
 		config.addDefault(path + ".MagmaCube", 60);
-		config.addDefault(path + ".PigZombie", 60);
-		config.addDefault(path + ".SilverFish", 75);
-		config.addDefault(path + ".Skeleton", 75);
+		config.addDefault(path + ".PigZombie", 55);
+		config.addDefault(path + ".SilverFish", 50);
+		config.addDefault(path + ".Skeleton", 70);
 		config.addDefault(path + ".Slime", 60);
 		config.addDefault(path + ".Zombie", 70);
 		config.addDefault(path + ".Spider", 75);		

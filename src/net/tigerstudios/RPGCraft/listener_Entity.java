@@ -1,23 +1,17 @@
 package net.tigerstudios.RPGCraft;
 
-import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Blaze;
-import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Chicken;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Ghast;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Pig;
@@ -33,7 +27,6 @@ import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -57,9 +50,7 @@ public class listener_Entity implements Listener{
 		if(event.getEntity() instanceof Monster)
 		{	if(rndSeed.nextInt(100) >= RPGCraft.config.getInt("DropRates.monsters"))
 				return;
-			
-			
-		
+					
 			monsterEnt = (Monster) event.getEntity();
 			mcPlayer = monsterEnt.getKiller();
 			if(mcPlayer == null)
@@ -80,12 +71,12 @@ public class listener_Entity implements Listener{
 			{	// Rare chance of Basic Mobs dropping 1 Silver
 				dropRate = cfg.getInt("DropRates.Creature.Zombie");
 				if(rndNum <= ( dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 1));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 40));
 					return;	}
 				
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
+					if(rndNum2 <= 200)
 					{ 	mcPlayer.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
 						return;
 					}
@@ -104,12 +95,12 @@ public class listener_Entity implements Listener{
 				dropRate = cfg.getInt("DropRates.Creature.Skeleton");
 				// Rare chance of Basic Mobs dropping 1 Silver
 				if(rndNum <= (dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 1));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 40));
 					return;	}
 				
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
+					if(rndNum2 <= 200)
 					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
 						return;
 					}
@@ -128,11 +119,11 @@ public class listener_Entity implements Listener{
 				dropRate = cfg.getInt("DropRates.Creature.Creeper");
 				// Rare chance of Basic Mobs dropping 1 Silver
 				if(rndNum <= ( dropRate / 10) )
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 2));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 30));
 					return;	}
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
+					if(rndNum2 <= 200)
 					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
 						return;
 					}
@@ -151,14 +142,13 @@ public class listener_Entity implements Listener{
 				dropRate = cfg.getInt("DropRates.Creature.Spider");
 				// Rare chance of Basic Mobs dropping 1 Silver
 				if(rndNum <= (dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 1));
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
 					return;	
 				}
 				
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
+					if(rndNum2 <= 200)
 					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
 						return;
 					}
@@ -177,14 +167,13 @@ public class listener_Entity implements Listener{
 				dropRate = cfg.getInt("DropRates.Creature.Slime");
 				// Rare chance of Basic Mobs dropping 1 Silver
 				if(rndNum <= (dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 2));
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 50));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 50));
 					return;	}
 							
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
-					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 15));
+					if(rndNum2 <= 200)
+					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 10));
 						return;
 					}
 					if(rndNum2 <= 350)
@@ -202,13 +191,12 @@ public class listener_Entity implements Listener{
 			{	// Rare chance of Basic Mobs dropping 1 Silver
 				dropRate = cfg.getInt("DropRates.Creature.Enderman");
 				if(rndNum <= (dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 1));
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 50));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 50));
 				return;	}
 				
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
+					if(rndNum2 <= 200)
 					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
 						return;
 					}
@@ -225,21 +213,20 @@ public class listener_Entity implements Listener{
 			{	// Rare chance of Basic Mobs dropping 1 Silver
 				dropRate = cfg.getInt("DropRates.Creature.Silverfish");
 				if(rndNum <= (dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.goldCoin, 1));
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 50));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 50));
 				return;	}
 				
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
 					if(rndNum2 <= 250)
-					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 3));
+					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 10));
 						return;
 					}
 					if(rndNum2 <= 400)
-					{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 2));
+					{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
 						return;
 					}										
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 50));
+					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 1));
 				} // if(rndNum < 437)
 				return;
 			} // if(monsterEnt instanceof Silverfish)	
@@ -253,13 +240,12 @@ public class listener_Entity implements Listener{
 				dropRate = cfg.getInt("DropRates.Creature.PigZombie");
 				// Rare chance of Basic Mobs dropping 1 Silver
 				if(rndNum <= (dropRate / 10) )
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 1));
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
 					return;	}
 							
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
+					if(rndNum2 <= 200)
 					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
 						return;
 					}
@@ -284,7 +270,7 @@ public class listener_Entity implements Listener{
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
 					if(rndNum2 <= 150)
-					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 35));
+					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
 						return;
 					}
 					if(rndNum2 <= 350)
@@ -302,21 +288,20 @@ public class listener_Entity implements Listener{
 				dropRate = cfg.getInt("DropRates.Creature.Ghast");
 				// Rare chance of Basic Mobs dropping 1 Silver
 				if(rndNum <= (dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.goldCoin, 1));
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 10));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 5));
 					return;	}
 													
 					if(rndNum <= dropRate)
 					{	rndNum2 = rndSeed.nextInt(1000);
 						if(rndNum2 <= 150)
-						{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 3));
+						{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 20));
 							return;
 						}
 						if(rndNum2 <= 350)
-						{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 1));
+						{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 10));
 							return;
 						}										
-						monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
+						monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 3));
 					} // if(rndNum < 437)
 					return;
 				} // if(monsterEnt instanceof Ghast)
@@ -327,13 +312,12 @@ public class listener_Entity implements Listener{
 				dropRate = cfg.getInt("DropRates.Creature.MagmaCube");
 				// Rare chance of Basic Mobs dropping 1 Silver
 				if(rndNum <= (dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, 2));
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 25));
 					return;	}
 					
 				// Chance to drop slime ball
 				int slimeChance = rndSeed.nextInt(1000);
-				if(slimeChance <= 250)
+				if(slimeChance <= 400)
 					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new ItemStack(Material.SLIME_BALL));
 				
 				if(rndNum <= dropRate)

@@ -19,9 +19,7 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 
 
 public class listener_Currency implements Listener {
-	private Plugin rpgPlugin = null;
 	private Server rpgServer = null;
-	private List<World> rpgWorlds = null;
 	private PropertiesFile playerBalances = null;
 	private PropertiesFile transactionHistory = null;
 	private RPG_Player rpgPlayer = null;
@@ -277,182 +275,15 @@ public class listener_Currency implements Listener {
 			
 			return true;
 		} // if(cmd[0].equalsIgnoreCase("/givecoin") || cmd[0].equalsIgnoreCase("/gc"))	
-		
-		
-		// Exchange a players money from rpg <--> icon
-		// /banker exchange rpg [all]|[(coin amount)]
-		// /banker exchange icon [all]|[(g) (s) (c)]
-		/*if(command.getName().equalsIgnoreCase("exchange"))
-		{
-			event.setCancelled(true);
-					
-			String iConCurrency = RPGCraft.getiConomy().getBank(p.getName()).;
-			int exchangeRate = Integer.parseInt(RPGCraft.settings.getString("icon_Exchange", "0", "iConomy exchange rate"));
-			double exchangeFee = Double.parseDouble(RPGCraft.settings.getString("icon_ExchangePercent", "0", "Exchange fee"));
 			
-			Account pAccount = RPGCraft.getiConomy().getBank().getAccount(p.getName());
-			RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName());
-			
-			// make sure there are at least 2 more values after exchange.
-			if(cmd.length == 1)
-			{
-				p.sendMessage("§aCurrency Exchange Help");
-				p.sendMessage(" ");
-				p.sendMessage("Usage: /exchange rpg §f[§aall§f] §f| §f[§acoin amount§f]");
-				p.sendMessage("       /exchange icon [all] | [(§6g§f) (§7s§f) (§cc§f)]");
-				p.sendMessage("");
-				p.sendMessage("With the above command you can exchange your money from");
-				p.sendMessage("one currency to another.");
-				return;
-			} // if(cmd.length == 1)
-			
-			// Get the exchange rate
-			if(cmd[1].equalsIgnoreCase("rate"))
-			{
-				// Figure out how much Gold, Silver and Copper = 1 iConomy coin.
-				// All calculations will be done using just copper though
-				int gold = 0;  int silver = 0; int copper = exchangeRate;
-				while(copper >= 100)
-				{	silver = silver + 1;  copper = copper - 100; }
-				while(silver >= 100)
-				{	gold = gold + 1; silver = silver - 100;  }
-				
-				p.sendMessage("§aCurrency Exchange Rates");
-				p.sendMessage(" ");
-				p.sendMessage("The current exchange rate for "+RPGCraft.getiConomy().getBank().getCurrency());
-				p.sendMessage("to RPG currency is:");
-				p.sendMessage("§a1"+RPGCraft.getiConomy().getBank().getCurrency()+"§f -> §6"+gold+" Gold§f, §7"+silver+" Silver§f, and §c"+copper+" Copper§f.");
-				p.sendMessage("The Exchange Fee is §a"+exchangeFee+"§f%");
-				
-				return;	
-			} // if(cmd[1].equalsIgnoreCase("rate"))
-			
-			
-			// Figure out what we are exchanging to...
-			if(cmd[1].equalsIgnoreCase("rpg"))
-			{
-				double iConBalance = pAccount.getBalance();
-				double coinAmount = 0;				
-				
-				// Find out how much the player wants to exchange
-				if(cmd.length == 3)
-				{
-					if(cmd[2].equalsIgnoreCase("all"))
-						coinAmount = iConBalance;
-					else
-					{	coinAmount = Double.parseDouble(cmd[2]);
-						if(coinAmount > iConBalance)
-						{
-							p.sendMessage("[§2RPG§f] You do not have §a"+coinAmount+" "+iConCurrency);
-							p.sendMessage("[§2RPG§f] The most you can exchange right now is §a"+pAccount.getBalance()+" "+iConCurrency);
-							return;
-						} // if(coinAmount > iConBalance)
-					}
-					
-					if(rpgPlayer != null)
-					{
-						// Subtract the fee from the coinAmount
-						double exFee = coinAmount * (exchangeFee / 100);
-					
-						// Minus this balance from the iConomy balance
-						pAccount.subtract(coinAmount);
-						// Make sure the iConomy balance is limited to 2 decimal places
-						int newBalance = (int) (pAccount.getBalance() * 100);
-						pAccount.setBalance(newBalance / 100);						
-						pAccount.save();
-										
-						coinAmount = coinAmount - exFee;
-					
-						// Convert all the players iConomy balance to RPG balance
-						int copper = (int) (coinAmount * exchangeRate);
-						rpgPlayer.setCopper(rpgPlayer.getCopper() + copper);
-						rpgPlayer.optimizeCoin();
-						
-						// Figure out how much gold, silver, and copper the player just gained.
-						int gold = 0; int silver = 0;
-						while(copper > 100)
-						{	silver = silver + 1; copper = copper - 100; }
-						while(silver > 100)
-						{	gold = gold + 1; silver = silver - 100; }
-						
-						p.sendMessage("[§2RPG§f] You have exchanged §a"+ coinAmount+" "+iConCurrency);
-						p.sendMessage("[§2RPG§f] This translated to: §6"+gold+" Gold§f, §7"+silver+" Silver§f, and §c"+copper+" Copper§f.");
-						p.sendMessage("[§2RPG§f] The exchange fee for this was §a"+exFee+" "+iConCurrency);
-						p.sendMessage("");
-						p.sendMessage("[§2RPG§f] You now have §a"+pAccount.getBalance()+" "+iConCurrency+"§f and");
-						p.sendMessage("[§2RPG§f] §6"+rpgPlayer.getGold()+" Gold§f, §7"+rpgPlayer.getSilver()+" Silver§f, and §c"+rpgPlayer.getCopper()+" Copper§f.");
-						
-						// Save transaction
-						String transaction = p.getName()+" exchanged "+coinAmount+" "+iConCurrency+" to "+gold+" Gold, "+silver+" Silver, and "+copper+" Copper";
-						String date = Calendar.getInstance().getTime().toString();
-						transactionHistory.setString(date, transaction, "Exchange iConomy --> RPG Currency");
-						transactionHistory.save();
-						
-						// Save updated player balance
-						String senderBalance = rpgPlayer.getGold()+","+rpgPlayer.getSilver()+","+rpgPlayer.getCopper();
-						playerBalances.setString(rpgPlayer.getMCName(), senderBalance, "Last updated: "+date);
-						playerBalances.save();
-						
-						return;						
-					} // if(rpgPlayer != null)				
-					return;
-				} // if(cmd.length == 3)
-				
-									
-				// Converting from iConomy to the RPG currency
-				return;
-			} // if(cmd[1].equalsIgnoreCase("rpg"))
-			if(cmd[1].equalsIgnoreCase("icon"))
-			{
-				// Get the gold, silver, and copper values
-				int gold = Integer.parseInt(cmd[2]); int silver = Integer.parseInt(cmd[3]);
-				double copper = Double.parseDouble(cmd[4]);
-				
-				// Now convert this value down to copper
-				copper = (gold * 100 * 100) + (silver * 100) + copper;
-				double exFee = copper * (exchangeFee / 100);
-								
-				double newbalance = (copper - exFee) / exchangeRate;
-				
-				// Add money to iConomy balance, and take away from rpg balance
-				pAccount.add(newbalance);	pAccount.save();
-				rpgPlayer.removeCopper((int)copper);
-				//rpgPlayer.optimizeCoin();
-				
-				p.sendMessage("[§2RPG§f] You have exchanged "+gold+" Gold, "+silver+" Silver, and "+Integer.parseInt(cmd[4])+" Copper");
-				p.sendMessage("[§2RPG§f] to "+newbalance+" "+ iConCurrency+".");
-				
-				// Calculate what the exfee was in gold, silver, and copper.
-				int feeGold = 0; int feeSilver = 0; int feeCopper = (int) exFee;
-				while(feeCopper > 100)	{	feeSilver = feeSilver + 1; feeCopper = feeCopper - 100; }
-				while(feeSilver > 100)	{	feeGold = feeGold + 1; feeSilver = feeSilver - 100; }
-				p.sendMessage("[§2RPG§f] The exchange fee for this was "+feeGold+" Gold, "+feeSilver+" Silver, and "+feeCopper+" Copper."); 
-				p.sendMessage("");
-				p.sendMessage("[§2RPG§f] You now have §a"+pAccount.getBalance()+" "+iConCurrency+"§f and");
-				p.sendMessage("[§2RPG§f] §6"+rpgPlayer.getGold()+" Gold§f, §7"+rpgPlayer.getSilver()+" Silver§f, and §c"+rpgPlayer.getCopper()+" Copper§f.");
-				
-			//	p.sendMessage("Copper converted: "+copper);
-				//p.sendMessage("iConomy Money: "+newbalance);
-				
-				return;					
-			} // if(cmd[1].equalsIgnoreCase("icon"))
-			
-				
-			// Get values for the exchange
-			return;
-		} // if(cmd[0].equalsIgnoreCase("exchange"))		
-		*/
-		
 		return false;
 	}	
 
+	
 	public listener_Currency(Plugin p)
 	{
 		Bukkit.getServer().getPluginManager().registerEvents(this, p);
-		this.rpgPlugin = p;
 		this.rpgServer = p.getServer();
-		this.rpgWorlds = rpgServer.getWorlds();
-		
 		playerBalances = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"playerBalances.log");
 		transactionHistory = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"transactionHistory.log");
 	} // public listener_Currency(Plugin p)
