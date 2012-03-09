@@ -16,15 +16,25 @@ import org.bukkit.entity.Player;
  */
 public class RPG_Player{
 	
-	int PlayerID = 0;		// Hash of mine craft name
+	int PlayerID = 0;				// Hash of mine craft name
 	public boolean bIsOnline;		// Is this player currently online
-	Player player;			// Minecraft Player class
+	Player player;					// Minecraft Player class
 	String mcName;
 	String rpgName;
 	String displayName;
-	String serverGroup;		// Players group on the server
+	String serverGroup;				// Players group on the server
 	String displayPrefix;	
 	String displaySuffix;
+	
+    // Race Stats
+	int race;
+	int profession;
+	int agility;
+	int stamina;
+	int strength;
+	int intelligence;
+	
+	
 	int Gold;
 	int Silver;
 	int Copper;

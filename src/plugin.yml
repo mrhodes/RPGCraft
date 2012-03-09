@@ -1,5 +1,7 @@
 name: RPGCraft
 version: 0.4.2
+author: Michael Rhodes
+website: http://tigerstudios.net/minecraft
 main: net.tigerstudios.RPGCraft.RPGCraft
 depend: [Spout]
 
@@ -10,21 +12,26 @@ commands:
     bal:
         description: Retreive your currency balance
         usage: /bal
+        permission: rpgcraft.money
     balance:
         description: Retreive your currency balance
         usage: /balance
     givecoin:
         description: Use this command to give coin to another player
         usage: /givecoin <gold> <silver> <copper> <player>
+        permission: rpgcraft.money
     deposit:
         description: Deposit money into the bank
         usage: /deposit <gold> <silver> <copper>
+        permission: rpgcraft.money
     withdraw:
         description: Withdraw coins from your rpg account
         usage: /withdrawl <gold> <silver> <copper>
+        permission: rpgcraft.money
     banker:
-        description:
-        usage:   
+        description: Allows Mods and Admins to give or take coin to a player
+        usage: /banker <gold> <silver> <copper> <playername>
+        permission: rpgcraft.bank.banker
     givexp:
         description: Give amount of xp to a player
         usage: /givexp <levels> <player>
@@ -34,4 +41,3 @@ commands:
     addxp:
         description: Adds exp to player.  Admin only
         usage: /addxp <amount> <player>
-        

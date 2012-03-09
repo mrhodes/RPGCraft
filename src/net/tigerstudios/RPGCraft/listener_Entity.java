@@ -5,25 +5,7 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Blaze;
-import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Cow;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Enderman;
-import org.bukkit.entity.Ghast;
-import org.bukkit.entity.MagmaCube;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Pig;
-import org.bukkit.entity.PigZombie;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Silverfish;
-import org.bukkit.entity.Skeleton;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Spider;
-import org.bukkit.entity.Squid;
-import org.bukkit.entity.Wolf;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -70,21 +52,25 @@ public class listener_Entity implements Listener{
 			if(monsterEnt instanceof Zombie && !(monsterEnt instanceof PigZombie))
 			{	// Rare chance of Basic Mobs dropping 1 Silver
 				dropRate = cfg.getInt("DropRates.Creature.Zombie");
+				
+				ItemStack ccoin = new SpoutItemStack(RPGCraft.copperCoin, 1);
+				
+				
 				if(rndNum <= ( dropRate / 10))
-				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 40));
+				{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), ccoin);
 					return;	}
 				
 				if(rndNum <= dropRate)
 				{	rndNum2 = rndSeed.nextInt(1000);
 					if(rndNum2 <= 200)
-					{ 	mcPlayer.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
+					{ 	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), ccoin);
 						return;
 					}
 					if(rndNum2 <= 350)
-					{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 3));
+					{	monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), ccoin);
 						return;
 					}					
-					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 1));
+					monsterEnt.getWorld().dropItem(monsterEnt.getLocation(), ccoin);
 				} // if(rndNum <= 300)
 				return;
 			} // if(monsterEnt instanceof Zombie)

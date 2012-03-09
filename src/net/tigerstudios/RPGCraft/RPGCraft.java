@@ -22,24 +22,17 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
-import javax.swing.text.html.parser.Entity;
-
-import net.tigerstudios.RPGCraft.utils.PropertiesFile;
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
 import net.tigerstudios.RPGCraft.utils.listener_Plugin;
 
-import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.ExperienceOrb;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.material.CustomItem;
-import org.getspout.spoutapi.material.MaterialData;
+
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -108,6 +101,8 @@ public class RPGCraft extends JavaPlugin{
 		cp = copperCoin.getCustomId();
 		sp = silverCoin.getCustomId();
 		gp = goldCoin.getCustomId();
+		
+		System.out.println("Copper Value: " + cp);
 				
 		if(initializeRPGCraft() == false)
 		{ 	// An error occurred while initiailizing the plugin.

@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
 
 import org.bukkit.Server;
