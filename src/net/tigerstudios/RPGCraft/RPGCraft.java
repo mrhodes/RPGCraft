@@ -23,7 +23,6 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
-import net.tigerstudios.RPGCraft.utils.listener_Plugin;
 
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -33,9 +32,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.material.CustomItem;
 
-
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
+import ru.tehkode.permissions.PermissionManager;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 
 public class RPGCraft extends JavaPlugin{
@@ -50,7 +48,6 @@ public class RPGCraft extends JavaPlugin{
 	private static listener_Player	playerListener = null;
 	private static listener_Currency currencyListener = null;
 	private static listener_Bank bankListener = null;
-	private static listener_Plugin PluginListener = null;
 	private static listener_Entity entityListener = null;
 	
 	public static CustomItem copperCoin;
@@ -60,14 +57,10 @@ public class RPGCraft extends JavaPlugin{
 			
 	public static String mainDirectory = "plugins" + File.separatorChar + "RPGCraft" + File.separatorChar;
 	public static String logDirectory = mainDirectory + "logs" + File.separatorChar;
-	public static PermissionHandler permissionHandler = null;
+	public static PermissionManager pexMan = null;
 	
 	static FileConfiguration config = null;
 	
-	// flags for other plugins
-	public boolean bCitizensEnabled = false;
-	public boolean biConomyEnabled = false;
-		
 
 	@Override
 	public void onDisable() {		
@@ -90,20 +83,7 @@ public class RPGCraft extends JavaPlugin{
 		
 		name = this.getDescription().getName();
 		version = this.getDescription().getVersion();
-			
-		// Load the RPGCraft.yml file
-		loadConfig();
-		
-		copperCoin = new CCopperCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
-		silverCoin = new CCopperCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
-		goldCoin = new CCopperCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
-		
-		cp = copperCoin.getCustomId();
-		sp = silverCoin.getCustomId();
-		gp = goldCoin.getCustomId();
-		
-		System.out.println("Copper Value: " + cp);
-				
+							
 		if(initializeRPGCraft() == false)
 		{ 	// An error occurred while initiailizing the plugin.
 			log.info(name + " " + version + " did not initialize.");
@@ -120,8 +100,12 @@ public class RPGCraft extends JavaPlugin{
 		log = Logger.getLogger("Minecraft");
 		mcServer = getServer();
 		
-		new File(logDirectory).mkdirs();		// Make the log Directory
+		// Load the config file before anything else.  This way settings for other systems
+		// can be added to the config
+		loadConfig();	
 		
+		new File(logDirectory).mkdirs();		// Make the log Directory
+				
 		if(SQLiteManager.initialize("RPGCraft")==false)
 		{	log.info("[RPGCraft]   Error when loading the SQLite library. RPGCraft cannot");
 			log.info("[RPGCraft]   run without this.  Please make sure you have sqlite-jdbc-3.7.2.jar");
@@ -133,6 +117,11 @@ public class RPGCraft extends JavaPlugin{
 		
 		setupPermissions();
 		setupDatabase();
+		
+		copperCoin = new CCopperCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
+		silverCoin = new CCopperCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
+		goldCoin = new CCopperCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
+		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
 						
 		mgr_Player.initialize(this);
 		mgr_Player.LoadAllData();
@@ -141,9 +130,7 @@ public class RPGCraft extends JavaPlugin{
 		currencyListener = new listener_Currency(this);
 		entityListener = new listener_Entity(this);
 		bankListener = new listener_Bank(this);
-		PluginListener = new listener_Plugin();
-		bankListener = new listener_Bank(this);
-				
+						
 		return result;
 	} // private boolean initializeRPGCraft()	
 	
@@ -195,9 +182,9 @@ public class RPGCraft extends JavaPlugin{
 	public void setupPermissions() {
 		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
 
-		if (this.permissionHandler == null) {
+		if (this.pexMan == null) {
 			if (permissionsPlugin != null) {
-				this.permissionHandler = ((Permissions) permissionsPlugin).getHandler();
+				this.pexMan = PermissionsEx.getPermissionManager();
 				log.info("[RPGCraft] ---> Permissions plugin detected.");
 			} else {
 				log.info("[RPGCraft] ---> Permissions plugin not detected, defaulting to Bukkit's built-in system.");

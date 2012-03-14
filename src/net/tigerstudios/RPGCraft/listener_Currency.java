@@ -33,14 +33,14 @@ public class listener_Currency implements Listener {
 		{
 			String playerName = p.getName();
 						
-			if(!(RPGCraft.permissionHandler.has(p, "rpgcraft.money")))
+			if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
 			{
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have access to the currency");
 				p.sendMessage("[§2RPG§f] commands. Speak to a server admin to gain access.");
 				return true;				
 			} // if(!(RPGCraft.Permissions.has(p, "rpgcraft.money")))
 			
-			if(cmd.length == 1 && RPGCraft.permissionHandler.has(p, "rpgcraft.money.mods"))
+			if(cmd.length == 1 && RPGCraft.pexMan.has(p, "rpgcraft.money.mods"))
 			{
 				playerName = cmd[0];
 				rpgPlayer = mgr_Player.getPlayer(playerName);
@@ -57,7 +57,7 @@ public class listener_Currency implements Listener {
 			} // if(cmd.length == 1)			
 			
 			p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getGold()+" Gold§f, §7"+rpgPlayer.getSilver()+" Silver§f, §c"+rpgPlayer.getCopper()+" Copper§f.");
-			if(cmd.length == 0 && RPGCraft.permissionHandler.has(p, "rpgcraft.money.mods"))
+			if(cmd.length == 0 && RPGCraft.pexMan.has(p, "rpgcraft.money.mods"))
 			{
 				p.sendMessage("[§2RPG§f] You may also check other players balances by adding");
 				p.sendMessage("[§2RPG§f] their name.");
@@ -69,7 +69,7 @@ public class listener_Currency implements Listener {
 		
 		if(command.getName().equalsIgnoreCase("deposit"))
 		{
-			if(!(RPGCraft.permissionHandler.has(p, "rpgcraft.money")))
+			if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
 			{
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have access to the currency");
 				p.sendMessage("[§2RPG§f] commands. Speak to a server admin to gain access.");
@@ -101,7 +101,7 @@ public class listener_Currency implements Listener {
 				
 		if(command.getName().equalsIgnoreCase("withdraw"))
 		{
-			if(!(RPGCraft.permissionHandler.has(p, "rpgcraft.money")))
+			if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
 			{
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have access to the currency");
 				p.sendMessage("[§2RPG§f] commands. Speak to a server admin to gain access.");
@@ -158,7 +158,7 @@ public class listener_Currency implements Listener {
 		if(command.getName().equalsIgnoreCase("givecoin") || command.getName().equalsIgnoreCase("gc"))
 		{
 			
-			if(!(RPGCraft.permissionHandler.has(p, "rpgcraft.money")))
+			if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
 			{
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have access to the currency");
 				p.sendMessage("[§2RPG§f] commands. Speak to a server admin to gain access.");

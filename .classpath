@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/Minecraft Servers/Official 1.2 Tigerstudios Server/plugins/Permissions.jar"/>
-	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/ebean-2.7.3/ebean-2.7.3.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bukkit"/>
 	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/Git Projects/libs/spoutpluginapi-dev-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/Git Projects/Bukkit/target/bukkit-1.1-R4.jar"/>
+	<classpathentry kind="lib" path="D:/Program Files/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
+	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/ebean-2.7.3/ebean-2.7.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

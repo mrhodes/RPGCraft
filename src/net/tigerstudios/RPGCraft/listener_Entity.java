@@ -14,6 +14,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 
+// TODO: This code needs a complete re write!!!
+// This code repeats itself for every mob type.
+
+
 public class listener_Entity implements Listener{
 	private Random rndSeed = null;
 	private int rndNum = 0;

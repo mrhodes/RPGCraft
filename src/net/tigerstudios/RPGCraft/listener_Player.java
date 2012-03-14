@@ -20,7 +20,6 @@ import org.bukkit.plugin.Plugin;
 public class listener_Player implements Listener {
 	private Plugin rpgPlugin = null;
 	private Server rpgServer = null;
-	private List<World> rpgWorlds = null;
 	private boolean bChatEnabled = false;
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -35,8 +34,7 @@ public class listener_Player implements Listener {
 			if(rpgPlayer.getRpgName().equals("null"))
 				p.sendMessage("Welcome back to the server "+p.getName()+".");
 			else
-				p.sendMessage("Welcome back to the server "+rpgPlayer.getRpgName()+".");
-				
+				p.sendMessage("Welcome back to the server "+rpgPlayer.getRpgName()+".");	
 			return;
 		}
 		// If player has not been added to the RPG list then register and login the 
@@ -66,7 +64,6 @@ public class listener_Player implements Listener {
 		Bukkit.getServer().getPluginManager().registerEvents(this, p);
 		rpgPlugin = p;
 		rpgServer = rpgPlugin.getServer();
-		rpgWorlds = rpgServer.getWorlds();
 	 } // public listener_Player(Plugin p)
 	
 	
@@ -81,7 +78,7 @@ public class listener_Player implements Listener {
 		{	Player p = event.getPlayer();
 			RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName());
 			
-			// Important, only do this if within the 15 second timer.
+			// Important, only do this if within the 10 second timer.
 			if( (rpgPlayer.lTimer + 10000) <= System.currentTimeMillis())
 			{	// Reset Timer and then exit
 				rpgPlayer.lTimer = 0;
@@ -122,16 +119,15 @@ public class listener_Player implements Listener {
 			p.sendMessage("    §2/givecoin §for §2/gc    §3Type /givecoin for usage info.");
 			p.sendMessage("    §2/deposit                §3Deposit Coins to the bank.");
 			p.sendMessage("    §2/withdraw               §3Type /withdraw for usage info.");
-			if(RPGCraft.permissionHandler.has(p, "rpgcraft.bank.banker"))
+			if(RPGCraft.pexMan.has(p, "rpgcraft.bank.banker"))
 			{ p.sendMessage("Bank Commands:");
 				p.sendMessage("Please type the following commands without options for");
 				p.sendMessage("more detailed help.");
 				p.sendMessage("    §2/banker §f<§6gold§f> §f<§7silver§f> §f<§ccopper§f> §f<§2receiver§f>");
 			} // if(RPGCraft.Permissions.has(p, "rpg.bank.banker"))
 			return true;
-		}
+		} // if(command.getName().equalsIgnoreCase("rpg"))
 		
 		return false;		
-	} // private void displayHelp(Player p)
-	
-}
+	} // public boolean displayHelp(CommandSender sender, Command command, String[] args)
+} // public class listener_Player implements Listener

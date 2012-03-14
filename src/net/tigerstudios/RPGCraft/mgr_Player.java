@@ -127,15 +127,8 @@ public class mgr_Player {
 					if(rpgPlayer.player != null)
 						rpgPlayer.bIsOnline = true;
 					else
-						rpgPlayer.bIsOnline = false;
-					
-					// Get the group, prefix and suffix from the permissions file.
-				//	rpgPlayer.serverGroup	= RPGCraft.Permissions.getGroup(rpgPlayer.mcName, null);
-				//	rpgPlayer.displayPrefix	= RPGCraft.Permissions.getGroupPrefix(rpgPlayer.mcName, null);
-				//	rpgPlayer.displaySuffix	= RPGCraft.Permissions.getGroupSuffix(rpgPlayer.mcName, null);
-					
-					rpgPlayer.displayName = rpgPlayer.displayPrefix+" "+rpgPlayer.rpgName+" "+rpgPlayer.displaySuffix; 
-					
+						rpgPlayer.bIsOnline = false;	
+						
 					rpgPlayers.put(rpgPlayer.mcName.hashCode(), rpgPlayer);
 				}
 			} catch (SQLException e) {

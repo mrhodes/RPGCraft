@@ -28,7 +28,7 @@ public class listener_Bank implements Listener {
 		
 		if(command.getName().equalsIgnoreCase("banker"))
 		{
-			if(!RPGCraft.permissionHandler.has(p, "rpgcraft.bank.banker"))
+			if(!RPGCraft.pexMan.has(p, "rpgcraft.bank.banker"))
 			{
 				p.sendMessage("[§2RPG§f] §4You do not have access to this command.");
 				return true;

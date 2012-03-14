@@ -16,12 +16,11 @@ import org.bukkit.entity.Player;
  */
 public class RPG_Player{
 	
-	int PlayerID = 0;				// Hash of mine craft name
-	public boolean bIsOnline;		// Is this player currently online
-	Player player;					// Minecraft Player class
-	String mcName;
-	String rpgName;
-	String displayName;
+	int PlayerID = 0;			// unique player ID.  Value stored in Database
+	boolean bIsOnline;			// Is this player currently online
+	Player player;				// Minecraft Player class
+	String mcName;				// Players Minecraft Name
+	String rpgName;				// Players Role Play name
 	String serverGroup;				// Players group on the server
 	String displayPrefix;	
 	String displaySuffix;
@@ -29,30 +28,21 @@ public class RPG_Player{
     // Race Stats
 	int race;
 	int profession;
+	int level;
+	int experience;
 	int agility;
 	int stamina;
 	int strength;
 	int intelligence;
+		
+	//TODO: Change the currency to use only copper internally
+	int Gold; int Silver; int Copper;
 	
-	
-	int Gold;
-	int Silver;
-	int Copper;
-	
-	// To be implemented at a later date
-	int KillsPerMinute = 0;
-	long lLastKillTime = 0;	// Used to prevent Farming Coin
-	
-	
+	// TODO: Add universal MT Timer/Callback system.  Pull timer out of Player class
 	long lTimer = -1;		// Used for things that need a timer.  This
 							// Value will be the end time of a time
 							// length
 		
-	// Data gathered from the Permissions plugin
-	String group = null;
-	String prefix = null;
-	String suffix = null;	
-	
 	public int getGold() { return Gold; }
 	public int getSilver() { return Silver; }
 	public int getCopper() { return Copper; }
@@ -67,8 +57,9 @@ public class RPG_Player{
 	public void setRpgName(String name) { rpgName = name; }
 	
 	public void setPlayer(Player p) { player = p; }
-	// methods used for
-	
+		
+	// This method basically filters all coin values 
+	// to the proper amounts (eg 150copper -> 1 silver 50 copper)
 	public void optimizeCoin()
 	{
 		while(Copper > 99)
@@ -82,6 +73,7 @@ public class RPG_Player{
 			Silver = Silver - 100;
 		}
 	} // public void optimizeCoin()
+	
 	public void removeCopper(int cp)
 	{
 		int newGold = getGold();
@@ -108,8 +100,7 @@ public class RPG_Player{
 	
 	public RPG_Player(String minecraftName)
 	{
-		this.player = null;
-		
+		this.player = null;		
 		mcName = minecraftName;
 		this.rpgName = mcName;
 		
@@ -121,16 +112,11 @@ public class RPG_Player{
 	
 	// This method will be called when a new player registers to be a RPG character.
 	public void initialize()
-	{	// Set Stats
-		int g = 0; int s = 0; int c = 0;
-		// Give initial amount of coin
-		g = RPGCraft.config.getInt("default_gold");
-		s = RPGCraft.config.getInt("default_silver");
-		c = RPGCraft.config.getInt("default_copper");
-			
-		setGold(g);
-		setSilver(s);
-		setCopper(c);
+	{	// Give initial amount of coin
+		setGold(RPGCraft.config.getInt("default_gold"));
+		setSilver(RPGCraft.config.getInt("default_silver"));
+		setCopper(RPGCraft.config.getInt("default_copper"));
+
 	} // public void initialize()
 	
 	public boolean savePlayerData()
@@ -186,16 +172,7 @@ public class RPG_Player{
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-		} // if(rs != null)	
-		
-			
-		// Set the players display name with prefix and suffix if applicable
-		if(rpgName.equals("null"))
-			displayName = mcName;
-		else
-			displayName = rpgName;
-			
-		this.player.setDisplayName(displayName);
+		} // if(rs != null)
 		
 		return true;
 	} // public boolean loadPlayerData()	
