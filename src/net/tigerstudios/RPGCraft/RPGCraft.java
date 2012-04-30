@@ -144,8 +144,6 @@ public class RPGCraft extends JavaPlugin{
 			SQLiteManager.SQLUpdate("create table playerData ("+
 					"mcName varchar(32) PRIMARY KEY," +
 			 		"rpgName varchar(32)," +
-					"gold smallint," +
-					"silver tinyint," +
 					"copper tinyint);");
 		} // if(SQLiteManager.TableExists("playerData") == false)		
 		
@@ -155,8 +153,6 @@ public class RPGCraft extends JavaPlugin{
 			log.info("[RPGCraft] --->   Creating CurrencyLog table.");
 			SQLiteManager.SQLUpdate("create table currencyLog ("+
 					"mcName varchar(32),"+
-					"gold int,"+
-					"silver tinyint,"+
 					"copper tinyint," +
 					"comment varchar(256));");
 			// TODO: add date, time, and to and from fields

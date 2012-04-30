@@ -34,68 +34,33 @@ public class RPG_Player{
 	int stamina;
 	int strength;
 	int intelligence;
-		
-	//TODO: Change the currency to use only copper internally
-	int Gold; int Silver; int Copper;
 	
 	// TODO: Add universal MT Timer/Callback system.  Pull timer out of Player class
 	long lTimer = -1;		// Used for things that need a timer.  This
 							// Value will be the end time of a time
 							// length
+	
+	// Currency Methods
+	int Copper;	
 		
-	public int getGold() { return Gold; }
-	public int getSilver() { return Silver; }
+	public int getGold() { return Copper + (Copper * 100) * ( Copper * 10000); }
+	public int getSilver() { return Copper + (Copper * 100); }
 	public int getCopper() { return Copper; }
-	public int getTotalCopper(){ return Copper + (100 * Silver) + (10000 * Gold); }
+	public int getTotalCopper(){ return Copper;}
 	public String getMCName() { return mcName; }
 	public String getRpgName() { return rpgName; }
 	
-	public void setGold(int gp) { Gold = gp; }
-	public void setSilver(int sp) { Silver = sp; }
+	public void setGold(int gp) { Copper = gp * 10000; }
+	public void setSilver(int sp) { Copper = sp * 100; }
 	public void setCopper(int cp) { Copper = cp; }	
 	public void setMCName(String name) { mcName = name; }
 	public void setRpgName(String name) { rpgName = name; }
 	
 	public void setPlayer(Player p) { player = p; }
-		
-	// This method basically filters all coin values 
-	// to the proper amounts (eg 150copper -> 1 silver 50 copper)
-	public void optimizeCoin()
-	{
-		while(Copper > 99)
-		{
-			Silver = Silver + 1;
-			Copper = Copper - 100;
-		}
-		while(Silver > 99)
-		{
-			Gold = Gold + 1;
-			Silver = Silver - 100;
-		}
-	} // public void optimizeCoin()
-	
+				
 	public void removeCopper(int cp)
 	{
-		int newGold = getGold();
-		int newSilver = getSilver();
-		int newCopper = getCopper();
-		
-		// remove the copper and then fix the numbers so there are no negatives
-		newCopper = newCopper - cp;
-		while(newCopper < 0)
-		{
-			newSilver = newSilver - 1;
-			newCopper = newCopper + 100;
-		}
-		while(newSilver < 0)
-		{
-			newGold = newGold - 1;
-			newSilver = newSilver + 100;
-		}
-		
-		setGold(newGold);
-		setSilver(newSilver);
-		setCopper(newCopper);		
+			
 	}
 	
 	public RPG_Player(String minecraftName)
@@ -139,13 +104,13 @@ public class RPG_Player{
 		{	query = "update playerData set " +
 				"	mcName 			= '"+mcName+"'," +
 				"   rpgName			= '"+rpgName+"'," +
-				"   gold = "+Gold+", silver = "+Silver+", copper = "+Copper +
+				"   copper = "+Copper +
 				" where mcName='"+mcName+"';";
 		}else {
 			query = "insert into playerData values (" +
 				"	'"+mcName+"'," +
 				"   '"+rpgName+"'," +
-				"   "+Gold+", "+Silver+", "+Copper+");";   
+				"    "+Copper+");";   
 		}
 		SQLiteManager.SQLUpdate(query);
 				
@@ -165,8 +130,6 @@ public class RPG_Player{
 			{	if(rs.getFetchSize() != 0)
 				{										
 					rpgName = rs.getString("rpgName");
-					Gold = rs.getInt("gold");
-					Silver = rs.getInt("silver");
 					Copper = rs.getInt("copper");
 				} // if(rs.getFetchSize() != 0)
 			} catch (SQLException e) {

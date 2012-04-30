@@ -29,8 +29,7 @@ public class listener_Bank implements Listener {
 		if(command.getName().equalsIgnoreCase("banker"))
 		{
 			if(!RPGCraft.pexMan.has(p, "rpgcraft.bank.banker"))
-			{
-				p.sendMessage("[§2RPG§f] §4You do not have access to this command.");
+			{	p.sendMessage("[§2RPG§f] §4You do not have access to this command.");
 				return true;
 			}
 			
@@ -58,7 +57,6 @@ public class listener_Bank implements Listener {
 					rpgPlayer.setGold(rpgPlayer.getGold() + gold);
 					rpgPlayer.setSilver(rpgPlayer.getSilver() + silver);
 					rpgPlayer.setCopper(rpgPlayer.getCopper() + copper);
-					rpgPlayer.optimizeCoin();
 					p.sendMessage("[§2RPG§f] The transaction with "+pReceiver.getDisplayName()+" is now complete.");
 					p.sendMessage("[§2RPG§f] §6"+gold+" Gold§f, §7"+silver+" Silver§f, and §c"+copper+" Copper §fhas been sent to "+pReceiver.getDisplayName()+".");
 					pReceiver.sendMessage("[§2RPG§f] The banker has paid you §6"+gold+" Gold§f, §7"+silver+" Silver§f, and §c"+copper+" Copper§f.");

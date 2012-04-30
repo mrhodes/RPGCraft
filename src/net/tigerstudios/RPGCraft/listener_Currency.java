@@ -252,7 +252,6 @@ public class listener_Currency implements Listener {
 			}
 				
 			receiver.setCopper(receiver.getCopper() + sendTotalCopper);
-			receiver.optimizeCoin();
 			pReceiver.sendMessage("[§2RPG§f] "+p.getName()+" has sent you §6"+sendGold+" Gold§f, §7"+sendSilver+" Silver§f, and §c"+sendCopper+" Copper§f.");
 			
 			pSender.removeCopper(sendTotalCopper);

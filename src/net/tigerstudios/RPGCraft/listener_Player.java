@@ -1,9 +1,7 @@
 package net.tigerstudios.RPGCraft;
 
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 public class listener_Player implements Listener {
 	private Plugin rpgPlugin = null;
 	private Server rpgServer = null;
-	private boolean bChatEnabled = false;
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(final PlayerJoinEvent event)
@@ -96,7 +93,6 @@ public class listener_Player implements Listener {
 			if(id == RPGCraft.gp)
 				rpgPlayer.setGold(rpgPlayer.getGold() + item.getAmount());
 			
-			rpgPlayer.optimizeCoin();
 			p.setItemInHand(null);
 			p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getGold()+" Gold§f, §7"+rpgPlayer.getSilver()+" Silver§f, §c"+rpgPlayer.getCopper()+" Copper§f.");
 						

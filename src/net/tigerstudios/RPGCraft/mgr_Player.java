@@ -117,8 +117,6 @@ public class mgr_Player {
 					
 					rpgPlayer.mcName 				= rs.getString("mcName");
 					rpgPlayer.rpgName 				= rs.getString("rpgName");
-					rpgPlayer.Gold					= rs.getInt("gold");
-					rpgPlayer.Silver				= rs.getInt("silver");
 					rpgPlayer.Copper				= rs.getInt("copper");					
 					
 					// Check if this player is online, if so set the Player field.  Will return null
