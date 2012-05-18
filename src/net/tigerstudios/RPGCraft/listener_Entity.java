@@ -9,6 +9,8 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -27,6 +29,22 @@ public class listener_Entity implements Listener{
 	private Player mcPlayer = null;
 	private ItemStack iStack = null;
 	
+	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onEntityDamage(final EntityDamageEvent event)
+	{
+		if(event.getCause() == DamageCause.ENTITY_ATTACK)
+		{
+			// See if a player is involved.
+			if(event.getEntityType() == EntityType.PLAYER)
+			{	// Player has been damaged.
+				Player p = (Player)event.getEntity();			
+				p.sendMessage("[§2RPG§f] You have been hit for " + event.getDamage() + " HP.");
+			}			
+		} // if(event.getCause() == DamageCause.ENTITY_ATTACK)		
+	}
+	
+	/*
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(final EntityDeathEvent event)
 	{
@@ -464,9 +482,9 @@ public class listener_Entity implements Listener{
 			
 			
 			return;
-		} // if(event.getEntity() instanceof Animals)			
+		} // if(event.getEntity() instanceof Animals)		
 	} // public void onEntityDeath(final EntityDeathEvent event)
-	
+	*/	
 	
 	public listener_Entity(Plugin p)
 	{

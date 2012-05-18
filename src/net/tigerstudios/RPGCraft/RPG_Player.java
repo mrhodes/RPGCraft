@@ -15,25 +15,29 @@ import org.bukkit.entity.Player;
  * The RPG_Player class will be the main class for each in game player. 
  */
 public class RPG_Player{
-	
-	int PlayerID = 0;			// unique player ID.  Value stored in Database
+	int AccountID = 0;			// unique account ID.  Value stored in Database
+	int CharacterID = 0;		// ID for this particular rpg character
 	boolean bIsOnline;			// Is this player currently online
 	Player player;				// Minecraft Player class
 	String mcName;				// Players Minecraft Name
 	String rpgName;				// Players Role Play name
-	String serverGroup;				// Players group on the server
 	String displayPrefix;	
 	String displaySuffix;
+	String skinURL;
 	
     // Race Stats
 	int race;
-	int profession;
 	int level;
 	int experience;
-	int agility;
-	int stamina;
-	int strength;
-	int intelligence;
+	
+	// Character Stats
+	int agility; 	int stamina;
+	int strength;	int intelligence;
+	int attack, defense, parry;
+	
+	// Character Ablities
+	int mining, farming, blacksmithing;
+	int enchanting, alchemist;	
 	
 	// TODO: Add universal MT Timer/Callback system.  Pull timer out of Player class
 	long lTimer = -1;		// Used for things that need a timer.  This
@@ -59,17 +63,21 @@ public class RPG_Player{
 	public void setPlayer(Player p) { player = p; }
 				
 	public void removeCopper(int cp)
-	{
-			
-	}
+	{	if(Copper > cp)
+		{	player.sendMessage("[RPG] Error trying to remove " + cp + "from you.");
+			player.sendMessage("[RPG] You only have "+ Copper);
+			return;
+		} // if(Copper > cp)
+	} // public void removeCopper(int cp)
 	
-	public RPG_Player(String minecraftName)
+	
+	public RPG_Player(String minecraftName, int id)
 	{
-		this.player = null;		
+		player = null;		
 		mcName = minecraftName;
-		this.rpgName = mcName;
-		
-		PlayerID = mcName.hashCode();		
+		rpgName = mcName;
+		AccountID = id;
+		CharacterID = 0;
 	} // public void RPG_Player(Player p)
 	
 	
@@ -81,33 +89,47 @@ public class RPG_Player{
 		setGold(RPGCraft.config.getInt("default_gold"));
 		setSilver(RPGCraft.config.getInt("default_silver"));
 		setCopper(RPGCraft.config.getInt("default_copper"));
+		
+		displayPrefix = "";	
+		displaySuffix = "";	
+		skinURL = "";
+		
+		race = 0; level = 1; experience = 0; 
+		agility = 10; stamina = 10; strength = 10;	intelligence = 10;
+		attack = 1; defense = 1; parry = 1;
+		
+		// Character Ablities
+		mining = 0; farming = 0; blacksmithing = 0;
+		enchanting = 0; alchemist = 0;
 
 	} // public void initialize()
 	
 	public boolean savePlayerData()
-	{ 
+	{ 		
+		// First check if the player even has a loaded 
+		// character to save.
+		if(CharacterID == 0)
+			return false;
+		
 		String query = null;
 		ResultSet rs = null;
 		boolean bInDB = false;
+		
 		// Create the query to save the players data
-				
-		rs = SQLiteManager.SQLQuery("select * from playerData where mcName ='"+mcName+"';");
+		// Get all Character data for this player (This can return multiple records)
+		rs = SQLiteManager.SQLQuery("select * from Characters where char_id = "+CharacterID+";");
 	
-		try {
-			bInDB = rs.next();
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		try { bInDB = rs.next();} 
+		catch (SQLException e1) { e1.printStackTrace();	}
 		
 		if(bInDB)
-		{	query = "update playerData set " +
+		{	query = "update Characters set " +
 				"	mcName 			= '"+mcName+"'," +
 				"   rpgName			= '"+rpgName+"'," +
 				"   copper = "+Copper +
 				" where mcName='"+mcName+"';";
 		}else {
-			query = "insert into playerData values (" +
+			query = "insert into Characters values (" +
 				"	'"+mcName+"'," +
 				"   '"+rpgName+"'," +
 				"    "+Copper+");";   
@@ -121,8 +143,8 @@ public class RPG_Player{
 	{
 		String query = null;
 		ResultSet rs = null;
-		query = "select * from playerData where mcName='"+mcName+"'";
 		
+		query = "select * from Characters where account_id = "+this.AccountID+";";
 		rs = SQLiteManager.SQLQuery(query);
 		
 		if(rs != null)

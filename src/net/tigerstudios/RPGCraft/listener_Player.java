@@ -1,5 +1,10 @@
 package net.tigerstudios.RPGCraft;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import net.tigerstudios.RPGCraft.utils.SQLiteManager;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -10,7 +15,9 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -19,11 +26,32 @@ public class listener_Player implements Listener {
 	private Plugin rpgPlugin = null;
 	private Server rpgServer = null;
 	
+	
+	@EventHandler(priority = EventPriority.NORMAL)	
+	public void onPlayerMove(final PlayerMoveEvent event)
+	{
+		Player p = event.getPlayer();
+		p.setVelocity(p.getVelocity().add(p.getVelocity()));
+	}
+	
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerJoin(final PlayerJoinEvent event)
 	{
 		Player p = event.getPlayer();
+		ResultSet rs = null;
+		
+		// See if this player is in the database.
+		String query = "SELECT account_id from Accounts WHERE mc_Name = '"+p.getName()+"';";
+		rs = SQLiteManager.SQLQuery(query);
+		if(rs == null)
+		{	
+			// New player.  Need to register this as a new player before logging in.
+			mgr_Player.playerRegister(p);
 			
+		
+		}
+		
 		RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName());
 		if(rpgPlayer!=null)
 		{
@@ -36,7 +64,7 @@ public class listener_Player implements Listener {
 		}
 		// If player has not been added to the RPG list then register and login the 
 		// player now
-		mgr_Player.playerRegister(p);
+		
 		mgr_Player.playerLogin(p);			
 		return;		
 	} // public void onPlayerJoin(final PlayerJoinEvent event)

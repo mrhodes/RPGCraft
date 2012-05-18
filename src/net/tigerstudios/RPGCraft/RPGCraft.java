@@ -137,29 +137,49 @@ public class RPGCraft extends JavaPlugin{
 	
 	private void setupDatabase()
 	{
-		// Setup the playerData Table...
-		if(SQLiteManager.TableExists("playerData", "RPGCraft") == false)
-		{
-			log.info("[RPGCraft] --->   Creating PlayerData table.");
-			SQLiteManager.SQLUpdate("create table playerData ("+
-					"mcName varchar(32) PRIMARY KEY," +
-			 		"rpgName varchar(32)," +
-					"copper tinyint);");
-		} // if(SQLiteManager.TableExists("playerData") == false)		
+		// Setup the account Table...
+		// When a new user joins the server this table will be updated with
+		// that new users info.  This is not character related.
+		if(SQLiteManager.TableExists("accounts", "RPGCraft") == false)
+		{	log.info("[RPGCraft] --->   Creating Accounts table.");
+			SQLiteManager.SQLUpdate("create table Accounts ("+
+					"account_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
+					"mc_Name VARCHAR(24),"+
+					"joined DATE"+
+					");");
+		} // if(SQLiteManager.TableExists("accounts", "RPGCraft") == false)
 		
-					
-		if(SQLiteManager.TableExists("currencyLog", "RPGCraft") == false)
+		// Setup the playerData Table...
+		if(SQLiteManager.TableExists("characters", "RPGCraft") == false)
+		{	log.info("[RPGCraft] --->   Creating Characters table.");
+			SQLiteManager.SQLUpdate("create table characters ("+
+					"char_id INTEGER PRIMARY KEY AUTOINCREMENT," + 	// Primary key
+					"account_id SMALLINT UNSIGNED NOT NULL," +		// Foreign key
+					"name varchar(16) NOT NULL," +
+					"namePrefix varchar(32), 	nameSuffix varchar(64),"+
+					"race tinyint, level tinyint, experience int, exp_to_levelup int," +
+					"agility int, strength int, intelligence int, stamina int," +
+					"attack int, defense int, parry int," +
+					"mining int, farming int, blacksmithing int, enchanting int, alchemy int,"+
+					"skinURL varchar(256)" +
+					");");
+		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)	
+		
+		// Setup the RaceData table
+		if(SQLiteManager.TableExists("race_info", "RPGCraft") == false)
 		{
-			log.info("[RPGCraft] --->   Creating CurrencyLog table.");
-			SQLiteManager.SQLUpdate("create table currencyLog ("+
-					"mcName varchar(32),"+
-					"copper tinyint," +
-					"comment varchar(256));");
-			// TODO: add date, time, and to and from fields
-			// TODO: also, add timezone settings, so player sees their timezone			
-		} // if(SQLiteManager.TableExists("currencyLog", "RPGCraft") == false)
+			log.info("[RPGCraft] --->   Creating Race_Info table.");
+			SQLiteManager.SQLUpdate("create table race_info ("+
+					"race_id INTEGER PRIMARY KEY AUTOINCREMENT,"+ //Primary Key
+					"Name varchar(5) NOT NULL,"+
+					"agi_bonus INT, str_bonus INT, sta_bonus INT, int_bonus INT"+
+					");");				
+				
+		} // if(SQLiteManager.TableExists("race_info", "RPGCraft") == false)
 	} // private void setupDatabase()	 
 		
+	
+	
 	
 	public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)
 	{

@@ -12,14 +12,12 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-
 public class mgr_Player {
 	private static Map<Integer, RPG_Player> rpgPlayers = new HashMap<Integer, RPG_Player>(); 
 	
 	// private static List<RPG_Player> rpgPlayers = new ArrayList<RPG_Player>();
-	private static Plugin rpgPlugin = null;
-	private static Server rpgServer = null;
-		
+	//private static Plugin rpgPlugin = null;
+	private static Server rpgServer = null;		
 	
 	public static RPG_Player getPlayer(String mcName)
 	{
@@ -31,12 +29,36 @@ public class mgr_Player {
 	} // public static RPG_Player getPlayer(String name)
 		
 	
+	// ----------------------------------------------------
+	// playerRegister()
+	//
+	// This method is called when a new player joins the
+	// server.  The 
 	public static boolean playerRegister(Player p)
 	{
 		RPG_Player player = null;
+		ResultSet rs = null;
+		int account_id = 0;
+		
+		// Need to create an entry in the Accounts Table with this players
+		// Name and Date joined.
+		String query = "INSERT INTO Accounts (mc_Name, joined) VALUES ('"+
+		 p.getName()+"', DATE());";
+		SQLiteManager.SQLUpdate(query);
+		
+		// Need to get the ID of this player before we continue.  
+		query = "SELECT account_id from Accounts WHERE mc_Name = '"+p.getName()+"';";
+		rs = SQLiteManager.SQLQuery(query);
+		if(rs != null)
+		{	try { while(rs.next()) { account_id = rs.getInt("account_id"); }}
+			catch (SQLException e) { e.printStackTrace(); }
+		} // if(rs != null)
+		
+		// TODO: Remove this line.  Only for testing purposes
+		p.sendMessage("Account ID = " + account_id);
 		
 		// New player, create a RPG Character for this player.
-		player = new RPG_Player(p.getName());
+		player = new RPG_Player(p.getName(), account_id);
 		player.initialize();
 				
 		// Save this player in the database, and then add to the player list
@@ -53,7 +75,7 @@ public class mgr_Player {
 		{
 			rpgPlayer.setPlayer(p);
 			rpgPlayer.loadPlayerData();
-			rpgPlayer.bIsOnline = true;
+			rpgPlayer.bIsOnline = true;		
 			return true;
 		} // if(rpgPlayer != null)
 					
@@ -82,11 +104,7 @@ public class mgr_Player {
 	{
 		return rpgPlayers.size();
 	} // public static int getPlayerCount()
-	/*
-	public static List<RPG_Player> getPlayerArray()
-	{
-		;
-	}*/	
+	
 			
 	public static void SaveAllData()
 	{
@@ -100,20 +118,18 @@ public class mgr_Player {
 		
 	
 	public static void LoadAllData()
-	{
-		ResultSet rs = null;
+	{	ResultSet rs = null;
 		// Clear the list first. Then start fresh
 		rpgPlayers.clear();
 		
 		// Load all record from the playerData Table
 		rs = SQLiteManager.SQLQuery("select * from playerData;");
 		if(rs != null)
-		{
-			try {
+		{	try {
 				while(rs.next())
 				{	// Create a new RPG_Player object and fill it with the values that
 					// were loaded.
-					RPG_Player rpgPlayer = new RPG_Player(rs.getString("mcName"));
+					RPG_Player rpgPlayer = null;//new RPG_Player(rs.getString("mcName"));
 					
 					rpgPlayer.mcName 				= rs.getString("mcName");
 					rpgPlayer.rpgName 				= rs.getString("rpgName");
@@ -130,7 +146,6 @@ public class mgr_Player {
 					rpgPlayers.put(rpgPlayer.mcName.hashCode(), rpgPlayer);
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -151,7 +166,7 @@ public class mgr_Player {
 	
 	public static void initialize(Plugin p)
 	{
-		rpgPlugin = p;
+		//rpgPlugin = p;
 		rpgServer = p.getServer();
 	}
 
