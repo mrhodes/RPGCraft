@@ -1,8 +1,11 @@
+// Temporarily Disabled this entire class.  It was created before
+// coins naturally dropped off mobs.  I am keeping the code here just in 
+// case it needs to be used again, perhaps as a testing tool or a moderator
+// feature.
+// Michael Rhodes ~ May 25, 2012
+
 package net.tigerstudios.RPGCraft;
 
-import java.io.File;
-import java.util.Calendar;
-import net.tigerstudios.RPGCraft.utils.PropertiesFile;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,15 +16,14 @@ import org.bukkit.plugin.Plugin;
 
 public class listener_Bank implements Listener {
 	private Server rpgServer = null;
-
 	
-	private PropertiesFile playerBalances = null;
-	private PropertiesFile transactionHistory = null;
+	//private PropertiesFile playerBalances = null;
+	//private PropertiesFile transactionHistory = null;
 			
 	//public void onPlayerCommandPreprocess(PlayerChatEvent event)
 	public boolean bankProcessor(CommandSender sender, Command command,	String label, String[] cmd)
 	{
-		Player p = rpgServer.getPlayer(sender.getName());
+		/*Player p = rpgServer.getPlayer(sender.getName());
 						
 		// Make sure the banking system is enabled, and then make sure the player
 		// issuing the command indeed has permissions to do so.				
@@ -51,7 +53,7 @@ public class listener_Bank implements Listener {
 			Player pReceiver = rpgServer.matchPlayer(cmd[3]).get(0);
 			if(pReceiver!=null)
 			{
-				RPG_Player rpgPlayer = mgr_Player.getPlayer(pReceiver.getName());
+				RPG_Player rpgPlayer = mgr_Player.getPlayer(pReceiver.getName().hashCode());
 				if(rpgPlayer != null)
 				{
 					rpgPlayer.setGold(rpgPlayer.getGold() + gold);
@@ -77,7 +79,7 @@ public class listener_Bank implements Listener {
 				} // if(PlayerManager.validatePlayer(pReceiver, rpgPlayer, false))
 			} // if(pReceiver!=null)					
 		} // if(cmd[0].equalsIgnoreCase("/banker"))	
-	
+	*/
 		return false;
 	} // public void onPlayerCommandPreprocess(PlayerChatEvent event)
 	
@@ -85,7 +87,7 @@ public class listener_Bank implements Listener {
 	public listener_Bank(Plugin p)
 	{	this.rpgServer = p.getServer();
 		
-		playerBalances = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"playerBalances.log");
-		transactionHistory = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"transactionHistory.log");
+		//playerBalances = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"playerBalances.log");
+		//transactionHistory = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"transactionHistory.log");
 	} // public listener_Bank(Plugin p)
 }

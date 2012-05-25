@@ -37,7 +37,6 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 
 public class RPGCraft extends JavaPlugin{
-	
 	private static String name;
 	private static String version;
 	public static Logger log = null;	
@@ -47,7 +46,7 @@ public class RPGCraft extends JavaPlugin{
 	// Listener Classes to handle the events
 	private static listener_Player	playerListener = null;
 	private static listener_Currency currencyListener = null;
-	private static listener_Bank bankListener = null;
+	//private static listener_Bank bankListener = null;
 	private static listener_Entity entityListener = null;
 	
 	public static CustomItem copperCoin;
@@ -59,8 +58,7 @@ public class RPGCraft extends JavaPlugin{
 	public static String logDirectory = mainDirectory + "logs" + File.separatorChar;
 	public static PermissionManager pexMan = null;
 	
-	static FileConfiguration config = null;
-	
+	static FileConfiguration config = null;	
 
 	@Override
 	public void onDisable() {		
@@ -79,8 +77,7 @@ public class RPGCraft extends JavaPlugin{
 	} // public void onDisable()
 
 	@Override
-	public void onEnable() {
-		
+	public void onEnable() {		
 		name = this.getDescription().getName();
 		version = this.getDescription().getVersion();
 							
@@ -129,7 +126,7 @@ public class RPGCraft extends JavaPlugin{
 		playerListener = new listener_Player(this);
 		currencyListener = new listener_Currency(this);
 		entityListener = new listener_Entity(this);
-		bankListener = new listener_Bank(this);
+		//bankListener = new listener_Bank(this);
 						
 		return result;
 	} // private boolean initializeRPGCraft()	
@@ -140,17 +137,18 @@ public class RPGCraft extends JavaPlugin{
 		// Setup the account Table...
 		// When a new user joins the server this table will be updated with
 		// that new users info.  This is not character related.
-		if(SQLiteManager.TableExists("accounts", "RPGCraft") == false)
+		if(SQLiteManager.TableExists("Accounts", "RPGCraft") == false)
 		{	log.info("[RPGCraft] --->   Creating Accounts table.");
 			SQLiteManager.SQLUpdate("create table Accounts ("+
 					"account_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
 					"mc_Name VARCHAR(24),"+
+					"character_total int,"+
 					"joined DATE"+
 					");");
 		} // if(SQLiteManager.TableExists("accounts", "RPGCraft") == false)
 		
-		// Setup the playerData Table...
-		if(SQLiteManager.TableExists("characters", "RPGCraft") == false)
+		// Setup the playerData Table..
+		if(SQLiteManager.TableExists("Characters", "RPGCraft") == false)
 		{	log.info("[RPGCraft] --->   Creating Characters table.");
 			SQLiteManager.SQLUpdate("create table characters ("+
 					"char_id INTEGER PRIMARY KEY AUTOINCREMENT," + 	// Primary key
@@ -158,9 +156,11 @@ public class RPGCraft extends JavaPlugin{
 					"name varchar(16) NOT NULL," +
 					"namePrefix varchar(32), 	nameSuffix varchar(64),"+
 					"race tinyint, level tinyint, experience int, exp_to_levelup int," +
-					"agility int, strength int, intelligence int, stamina int," +
+					"strength int, dexterity int, constitution int, intelligence int," +
 					"attack int, defense int, parry int," +
-					"mining int, farming int, blacksmithing int, enchanting int, alchemy int,"+
+					"mining int, farming int, blacksmithing int,"+
+					"enchanting int, alchemy int, cooking int,"+
+					"copper int,"+
 					"skinURL varchar(256)" +
 					");");
 		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)	
@@ -172,23 +172,23 @@ public class RPGCraft extends JavaPlugin{
 			SQLiteManager.SQLUpdate("create table race_info ("+
 					"race_id INTEGER PRIMARY KEY AUTOINCREMENT,"+ //Primary Key
 					"Name varchar(5) NOT NULL,"+
-					"agi_bonus INT, str_bonus INT, sta_bonus INT, int_bonus INT"+
+					"dex_bonus INT, str_bonus INT, con_bonus INT, int_bonus"+
 					");");				
 				
 		} // if(SQLiteManager.TableExists("race_info", "RPGCraft") == false)
 	} // private void setupDatabase()	 
-		
+			
 	
 	
-	
+	@Override
 	public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)
 	{
 		if(playerListener.displayHelp(sender,command, args))
 			return true;
 		
-		if (bankListener.bankProcessor(sender, command, label, args))
+	/*	if (bankListener.bankProcessor(sender, command, label, args))
 			return true;
-		
+		*/
 		if(currencyListener.currencyProcessor(sender, command, label, args))
 			return true;
 		
@@ -198,9 +198,9 @@ public class RPGCraft extends JavaPlugin{
 	public void setupPermissions() {
 		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
 
-		if (this.pexMan == null) {
+		if (RPGCraft.pexMan == null) {
 			if (permissionsPlugin != null) {
-				this.pexMan = PermissionsEx.getPermissionManager();
+				RPGCraft.pexMan = PermissionsEx.getPermissionManager();
 				log.info("[RPGCraft] ---> Permissions plugin detected.");
 			} else {
 				log.info("[RPGCraft] ---> Permissions plugin not detected, defaulting to Bukkit's built-in system.");
@@ -217,9 +217,9 @@ public class RPGCraft extends JavaPlugin{
 		config.addDefault("default_gold", 0);
 		config.addDefault("default_silver", 0);
 		config.addDefault("default_copper", 0);
-		config.addDefault("URL Images."+ "copperIcon", "http://tigerstudios.net/minecraft/copper.png");
-		config.addDefault("URL Images." + "silverIcon", "http://tigerstudios.net/minecraft/silver.png");
-		config.addDefault("URL Images." +"goldIcon", "http://tigerstudios.net/minecraft/gold.png");
+		config.addDefault("URL Images."+ "copperIcon", "http://tigerstudios.net/minecraft/textures/copper.png");
+		config.addDefault("URL Images." + "silverIcon", "http://tigerstudios.net/minecraft/textures/silver.png");
+		config.addDefault("URL Images." +"goldIcon", "http://tigerstudios.net/minecraft/textures/gold.png");
 				
 		config.addDefault("DropRates.animals", 55);
 		config.addDefault("DropRates.monsters", 80);

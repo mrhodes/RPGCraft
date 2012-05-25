@@ -12,9 +12,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+
+import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 // TODO: This code needs a complete re write!!!
 // This code repeats itself for every mob type.
@@ -27,6 +31,7 @@ public class listener_Entity implements Listener{
 	private Monster monsterEnt = null;
 	private Animals animalEnt = null;
 	private Player mcPlayer = null;
+	private SpoutPlayer sPlayer = null;
 	private ItemStack iStack = null;
 	
 	
@@ -34,17 +39,33 @@ public class listener_Entity implements Listener{
 	public void onEntityDamage(final EntityDamageEvent event)
 	{
 		if(event.getCause() == DamageCause.ENTITY_ATTACK)
-		{
-			// See if a player is involved.
+		{	// See if a player is involved.
 			if(event.getEntityType() == EntityType.PLAYER)
 			{	// Player has been damaged.
-				Player p = (Player)event.getEntity();			
-				p.sendMessage("[§2RPG§f] You have been hit for " + event.getDamage() + " HP.");
+				mcPlayer = (Player)event.getEntity();	
+				sPlayer = SpoutManager.getPlayer(mcPlayer);
+				sPlayer.sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.DIAMOND_SWORD);
 			}			
 		} // if(event.getCause() == DamageCause.ENTITY_ATTACK)		
 	}
 	
-	/*
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onEntityShootBow(final EntityShootBowEvent event)
+	{
+		/*Float force = Force.get(shooter);
+		Float dirX = (float) ((0 - (Math.sin((shooter.getLocation().getYaw() / 180) * Math.PI) * 3)) * force);
+		Float dirZ = (float) ((Math.cos((shooter.getLocation().getYaw() / 180) * Math.PI) * 3) * force);
+		 
+		event.getEntity().setVelocity(event.getEntity().getVelocity().setX(dirX));                       
+		event.getEntity().setVelocity(event.getEntity().getVelocity().setZ(dirZ));
+		*/
+		
+		Player p = (Player)event.getEntity();
+		p.sendMessage("ShootBow Event");
+		p.sendMessage("Force is: "+event.getForce());		
+	}
+	
+	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(final EntityDeathEvent event)
 	{
@@ -484,7 +505,7 @@ public class listener_Entity implements Listener{
 			return;
 		} // if(event.getEntity() instanceof Animals)		
 	} // public void onEntityDeath(final EntityDeathEvent event)
-	*/	
+		
 	
 	public listener_Entity(Plugin p)
 	{

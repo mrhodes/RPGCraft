@@ -1,10 +1,6 @@
 package net.tigerstudios.RPGCraft;
 
-import java.io.File;
-import java.util.Calendar;
 import java.util.List;
-
-import net.tigerstudios.RPGCraft.utils.PropertiesFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -16,11 +12,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 
-
 public class listener_Currency implements Listener {
 	private Server rpgServer = null;
-	private PropertiesFile playerBalances = null;
-	private PropertiesFile transactionHistory = null;
 	private RPG_Player rpgPlayer = null;
 	
 	// public void onPlayerCommandPreprocess(PlayerChatEvent event)
@@ -43,7 +36,7 @@ public class listener_Currency implements Listener {
 			if(cmd.length == 1 && RPGCraft.pexMan.has(p, "rpgcraft.money.mods"))
 			{
 				playerName = cmd[0];
-				rpgPlayer = mgr_Player.getPlayer(playerName);
+				rpgPlayer = mgr_Player.getPlayer(playerName.hashCode());
 				if(rpgPlayer == null)
 				{	p.sendMessage("[§2RPG§f] The player cannot be found.  Either they are not online");
 					p.sendMessage("[§2RPG§f] or there may be a spelling mistake.");
@@ -53,10 +46,10 @@ public class listener_Currency implements Listener {
 			
 			if(cmd.length == 0)
 			{	playerName = p.getName();
-				rpgPlayer = mgr_Player.getPlayer(playerName);
+				rpgPlayer = mgr_Player.getPlayer(playerName.hashCode());
 			} // if(cmd.length == 1)			
 			
-			p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getGold()+" Gold§f, §7"+rpgPlayer.getSilver()+" Silver§f, §c"+rpgPlayer.getCopper()+" Copper§f.");
+			p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getCharacter().getGold()+" Gold§f, §7"+rpgPlayer.getCharacter().getSilver()+" Silver§f, §c"+rpgPlayer.getCharacter().getCopper()+" Copper§f.");
 			if(cmd.length == 0 && RPGCraft.pexMan.has(p, "rpgcraft.money.mods"))
 			{
 				p.sendMessage("[§2RPG§f] You may also check other players balances by adding");
@@ -90,7 +83,7 @@ public class listener_Currency implements Listener {
 			p.sendMessage("[§2RPG§f] coin you want to deposit.");
 			
 			// Set the timer for 15 seconds
-			rpgPlayer = mgr_Player.getPlayer(p.getName());
+			rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
 			rpgPlayer.lTimer = System.currentTimeMillis(); 
 			p.sendMessage("[§2RPG§f] Right click with the coins in your hand that you want");
 			p.sendMessage("[§2RPG§f] to deposit");		
@@ -121,7 +114,7 @@ public class listener_Currency implements Listener {
 				return true;
 			}
 			
-			rpgPlayer = mgr_Player.getPlayer(p.getName());
+			rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
 			
 // TODO: Add error checking here to make sure all values are valid
 // TODO: Add ability to append G, S, or C to amount and let player enter what they want instead
@@ -131,10 +124,10 @@ public class listener_Currency implements Listener {
 			sp = Integer.parseInt(cmd[1]);
 			cp = Integer.parseInt(cmd[2]);
 			
-			if(rpgPlayer.getTotalCopper() < ( cp + (sp * 100) + (gp * 10000)))
+			if(rpgPlayer.getCharacter().getTotalCopper() < ( cp + (sp * 100) + (gp * 10000)))
 			{ 
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have enough coin.");
-				p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getGold()+" Gold§f, §7"+rpgPlayer.getSilver()+" Silver§f, §c"+rpgPlayer.getCopper()+" Copper§f.");						
+				p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getCharacter().getGold()+" Gold§f, §7"+rpgPlayer.getCharacter().getSilver()+" Silver§f, §c"+rpgPlayer.getCharacter().getCopper()+" Copper§f.");						
 				return true;
 			}
 			if(cp > 0)
@@ -149,8 +142,8 @@ public class listener_Currency implements Listener {
 			
 			
 			int totalcp = cp + (sp * 100) + (gp * 10000);
-			rpgPlayer.removeCopper(totalcp);
-			p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getGold()+" Gold§f, §7"+rpgPlayer.getSilver()+" Silver§f, §c"+rpgPlayer.getCopper()+" Copper§f.");						
+			rpgPlayer.getCharacter().removeCopper(totalcp, p);
+			p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getCharacter().getGold()+" Gold§f, §7"+rpgPlayer.getCharacter().getSilver()+" Silver§f, §c"+rpgPlayer.getCharacter().getCopper()+" Copper§f.");						
 			return true;
 		} // if(command.getName().equalsIgnoreCase("withdraw"))
 		
@@ -172,7 +165,7 @@ public class listener_Currency implements Listener {
 				return true;
 			}
 			// Make sure player is logged in to RPGCraft
-			RPG_Player pSender = mgr_Player.getPlayer(p.getName());
+			RPG_Player pSender = mgr_Player.getPlayer(p.getName().hashCode());
 			if(pSender == null)
 				return true;
 			
@@ -192,7 +185,7 @@ public class listener_Currency implements Listener {
 				return true;
 			} // if(receivList.size() != 1)
 			Player pReceiver = receivList.get(0);
-			RPG_Player receiver = mgr_Player.getPlayer(pReceiver.getName());
+			RPG_Player receiver = mgr_Player.getPlayer(pReceiver.getName().hashCode());
 			if(receiver == null)
 			{
 				p.sendMessage("[§2RPG§f] Cannot give coin to "+receivList.get(0).getName()+".");
@@ -201,15 +194,13 @@ public class listener_Currency implements Listener {
 				return true;
 			}
 			
-			int gold = pSender.getGold();
-			int silver = pSender.getSilver();
-			int copper = pSender.getCopper();
+			int gold = pSender.getCharacter().getGold();
+			int silver = pSender.getCharacter().getSilver();
+			int copper = pSender.getCharacter().getCopper();
 			int totalCopper = (gold*100*100) + (silver*100) + copper;
 			
-			int sendGold = 0;
-			int sendSilver = 0;
-			int sendCopper = 0;
-			int sendTotalCopper = 0;
+			int sendGold = 0;		int sendSilver = 0;
+			int sendCopper = 0;		int sendTotalCopper = 0;
 			
 			// Now get the coin values...
 			
@@ -227,63 +218,44 @@ public class listener_Currency implements Listener {
 			case 2:	
 				sendCopper = Integer.parseInt(cmd[0]);
 				break;
-			}
+			} // switch (cmd.length)
 			
 			sendTotalCopper = (sendGold*100*100) + (sendSilver*100) + sendCopper;
 			if(sendTotalCopper < 0)
-			{
-				p.sendMessage("[§2RPG§f] You cannot send a negative amount of coin.");
+			{	p.sendMessage("[§2RPG§f] You cannot send a negative amount of coin.");
 				p.sendMessage("[§2RPG§f] Your transaction has been cancelled.");
 				return true;
-			}
+			} // if(sendTotalCopper < 0)
 			
 			if(sendTotalCopper == 0)
-			{
-				p.sendMessage("[§2RPG§f] You cannot send nothing, that would be a waste of time.");
+			{	p.sendMessage("[§2RPG§f] You cannot send nothing, that would be a waste of time.");
 				p.sendMessage("[§2RPG§f] Your transaction has been cancelled.");
 				return true;
-			}
+			} // if(sendTotalCopper == 0)
 				
 			if(totalCopper < sendTotalCopper)
-			{
-				p.sendMessage("[§2RPG§f] You do not have enough coin to send to "+pReceiver.getDisplayName()+".");
+			{	p.sendMessage("[§2RPG§f] You do not have enough coin to send to "+pReceiver.getDisplayName()+".");
 				p.sendMessage("[§2RPG§f] You only have §6"+gold+" gold§f, §7"+silver+" silver§f, and §c"+copper+" copper§f.");
 				return true;	
-			}
+			} // if(totalCopper < sendTotalCopper)
 				
-			receiver.setCopper(receiver.getCopper() + sendTotalCopper);
+			receiver.getCharacter().setCopper(receiver.getCharacter().getCopper() + sendTotalCopper);
 			pReceiver.sendMessage("[§2RPG§f] "+p.getName()+" has sent you §6"+sendGold+" Gold§f, §7"+sendSilver+" Silver§f, and §c"+sendCopper+" Copper§f.");
 			
-			pSender.removeCopper(sendTotalCopper);
+			pSender.getCharacter().removeCopper(sendTotalCopper, p);
 			p.sendMessage("[§2RPG§f] You sent §6"+sendGold+" Gold§f, §7"+sendSilver+" Silver§f, and §c"+sendCopper+" Copper §fto "+receiver.GetPlayer().getName()+".");
-			p.sendMessage("[§2RPG§f] You have §6"+pSender.getGold()+" Gold§f, §7"+pSender.getSilver()+" Silver§f, and §C"+pSender.getCopper()+" Copper §fleft.");
+			p.sendMessage("[§2RPG§f] You have §6"+pSender.getCharacter().getGold()+" Gold§f, §7"+pSender.getCharacter().getSilver()+" Silver§f, and §C"+pSender.getCharacter().getCopper()+" Copper §fleft.");
 			
-			// Save transaction
-			String transaction = pSender.mcName + " sent "+sendGold+"gold, "+sendSilver+"silver, and "+sendCopper+"copper to "+receiver.mcName;
-			String date = Calendar.getInstance().getTime().toString();
-			transactionHistory.setString(date, transaction, "Player-to-Player transaction");
-			transactionHistory.save();
-			
-			// Save updated player balance
-			String senderBalance = pSender.getGold()+","+pSender.getSilver()+","+pSender.getCopper();
-			String receiverBalance = receiver.getGold()+","+receiver.getSilver()+","+receiver.getCopper();
-			playerBalances.setString(pSender.getMCName(), senderBalance, "Last updated: "+date);
-			playerBalances.setString(receiver.getMCName(), receiverBalance, "Last updated: "+date);
-			playerBalances.save();
-			
+// TODO: Save a record of the transaction in the database
 			return true;
 		} // if(cmd[0].equalsIgnoreCase("/givecoin") || cmd[0].equalsIgnoreCase("/gc"))	
 			
 		return false;
-	}	
-
+	} // public boolean currencyProcessor(CommandSender sender, Command command, String label, String[] cmd)	
 	
 	public listener_Currency(Plugin p)
 	{
 		Bukkit.getServer().getPluginManager().registerEvents(this, p);
 		this.rpgServer = p.getServer();
-		playerBalances = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"playerBalances.log");
-		transactionHistory = new PropertiesFile(RPGCraft.mainDirectory+"logs"+File.separatorChar+"transactionHistory.log");
 	} // public listener_Currency(Plugin p)
-
 }
