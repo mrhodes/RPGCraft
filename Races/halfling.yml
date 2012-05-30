@@ -1,0 +1,28 @@
+## Sample Race File
+# This is the first draft of this file so expect there to 
+# be changes
+#
+# Michael Rhodes
+# May 30th 2012
+
+Name:
+    "Halfling"
+Description:
+    "Halflings are short people"
+Modifiers:
+    Dexterity: 2
+    Strength: -2
+    Intelligence: 0
+    Constitution: 0
+    RunSpeed: 0.90
+MaxArmor: "Cloth"
+MaxWeapon: "Stone"
+MaxTool: "Stone"
+SpecialItem: "Hoe"
+SkillRateBonus:
+    Farming: 1.3
+    Cooking: 1.25
+    Mining: 0.5
+    Blacksmithing: 0.6
+    Alchemy: 0.7
+    Enchanting: 0.6

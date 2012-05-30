@@ -6,16 +6,13 @@ import java.sql.SQLException;
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -93,19 +90,7 @@ public class listener_Player implements Listener {
 			return;
 		
 		ItemStack item = event.getItem();
-		
-		if(item.getType() == Material.BOW)
-		{
-			// Make sure player has ammo to shoot
-			Player p = event.getPlayer();
-			if(p.getInventory().contains(Material.ARROW))
-			{	Projectile e = p.getWorld().spawnArrow(p.getLocation(), p.getVelocity(), (float) 0.6, 10); 
-				Bukkit.getPluginManager().callEvent(new ProjectileLaunchEvent(e));
-				event.setCancelled(true);
-				p.sendMessage("Bow Fired");
-			}
-		}
-		
+				
 		if(item.getDurability() > 1023)
 		{	Player p = event.getPlayer();
 			RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
@@ -138,25 +123,7 @@ public class listener_Player implements Listener {
 	
 	public boolean displayHelp(CommandSender sender, Command command, String[] args)
 	{
-		if(command.getName().equalsIgnoreCase("rpg"))
-		{
-			Player p = rpgServer.getPlayer(sender.getName());
 		
-			p.sendMessage("§aRPGCraft Help System - Page 1");
-			p.sendMessage(" ");
-			p.sendMessage("Currency Commands:");
-			p.sendMessage("    §2/balance §for §2/bal    §3Displays your current balance.");
-			p.sendMessage("    §2/givecoin §for §2/gc    §3Type /givecoin for usage info.");
-			p.sendMessage("    §2/deposit                §3Deposit Coins to the bank.");
-			p.sendMessage("    §2/withdraw               §3Type /withdraw for usage info.");
-			if(RPGCraft.pexMan.has(p, "rpgcraft.bank.banker"))
-			{ p.sendMessage("Bank Commands:");
-				p.sendMessage("Please type the following commands without options for");
-				p.sendMessage("more detailed help.");
-				p.sendMessage("    §2/banker §f<§6gold§f> §f<§7silver§f> §f<§ccopper§f> §f<§2receiver§f>");
-			} // if(RPGCraft.Permissions.has(p, "rpg.bank.banker"))
-			return true;
-		} // if(command.getName().equalsIgnoreCase("rpg"))
 		
 		return false;		
 	} // public boolean displayHelp(CommandSender sender, Command command, String[] args)

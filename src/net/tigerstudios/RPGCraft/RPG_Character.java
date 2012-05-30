@@ -39,8 +39,8 @@ public class RPG_Character {
 	public int getTotalCopper(){ return Copper;}
 	public void removeCopper(int cp, Player p)
 	{	if(Copper > cp)
-		{	p.sendMessage("[RPG] Error trying to remove " + cp + "from you.");
-			p.sendMessage("[RPG] You only have "+ Copper);
+		{	p.sendMessage("[§2RPG§f] Error trying to remove " + cp + "from you.");
+			p.sendMessage("[§2RPG§f] You only have "+ Copper);
 			return;
 		} // if(Copper > cp)
 	} // public void removeCopper(int cp)
@@ -126,26 +126,5 @@ public class RPG_Character {
 				
 		return true;
 	} // public boolean savePlayerData()
-	public boolean loadPlayerData()
-	{
-		String query = null;
-		ResultSet rs = null;
-		
-		query = "select * from Characters where account_id = "+this.AccountID+";";
-		rs = SQLiteManager.SQLQuery(query);
-		
-		if(rs != null)
-		{	try 
-			{	if(rs.getFetchSize() != 0)
-				{										
-					Name = rs.getString("rpgName");
-					Copper = rs.getInt("copper");
-				} // if(rs.getFetchSize() != 0)
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} // if(rs != null)
-		
-		return true;
-	} // public boolean loadPlayerData()
+	
 } // public class RPG_Character

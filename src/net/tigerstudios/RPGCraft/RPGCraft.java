@@ -23,11 +23,13 @@ import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
+import net.tigerstudios.RPGCraft.utils.custom.CCoin;
 
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.material.CustomItem;
@@ -40,6 +42,7 @@ public class RPGCraft extends JavaPlugin{
 	private static String name;
 	private static String version;
 	public static Logger log = null;	
+	public static String divider = "****************************************************************";	
 	
 	private static Server mcServer;	
 	
@@ -48,6 +51,7 @@ public class RPGCraft extends JavaPlugin{
 	private static listener_Currency currencyListener = null;
 	//private static listener_Bank bankListener = null;
 	private static listener_Entity entityListener = null;
+	private static CombatSystem combatSystem = null;
 	
 	public static CustomItem copperCoin;
 	public static CustomItem silverCoin;
@@ -67,10 +71,7 @@ public class RPGCraft extends JavaPlugin{
 			mgr_Player.SaveAllData();
 			mgr_Player.logoutAllPlayers();
 			SQLiteManager.closeConnection("RPGCraft");
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		} catch (SQLException e1) { e1.printStackTrace();}
 		
 		log.info(name + " " + version + " disabled.");
 		log = null;
@@ -115,9 +116,9 @@ public class RPGCraft extends JavaPlugin{
 		setupPermissions();
 		setupDatabase();
 		
-		copperCoin = new CCopperCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
-		silverCoin = new CCopperCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
-		goldCoin = new CCopperCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
+		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
+		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
+		goldCoin = new CCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
 		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
 						
 		mgr_Player.initialize(this);
@@ -126,6 +127,7 @@ public class RPGCraft extends JavaPlugin{
 		playerListener = new listener_Player(this);
 		currencyListener = new listener_Currency(this);
 		entityListener = new listener_Entity(this);
+		combatSystem = new CombatSystem(this);
 		//bankListener = new listener_Bank(this);
 						
 		return result;
@@ -176,15 +178,36 @@ public class RPGCraft extends JavaPlugin{
 					");");				
 				
 		} // if(SQLiteManager.TableExists("race_info", "RPGCraft") == false)
-	} // private void setupDatabase()	 
-			
-	
+	} // private void setupDatabase()	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)
-	{
-		if(playerListener.displayHelp(sender,command, args))
-			return true;
+	{		
+		if(sender instanceof Player)
+		{
+			if(command.getName().equalsIgnoreCase("rpg"))
+				if(CommandProcessor.rpgCommands((Player)sender, args))
+					return true;
+			
+		} // if(sender instanceof Player)
+			
+			/*Player p = rpgServer.getPlayer(sender.getName());
+		
+			p.sendMessage("§aRPGCraft Help System - Page 1");
+			p.sendMessage(" ");
+			p.sendMessage("Currency Commands:");
+			p.sendMessage("    §2/balance §for §2/bal    §3Displays your current balance.");
+			p.sendMessage("    §2/givecoin §for §2/gc    §3Type /givecoin for usage info.");
+			p.sendMessage("    §2/deposit                §3Deposit Coins to the bank.");
+			p.sendMessage("    §2/withdraw               §3Type /withdraw for usage info.");
+			if(RPGCraft.pexMan.has(p, "rpgcraft.bank.banker"))
+			{ p.sendMessage("Bank Commands:");
+				p.sendMessage("Please type the following commands without options for");
+				p.sendMessage("more detailed help.");
+				p.sendMessage("    §2/banker §f<§6gold§f> §f<§7silver§f> §f<§ccopper§f> §f<§2receiver§f>");
+			} // if(RPGCraft.Permissions.has(p, "rpg.bank.banker"))
+			return true;*/
+			
 		
 	/*	if (bankListener.bankProcessor(sender, command, label, args))
 			return true;
@@ -192,11 +215,14 @@ public class RPGCraft extends JavaPlugin{
 		if(currencyListener.currencyProcessor(sender, command, label, args))
 			return true;
 		
+		if(playerListener.displayHelp(sender,command, args))
+			return true;
+		
 		return false;
 	} // public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)			
 	
 	public void setupPermissions() {
-		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("Permissions");
+		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("PermissionsEx");
 
 		if (RPGCraft.pexMan == null) {
 			if (permissionsPlugin != null) {
@@ -206,17 +232,13 @@ public class RPGCraft extends JavaPlugin{
 				log.info("[RPGCraft] ---> Permissions plugin not detected, defaulting to Bukkit's built-in system.");
 			}
 		}
-	} // public void setupPermissions()
-		
+	} // public void setupPermissions()	
 	
 	public void loadConfig()
-	{		
-		config = this.getConfig();
+	{	config = this.getConfig();
 		String path = "DropRates.Creature";
+		
 		config.createSection("URL Images");
-		config.addDefault("default_gold", 0);
-		config.addDefault("default_silver", 0);
-		config.addDefault("default_copper", 0);
 		config.addDefault("URL Images."+ "copperIcon", "http://tigerstudios.net/minecraft/textures/copper.png");
 		config.addDefault("URL Images." + "silverIcon", "http://tigerstudios.net/minecraft/textures/silver.png");
 		config.addDefault("URL Images." +"goldIcon", "http://tigerstudios.net/minecraft/textures/gold.png");
@@ -252,7 +274,6 @@ public class RPGCraft extends JavaPlugin{
 		config.options().copyDefaults(true);
 		saveConfig();
 	} // public void loadConfig()
-		
 	public static Server getBukkitServer() {
         return mcServer;
     }		

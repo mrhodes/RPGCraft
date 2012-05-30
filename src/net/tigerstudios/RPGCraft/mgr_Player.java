@@ -15,8 +15,6 @@ import org.getspout.spoutapi.SpoutManager;
 
 public class mgr_Player {
 	private static Map<Integer, RPG_Player> rpgPlayers = new HashMap<Integer, RPG_Player>(); 
-	
-	//private static Plugin rpgPlugin = null;
 	private static Server rpgServer = null;		
 	
 	public static RPG_Player getPlayer(int nameHash)
@@ -55,9 +53,7 @@ public class mgr_Player {
 			rs.next(); 
 			account_id = rs.getInt("account_id");
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} // if(rs != null)		
+		} catch (SQLException e) { e.printStackTrace();	} 
 							
 		// New player, create a RPG Character for this player.
 		player = new RPG_Player(p.getName(), account_id, 0);
@@ -92,17 +88,15 @@ public class mgr_Player {
 				rpgPlayer.setPlayer(null);
 				rpgPlayer.bIsOnline = false;
 			} // if(rpgPlayer.bIsOnline)
-		}
+		} // if(rpgPlayer != null)
 		return;
 	} // public boolean playerLogout(Player p, String name)	
-
 	
 	public static int getPlayerCount()
 	{
 		return rpgPlayers.size();
 	} // public static int getPlayerCount()
-	
-			
+				
 	public static void SaveAllData()
 	{
 		Collection<RPG_Player> players = rpgPlayers.values();
@@ -122,33 +116,29 @@ public class mgr_Player {
 		// Load all records from the Accounts Table
 		rs = SQLiteManager.SQLQuery("select * from Accounts;");
 		try {
-			if(rs.getFetchSize() > 0)
-			{	while(rs.next())
-				{	// Create a new RPG_Player object and fill it with the values that
-					// were loaded.
-					RPG_Player rpgPlayer = new RPG_Player(rs.getString("mc_Name"), rs.getInt("account_id"), rs.getInt("character_total"));
+			while(rs.next())
+			{	// Create a new RPG_Player object and fill it with the values that
+				// were loaded.
+				RPG_Player rpgPlayer = new RPG_Player(rs.getString("mc_Name"), rs.getInt("account_id"), rs.getInt("character_total"));
 											
-					// Check if this player is online, if so set the Player field.  Will return null
-					// if player is not online.
-					rpgPlayer.player = rpgServer.getPlayer(rpgPlayer.mcName);
-					if(rpgPlayer.player != null)
-					{	rpgPlayer.bIsOnline = true;
-						rpgPlayer.SptPlayer = SpoutManager.getPlayer(rpgPlayer.player);
-					}
-					else
-						rpgPlayer.bIsOnline = false;	
+				// Check if this player is online, if so set the Player field.  Will return null
+				// if player is not online.
+				rpgPlayer.player = rpgServer.getPlayer(rpgPlayer.mcName);
+				if(rpgPlayer.player != null)
+				{	rpgPlayer.bIsOnline = true;
+					rpgPlayer.SptPlayer = SpoutManager.getPlayer(rpgPlayer.player);
+				}
+				else
+					rpgPlayer.bIsOnline = false;	
 							
-					rpgPlayers.put(rpgPlayer.mcName.hashCode(), rpgPlayer);
-				} // while(rs.next())			
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} // if(rs.getFetchSize() > 0)	
+				rpgPlayers.put(rpgPlayer.mcName.hashCode(), rpgPlayer);
+			} // while(rs.next())			
+			
+		} catch (SQLException e) { e.printStackTrace();	} 
 		
 		RPGCraft.log.info("[RPGCraft] ---> Successfully loaded all player data.");
 	} // public static void LoadAllData()
-		
+	
 	
 	public static void logoutAllPlayers()
 	{
@@ -157,13 +147,10 @@ public class mgr_Player {
 			playerLogout(rpgPlayer.GetPlayer());
 			
 	} // public static void logoutAllPlayers()
-
 	
 	public static void initialize(Plugin p)
 	{
-		//rpgPlugin = p;
 		rpgServer = p.getServer();
-	}
-
+	} // public static void initialize(Plugin p)
 
 } // public class mgr_Player {

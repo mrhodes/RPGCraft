@@ -8,8 +8,11 @@ package net.tigerstudios.RPGCraft;
 
 // mobs need to have certain properties
 
-public class RPG_Monster {
+public class RPG_Mob {
+	int level;
 	int speed;
+	
+	
 	
 	
 } // public class RPG_Monster

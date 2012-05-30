@@ -38,15 +38,7 @@ public class listener_Entity implements Listener{
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamage(final EntityDamageEvent event)
 	{
-		if(event.getCause() == DamageCause.ENTITY_ATTACK)
-		{	// See if a player is involved.
-			if(event.getEntityType() == EntityType.PLAYER)
-			{	// Player has been damaged.
-				mcPlayer = (Player)event.getEntity();	
-				sPlayer = SpoutManager.getPlayer(mcPlayer);
-				sPlayer.sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.DIAMOND_SWORD);
-			}			
-		} // if(event.getCause() == DamageCause.ENTITY_ATTACK)		
+		
 	}
 	
 	@EventHandler(priority = EventPriority.NORMAL)
