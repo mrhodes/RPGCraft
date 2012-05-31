@@ -1,9 +1,11 @@
 package net.tigerstudios.RPGCraft;
 
-import net.tigerstudios.RPGCraft.utils.SQLiteManager;
-import org.bukkit.entity.Player;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import net.tigerstudios.RPGCraft.utils.SQLiteManager;
+
+import org.bukkit.entity.Player;
 
 // The RPG Character class represents an ingame character and what events
 // happen to the character.

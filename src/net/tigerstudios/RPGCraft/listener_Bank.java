@@ -9,9 +9,9 @@ package net.tigerstudios.RPGCraft;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+
 
 
 public class listener_Bank implements Listener {

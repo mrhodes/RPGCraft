@@ -2,6 +2,7 @@ package net.tigerstudios.RPGCraft.utils;
 
 import org.bukkit.entity.Player;
 
+
 public class MathMethods {
 	
 	public static boolean isLookingAtAndInRange(Player player, double x, double y, double z, double range) {
