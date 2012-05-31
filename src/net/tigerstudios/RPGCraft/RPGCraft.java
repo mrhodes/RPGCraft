@@ -165,20 +165,9 @@ public class RPGCraft extends JavaPlugin{
 					"copper int,"+
 					"skinURL varchar(256)" +
 					");");
-		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)	
-		
-		// Setup the RaceData table
-		if(SQLiteManager.TableExists("race_info", "RPGCraft") == false)
-		{
-			log.info("[RPGCraft] --->   Creating Race_Info table.");
-			SQLiteManager.SQLUpdate("create table race_info ("+
-					"race_id INTEGER PRIMARY KEY AUTOINCREMENT,"+ //Primary Key
-					"Name varchar(5) NOT NULL,"+
-					"dex_bonus INT, str_bonus INT, con_bonus INT, int_bonus"+
-					");");				
-				
-		} // if(SQLiteManager.TableExists("race_info", "RPGCraft") == false)
+		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)			
 	} // private void setupDatabase()	
+	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)
@@ -193,18 +182,18 @@ public class RPGCraft extends JavaPlugin{
 			
 			/*Player p = rpgServer.getPlayer(sender.getName());
 		
-			p.sendMessage("§aRPGCraft Help System - Page 1");
+			p.sendMessage("ï¿½aRPGCraft Help System - Page 1");
 			p.sendMessage(" ");
 			p.sendMessage("Currency Commands:");
-			p.sendMessage("    §2/balance §for §2/bal    §3Displays your current balance.");
-			p.sendMessage("    §2/givecoin §for §2/gc    §3Type /givecoin for usage info.");
-			p.sendMessage("    §2/deposit                §3Deposit Coins to the bank.");
-			p.sendMessage("    §2/withdraw               §3Type /withdraw for usage info.");
+			p.sendMessage("    ï¿½2/balance ï¿½for ï¿½2/bal    ï¿½3Displays your current balance.");
+			p.sendMessage("    ï¿½2/givecoin ï¿½for ï¿½2/gc    ï¿½3Type /givecoin for usage info.");
+			p.sendMessage("    ï¿½2/deposit                ï¿½3Deposit Coins to the bank.");
+			p.sendMessage("    ï¿½2/withdraw               ï¿½3Type /withdraw for usage info.");
 			if(RPGCraft.pexMan.has(p, "rpgcraft.bank.banker"))
 			{ p.sendMessage("Bank Commands:");
 				p.sendMessage("Please type the following commands without options for");
 				p.sendMessage("more detailed help.");
-				p.sendMessage("    §2/banker §f<§6gold§f> §f<§7silver§f> §f<§ccopper§f> §f<§2receiver§f>");
+				p.sendMessage("    ï¿½2/banker ï¿½f<ï¿½6goldï¿½f> ï¿½f<ï¿½7silverï¿½f> ï¿½f<ï¿½ccopperï¿½f> ï¿½f<ï¿½2receiverï¿½f>");
 			} // if(RPGCraft.Permissions.has(p, "rpg.bank.banker"))
 			return true;*/
 			

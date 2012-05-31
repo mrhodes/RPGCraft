@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="D:/Program Files/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
+	<classpathentry kind="lib" path="D:/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/ebean-2.7.3/ebean-2.7.3.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bukkit"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spoutplugin"/>
