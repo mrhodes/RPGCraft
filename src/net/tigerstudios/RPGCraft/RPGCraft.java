@@ -204,9 +204,6 @@ public class RPGCraft extends JavaPlugin{
 		if(currencyListener.currencyProcessor(sender, command, label, args))
 			return true;
 		
-		if(playerListener.displayHelp(sender,command, args))
-			return true;
-		
 		return false;
 	} // public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)			
 	

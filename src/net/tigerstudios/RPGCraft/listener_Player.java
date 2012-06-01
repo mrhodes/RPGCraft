@@ -6,81 +6,38 @@ import java.sql.SQLException;
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.Server;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 
 public class listener_Player implements Listener {
 	private Plugin rpgPlugin = null;
 	private Server rpgServer = null;
+	private static Player player = null;
+	private static SpoutPlayer sPlayer = null;
 		
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerJoin(final PlayerJoinEvent event)
-	{
-		Player p = event.getPlayer();
-		ResultSet rs = null;
-		
-		// See if this player is in the database.
-		String query = "SELECT * from Accounts WHERE mc_Name='"+p.getName()+"';";
-		rs = SQLiteManager.SQLQuery(query);
-		if(rs != null)
-		{
-			try {
-				if(!rs.next())
-				{	// New player.  Need to register this as a new player before logging in.
-					mgr_Player.playerRegister(p);	
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		} // if(rs != null)
-		
-		
-		RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
-		if(rpgPlayer!=null)
-		{
-			mgr_Player.playerLogin(p);
-			p.sendMessage("Welcome back to the server "+p.getName()+".");
-			return;
-		}
-		// If player has not been added to the RPG list then register and login the 
-		// player now
-		
-		mgr_Player.playerLogin(p);			
-		return;		
-	} // public void onPlayerJoin(final PlayerJoinEvent event)
 	
 	@EventHandler(priority = EventPriority.NORMAL)
-	public void onPlayerQuit(final PlayerQuitEvent event)
+	public void onPlayerItemHeld(PlayerItemHeldEvent event)
 	{
-		Player p = event.getPlayer();
-		RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
-		if(rpgPlayer!=null)
-		{
-			if(rpgPlayer.bIsOnline)
-				mgr_Player.playerLogout(p);
-			
-		} // if(rpgPlayer!=null)
-		return;
-	} // public void onPlayerQuit(PlayerEvent event)
-	
-	
-	public listener_Player(Plugin p)
-	{
-		Bukkit.getServer().getPluginManager().registerEvents(this, p);
-		rpgPlugin = p;
-		rpgServer = rpgPlugin.getServer();
-	 } // public listener_Player(Plugin p)
+		player = event.getPlayer();
+		ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
+		
+		if(newItem.getType() == Material.DIAMOND_AXE)
+			player.sendMessage("Switched to Diamond Axe");
+		
+	} // public void onPlayerItemHeld(PlayerItemHeldEvent event)
 	
 	
 	@EventHandler(priority = EventPriority.NORMAL)
@@ -119,12 +76,58 @@ public class listener_Player implements Listener {
 		} // if(item.getDurability() > 1023)
 	} // public void onPlayerInteract(final PlayerInteractEvent event)
 		
-	
-	
-	public boolean displayHelp(CommandSender sender, Command command, String[] args)
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerJoin(final PlayerJoinEvent event)
 	{
+		Player p = event.getPlayer();
+		ResultSet rs = null;
 		
+		// See if this player is in the database.
+		String query = "SELECT * from Accounts WHERE mc_Name='"+p.getName()+"';";
+		rs = SQLiteManager.SQLQuery(query);
+		if(rs != null)
+		{
+			try {
+				if(!rs.next())
+				{	// New player.  Need to register this as a new player before logging in.
+					mgr_Player.playerRegister(p);	
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} // if(rs != null)		
 		
-		return false;		
-	} // public boolean displayHelp(CommandSender sender, Command command, String[] args)
+		RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
+		if(rpgPlayer!=null)
+		{
+			mgr_Player.playerLogin(p);
+			p.sendMessage("Welcome back to the server "+p.getName()+".");
+			return;
+		}
+		// If player has not been added to the RPG list then register and login the 
+		// player now
+		
+		mgr_Player.playerLogin(p);			
+		return;		
+	} // public void onPlayerJoin(final PlayerJoinEvent event)	
+	@EventHandler(priority = EventPriority.NORMAL)
+	public void onPlayerQuit(final PlayerQuitEvent event)
+	{
+		Player p = event.getPlayer();
+		RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
+		if(rpgPlayer!=null)
+		{
+			if(rpgPlayer.bIsOnline)
+				mgr_Player.playerLogout(p);
+			
+		} // if(rpgPlayer!=null)
+		return;
+	} // public void onPlayerQuit(PlayerEvent event)
+	public listener_Player(Plugin p)
+	{
+		Bukkit.getServer().getPluginManager().registerEvents(this, p);
+		rpgPlugin = p;
+		rpgServer = rpgPlugin.getServer();
+	 } // public listener_Player(Plugin p)
+			
 } // public class listener_Player implements Listener

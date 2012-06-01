@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 // The RPG Character class represents an ingame character and what events
@@ -32,6 +33,15 @@ public class RPG_Character {
 	
 	// Currency Methods
 	int Copper;	
+	
+	
+	public int canUse(Material mat)
+	{
+		
+		return 0;		
+	}
+	
+	
 	public int getGold() { return Copper + (Copper * 100) * ( Copper * 10000); }
 	public int getSilver() { return Copper + (Copper * 100); }
 	public int getCopper() { return Copper; }
