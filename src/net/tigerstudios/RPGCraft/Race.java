@@ -2,7 +2,6 @@ package net.tigerstudios.RPGCraft;
 
 import org.bukkit.Material;
 
-
 public class Race {
 	String Name;
 	String Description;

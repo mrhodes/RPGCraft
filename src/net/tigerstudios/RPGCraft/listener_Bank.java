@@ -13,7 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 
-
 public class listener_Bank implements Listener {
 	private Server rpgServer = null;
 	

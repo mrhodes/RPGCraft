@@ -3,8 +3,6 @@
 	<name>RPGCraft</name>
 	<comment></comment>
 	<projects>
-		<project>bukkit</project>
-		<project>spoutpluginapi</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

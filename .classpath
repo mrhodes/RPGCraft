@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="D:/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/ebean-2.7.3/ebean-2.7.3.jar"/>
+	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/bukkit-1.2.5-R3.1-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/plugins/spoutplugin-dev-SNAPSHOT.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bukkit"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/spoutplugin"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

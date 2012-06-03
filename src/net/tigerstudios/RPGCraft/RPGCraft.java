@@ -96,7 +96,7 @@ public class RPGCraft extends JavaPlugin{
 	{
 		boolean result = true;
 		log = Logger.getLogger("Minecraft");
-		mcServer = getServer();
+		mcServer = getBukkitServer();
 		
 		// Load the config file before anything else.  This way settings for other systems
 		// can be added to the config
@@ -104,6 +104,8 @@ public class RPGCraft extends JavaPlugin{
 		
 		new File(logDirectory).mkdirs();		// Make the log Directory
 				
+		
+		
 		if(SQLiteManager.initialize("RPGCraft")==false)
 		{	log.info("[RPGCraft]   Error when loading the SQLite library. RPGCraft cannot");
 			log.info("[RPGCraft]   run without this.  Please make sure you have sqlite-jdbc-3.7.2.jar");
@@ -176,8 +178,7 @@ public class RPGCraft extends JavaPlugin{
 		{
 			if(command.getName().equalsIgnoreCase("rpg"))
 				if(CommandProcessor.rpgCommands((Player)sender, args))
-					return true;
-			
+					return true;			
 		} // if(sender instanceof Player)
 			
 			/*Player p = rpgServer.getPlayer(sender.getName());
