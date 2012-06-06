@@ -5,8 +5,10 @@
 # Michael Rhodes
 # May 30th 2012
 
-Name: "Halfling"
-Description: "Halflings are short people"
+Name: 
+    "Halfling"
+Description: 
+    "Halflings are short people"
 Modifiers:
     Dexterity: 2
     Strength: -2

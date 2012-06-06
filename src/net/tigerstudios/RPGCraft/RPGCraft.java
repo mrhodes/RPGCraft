@@ -105,7 +105,6 @@ public class RPGCraft extends JavaPlugin{
 		new File(logDirectory).mkdirs();		// Make the log Directory
 				
 		
-		
 		if(SQLiteManager.initialize("RPGCraft")==false)
 		{	log.info("[RPGCraft]   Error when loading the SQLite library. RPGCraft cannot");
 			log.info("[RPGCraft]   run without this.  Please make sure you have sqlite-jdbc-3.7.2.jar");
@@ -117,6 +116,7 @@ public class RPGCraft extends JavaPlugin{
 		
 		setupPermissions();
 		setupDatabase();
+		RaceSystem.loadRaceFile(mainDirectory+"Races"+File.pathSeparatorChar+"halfling.yml");
 		
 		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
 		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
