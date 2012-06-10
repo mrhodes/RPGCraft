@@ -46,8 +46,7 @@ public class SQLiteManager {
 	} // void newConnection(String filename)
 	
 	static public void closeConnection(String pluginName) throws SQLException
-	{
-		
+	{		
 		if(conn != null)
 		{
 			if(conn.isClosed() == false)
@@ -66,13 +65,10 @@ public class SQLiteManager {
 		ResultSet rs = null;
 				
 		if(bIsConnected)
-		{ 
-			try {
+		{ 	try {
 				rs = statement.executeQuery(query);
-			} catch (SQLException e) {
-				rs = null;
-			}			
-		}	
+			} catch (SQLException e) { System.out.println(e.getLocalizedMessage()); rs = null; }			
+		} // if(bIsConnected)
 		
 		return rs;
 	} // static public ResultSet SQLQuery(String query)
@@ -80,14 +76,10 @@ public class SQLiteManager {
 	static public void SQLUpdate(String query)
 	{
 		if(bIsConnected)
-		{ 
-			try {
-				statement.executeUpdate(query);
-				
-			} catch (SQLException e) {
-				System.out.println(e.getLocalizedMessage());
-			}			
-		}	
+		{ 	try {
+				statement.executeUpdate(query);			
+			} catch (SQLException e) { System.out.println(e.getLocalizedMessage());	}			
+		} // if(bIsConnected)
 		
 	} // static public ResultSet SQLQuery(String query)	
 	
@@ -104,7 +96,5 @@ public class SQLiteManager {
 		}
 		
 		return true;
-	} // static public boolean TableExists(String id)
-	
-	
-}
+	} // static public boolean TableExists(String id)	
+} // public class SQLiteManager

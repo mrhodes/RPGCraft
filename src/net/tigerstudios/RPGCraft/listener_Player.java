@@ -31,11 +31,11 @@ public class listener_Player implements Listener {
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onPlayerItemHeld(PlayerItemHeldEvent event)
 	{
-		player = event.getPlayer();
+		/*player = event.getPlayer();
 		ItemStack newItem = player.getInventory().getItem(event.getNewSlot());
 		
 		if(newItem.getType() == Material.DIAMOND_AXE)
-			player.sendMessage("Switched to Diamond Axe");
+			player.sendMessage("Switched to Diamond Axe");*/
 		
 	} // public void onPlayerItemHeld(PlayerItemHeldEvent event)
 	
@@ -83,19 +83,18 @@ public class listener_Player implements Listener {
 		ResultSet rs = null;
 		
 		// See if this player is in the database.
-		String query = "SELECT * from Accounts WHERE mc_Name='"+p.getName()+"';";
+		String query = "SELECT * from Accounts WHERE mc_Name='"+p.getName()+"'";
 		rs = SQLiteManager.SQLQuery(query);
-		if(rs != null)
-		{
-			try {
-				if(!rs.next())
-				{	// New player.  Need to register this as a new player before logging in.
-					mgr_Player.playerRegister(p);	
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+		
+		try {
+			if(!rs.next())
+			{	// New player.  Need to register this as a new player before logging in.
+				mgr_Player.playerRegister(p);
+				rs.close();
 			}
-		} // if(rs != null)		
+			
+		} catch (SQLException e) { e.printStackTrace();	}
+		
 		
 		RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
 		if(rpgPlayer!=null)

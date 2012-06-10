@@ -15,7 +15,7 @@ import org.getspout.spoutapi.inventory.SpoutItemStack;
 public class listener_Currency implements Listener {
 	private Server rpgServer = null;
 	private RPG_Player rpgPlayer = null;
-	
+		
 	// public void onPlayerCommandPreprocess(PlayerChatEvent event)
 	
 	public boolean currencyProcessor(CommandSender sender, Command command, String label, String[] cmd)
@@ -243,7 +243,7 @@ public class listener_Currency implements Listener {
 			pReceiver.sendMessage("[§2RPG§f] "+p.getName()+" has sent you §6"+sendGold+" Gold§f, §7"+sendSilver+" Silver§f, and §c"+sendCopper+" Copper§f.");
 			
 			pSender.getCharacter().removeCopper(sendTotalCopper, p);
-			p.sendMessage("[§2RPG§f] You sent §6"+sendGold+" Gold§f, §7"+sendSilver+" Silver§f, and §c"+sendCopper+" Copper §fto "+receiver.GetPlayer().getName()+".");
+			p.sendMessage("[§2RPG§f] You sent §6"+sendGold+" Gold§f, §7"+sendSilver+" Silver§f, and §c"+sendCopper+" Copper §fto "+receiver.getPlayer().getName()+".");
 			p.sendMessage("[§2RPG§f] You have §6"+pSender.getCharacter().getGold()+" Gold§f, §7"+pSender.getCharacter().getSilver()+" Silver§f, and §C"+pSender.getCharacter().getCopper()+" Copper §fleft.");
 			
 // TODO: Save a record of the transaction in the database

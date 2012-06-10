@@ -51,7 +51,7 @@ public class CombatSystem implements Listener{
 				
 				if(rpgP != null)
 				{
-					rpgP.SptPlayer.sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.APPLE);
+					rpgP.getSpoutPlayer().sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.APPLE);
 				}
 			} // if(event.getEntity() instanceof Player)			
 		} // if(event.getDamager() instanceof Projectile)		

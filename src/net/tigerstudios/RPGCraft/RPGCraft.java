@@ -48,6 +48,7 @@ public class RPGCraft extends JavaPlugin{
 	
 	// Listener Classes to handle the events
 	private static listener_Player	playerListener = null;
+	private static listener_Block blockListener = null;
 	private static listener_Currency currencyListener = null;
 	//private static listener_Bank bankListener = null;
 	private static listener_Entity entityListener = null;
@@ -95,7 +96,7 @@ public class RPGCraft extends JavaPlugin{
 	private boolean initializeRPGCraft()
 	{
 		boolean result = true;
-		log = Logger.getLogger("Minecraft");
+		log = Logger.getLogger("Minecraft.RPGCraft");
 		mcServer = getBukkitServer();
 		
 		// Load the config file before anything else.  This way settings for other systems
@@ -116,7 +117,11 @@ public class RPGCraft extends JavaPlugin{
 		
 		setupPermissions();
 		setupDatabase();
-		RaceSystem.loadRaceFile(mainDirectory+"Races"+File.pathSeparatorChar+"halfling.yml");
+		
+		RaceSystem.loadRaceFile("halfling.yml");
+		RaceSystem.loadRaceFile("human.yml");
+		RaceSystem.loadRaceFile("elf.yml");
+		RaceSystem.loadRaceFile("dwarf.yml");
 		
 		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
 		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
@@ -127,6 +132,7 @@ public class RPGCraft extends JavaPlugin{
 		mgr_Player.LoadAllData();
 		
 		playerListener = new listener_Player(this);
+		blockListener = new listener_Block(this);
 		currencyListener = new listener_Currency(this);
 		entityListener = new listener_Entity(this);
 		combatSystem = new CombatSystem(this);
@@ -146,7 +152,6 @@ public class RPGCraft extends JavaPlugin{
 			SQLiteManager.SQLUpdate("create table Accounts ("+
 					"account_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
 					"mc_Name VARCHAR(24),"+
-					"character_total int,"+
 					"joined DATE"+
 					");");
 		} // if(SQLiteManager.TableExists("accounts", "RPGCraft") == false)
@@ -154,7 +159,7 @@ public class RPGCraft extends JavaPlugin{
 		// Setup the playerData Table..
 		if(SQLiteManager.TableExists("Characters", "RPGCraft") == false)
 		{	log.info("[RPGCraft] --->   Creating Characters table.");
-			SQLiteManager.SQLUpdate("create table characters ("+
+			SQLiteManager.SQLUpdate("create table Characters ("+
 					"char_id INTEGER PRIMARY KEY AUTOINCREMENT," + 	// Primary key
 					"account_id SMALLINT UNSIGNED NOT NULL," +		// Foreign key
 					"name varchar(16) NOT NULL," +
@@ -162,10 +167,9 @@ public class RPGCraft extends JavaPlugin{
 					"race tinyint, level tinyint, experience int, exp_to_levelup int," +
 					"strength int, dexterity int, constitution int, intelligence int," +
 					"attack int, defense int, parry int," +
-					"mining int, farming int, blacksmithing int,"+
-					"enchanting int, alchemy int, cooking int,"+
-					"copper int,"+
-					"skinURL varchar(256)" +
+					"mining int, farming int, blacksmithing int, "+
+					"enchanting int, alchemy int, cooking int, fishing int, trading int,"+
+					"copper int"+					
 					");");
 		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)			
 	} // private void setupDatabase()	

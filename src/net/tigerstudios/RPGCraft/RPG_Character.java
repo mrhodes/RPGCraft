@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 // The RPG Character class represents an ingame character and what events
@@ -13,13 +12,13 @@ import org.bukkit.entity.Player;
 public class RPG_Character {
 	int CharacterID = 0;		// ID for this particular rpg character
 	int AccountID = 0;			// Account of player that owns this character
+	
 	String Name;				// Players Role Play name
 	String displayPrefix;	
 	String displaySuffix;
-	String skinURL;
-		
+	
 	// Race Stats
-	int race;			int level;
+	String race;		int level;
 	int experience;		int exp_to_level;
 		
 	// Character Stats
@@ -30,17 +29,26 @@ public class RPG_Character {
 	// Character Ablities
 	int mining, farming, blacksmithing;
 	int enchanting, alchemy, cooking;
+	int fishing, trading;
 	
 	// Currency Methods
 	int Copper;	
-	
-	
-	public int canUse(Material mat)
-	{
 		
-		return 0;		
-	}
+	public RPG_Character(Race r, int acc_id)
+	{
+		// First initialize character to default stats
+		initialize(acc_id);		
+		// Now adjust the stats for the given race.
+		displaySuffix = "the "+r.Name;		
+		dexterity 		+= r.dex_mod;
+		constitution 	+= r.con_mod;
+		strength		+= r.str_mod;
+		intelligence	+= r.int_mod;
+		
+		saveCharacter();
+	} // public RPG_Character(Race r)
 	
+	public RPG_Character(){	}
 	
 	public int getGold() { return Copper + (Copper * 100) * ( Copper * 10000); }
 	public int getSilver() { return Copper + (Copper * 100); }
@@ -59,64 +67,41 @@ public class RPG_Character {
 	
 	public String getName() { return Name; }
 	public void setName(String name) { Name = name; }
-	public void initialize()
+	
+	
+	public void initialize(int acc_id)
 	{	
+		Name = "unnamed";
+		AccountID = acc_id;
 		displayPrefix = "";	
 		displaySuffix = "";	
-		skinURL = "";
-		
-		race = 0; level = 1; experience = 0; exp_to_level = 0; 
+				
+		race = "default"; level = 1; experience = 0; exp_to_level = 0; 
 		dexterity = 5; constitution = 5; strength = 5; intelligence = 5;
 		attack = 1; defense = 1; parry = 1;
 		
 		// Character Ablities
 		mining = 0; farming = 0; blacksmithing = 0;
 		enchanting = 0; alchemy = 0; cooking = 0;
+		fishing = 0; trading = 0;
 		
 		Copper = 0;
+		
+		// Save this new character to the db to get a CharacterID value
+		saveCharacter();
 
 	} // public void initialize()
-	public boolean saveCharacter()
+	
+	public int saveCharacter()
 	{ 		
 		String query = null;
-		ResultSet rs = null;
-		boolean bInDB = false;
-		
+				
 		// Create the query to save the players data
-		// Get all Character data for this player (This can return multiple records)
-		rs = SQLiteManager.SQLQuery("select * from Characters where char_id = "+CharacterID+";");
-	
-		try { bInDB = rs.next();} 
-		catch (SQLException e1) { e1.printStackTrace();	}
-		
-		if(bInDB)
-		{	query = "update Characters set " +
-				"namePrefix 			= '"+displayPrefix+"'," +
-				"nameSuffix				= '"+displaySuffix+"'," +
-				"level					= "+level+","+
-				"experience				= "+experience+","+
-				"exp_to_levelup			= "+exp_to_level+","+
-				"strength				= "+strength+","+
-				"dexterity				= "+dexterity+","+
-				"constitution			= "+constitution+","+
-				"intelligence			= "+intelligence+","+
-				"mining					= "+mining+","+
-				"farming				= "+farming+","+
-				"blacksmithing			= "+blacksmithing+","+
-				"enchanting				= "+enchanting+","+
-				"alchemy				= "+alchemy+","+
-				"cooking				= "+cooking+","+
-				"skinURL				= '"+skinURL+"',"+
-				"copper					= "+Copper+
-				"where char_id="+CharacterID+";";
-						
-		}else {
-			query = "insert into Characters values (" +
-					"account_id				= "+AccountID+","+
-					"name					= "+Name+","+
+		if(CharacterID != 0)
+		{	// Already assigned an id, which means this is in the database already
+			query = "update characters set " +
 					"namePrefix 			= '"+displayPrefix+"'," +
 					"nameSuffix				= '"+displaySuffix+"'," +
-					"race					= "+race+","+
 					"level					= "+level+","+
 					"experience				= "+experience+","+
 					"exp_to_levelup			= "+exp_to_level+","+
@@ -124,19 +109,42 @@ public class RPG_Character {
 					"dexterity				= "+dexterity+","+
 					"constitution			= "+constitution+","+
 					"intelligence			= "+intelligence+","+
+					"attack					= "+attack+","+
+					"defense				= "+defense+","+
+					"parry					= "+parry+"," +
 					"mining					= "+mining+","+
 					"farming				= "+farming+","+
 					"blacksmithing			= "+blacksmithing+","+
 					"enchanting				= "+enchanting+","+
 					"alchemy				= "+alchemy+","+
 					"cooking				= "+cooking+","+
-					"copper					= "+Copper+","+
-					"skinURL				= '"+skinURL+"' "+
-					");";   
-		}
+					"fishing				= "+fishing+","+
+					"trading                = "+trading+","+
+					"copper					= "+Copper+
+					" where char_id="+CharacterID+";";
+			SQLiteManager.SQLUpdate(query);
+			return CharacterID;
+		} // if(CharacterID != 0)	
+		
+		query = "insert into characters (account_id, name, namePrefix, nameSuffix, race, level,"+
+				"experience, exp_to_levelup, strength, dexterity, constitution, intelligence, mining," +
+				"farming, blacksmithing, enchanting, alchemy, cooking, fishing, trading, copper) VALUES (" +
+				AccountID+", '"+Name+"', '"+displayPrefix+"', '"+displaySuffix+"', '"+race+"', "+level+","+
+				experience+","+exp_to_level+","+strength+","+dexterity+","+constitution+","+intelligence+","+
+				mining+","+farming+","+blacksmithing+","+enchanting+","+alchemy+","+cooking+","+fishing+","+
+				trading+","+Copper+")"; 
+		
 		SQLiteManager.SQLUpdate(query);
-				
-		return true;
+		
+		query = "SELECT char_id FROM Characters WHERE account_id = "+this.AccountID;
+		ResultSet rs = SQLiteManager.SQLQuery(query);
+		
+		try { rs.next();
+			  CharacterID = rs.getInt("char_id");
+			  rs.close();
+		} catch (SQLException e) { e.printStackTrace();	}
+		
+		return CharacterID;
 	} // public boolean savePlayerData()
 	
 } // public class RPG_Character
