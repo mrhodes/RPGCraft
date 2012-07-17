@@ -4,7 +4,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
+import net.tigerstudios.RPGCraft.utils.SpoutFeatures;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -18,17 +20,17 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 public class RPG_Player {	
 	
 	int AccountID = 0;			// unique account ID.  Value stored in Database
-	boolean bIsOnline;			// Is this player currently online
-	
+		
 	private String mcName = null;					// Players Minecraft Name
 	private Player player = null;					// Minecraft Player class
 	private SpoutPlayer SptPlayer = null;			// Spout Player object.	
-	private RPG_Character rpgCharacter = null;		// This players rpg character
+	private RPG_Character rpgCharacter = null;		// This players rpg character	
+	private boolean bCharLoaded = false;
 	
 	
 	// TODO: Add universal MT Timer/Callback system.  Pull timer out of Player class
 	long lTimer = -1;		// Used for things that need a timer.  This
-							// Value will be the end time of a time
+							// qValue will be the end time of a time
 							// length		
 		
 	public String getMCName() { return mcName; }		
@@ -38,6 +40,10 @@ public class RPG_Player {
 	{		
 		mcName = minecraftName;
 		AccountID = id;
+		player = Bukkit.getPlayer(minecraftName);
+		SptPlayer = SpoutManager.getPlayer(player);
+		if(loadCharacterData())
+			bCharLoaded = true;		
 	} // public void RPG_Player(Player p)
 	
 		
@@ -48,41 +54,46 @@ public class RPG_Player {
 		return SptPlayer; 
 	} // public SpoutPlayer getSpoutPlayer() 
 	
-	public RPG_Character getCharacter() { return rpgCharacter; }
-	public void setCharacter(RPG_Character character) { rpgCharacter = character; } 
+	public RPG_Character getCharacter() { if(bCharLoaded) return rpgCharacter; return null;}
+	public void setCharacter(RPG_Character character) { rpgCharacter = character; bCharLoaded = true; } 
 	public Player getPlayer() { return player; }
 	public void setPlayer(Player p) { player = p; if(p!=null) SptPlayer = SpoutManager.getPlayer(p); }
+			
 		
-	
-	// This method will be called when a new player registers to be a RPG character.
-	public void initialize(String name)
-	{	
-		mcName = name;
-		player = RPGCraft.getBukkitServer().getPlayer(name);
-		SptPlayer = SpoutManager.getPlayer(player);
-	} // public void initialize()
+	public void resetCharacter()
+	{		
+		if(bCharLoaded)
+		{
+			rpgCharacter = null;
+			bCharLoaded = false;
+			SpoutFeatures.setSpeed(player, (float) 1.0);
+			SpoutFeatures.updateTitle(player, null);
+			return;
+		}
+		rpgCharacter = null;
+	}
 	
 	public void saveCharacterData()
 	{
-		rpgCharacter.saveCharacter();		
+		// Make sure play has a character to save
+		if(rpgCharacter != null)
+			rpgCharacter.saveCharacter();		
 	} // public void saveCharacterData()
-	
-	
-	public void loadCharacterData()
+	public boolean loadCharacterData()
 	{
 		String query = "SELECT * FROM Characters WHERE account_id = "+this.AccountID+";";
 		ResultSet rs = SQLiteManager.SQLQuery(query);
-		
+			
 		try {
 			if(rs.next())
 			{
 				RPG_Character character = new RPG_Character();				
-								
+									
 				character.AccountID		= rs.getInt("account_id");
 				character.CharacterID	= rs.getInt("char_id");
 				character.Name     		= rs.getString("name");
 				character.displayPrefix	= rs.getString("namePrefix");
-				character.displaySuffix = rs.getString("nameSuffix");
+				character.setDisplaySuffix(rs.getString("nameSuffix"));
 				character.race			= rs.getString("race");
 				character.level			= rs.getInt("level");
 				character.experience	= rs.getInt("experience");
@@ -91,20 +102,31 @@ public class RPG_Player {
 				character.dexterity		= rs.getInt("dexterity");
 				character.constitution	= rs.getInt("constitution");
 				character.intelligence	= rs.getInt("intelligence");
-				character.mining		= rs.getInt("mining");
-				character.farming		= rs.getInt("farming");
-				character.blacksmithing	= rs.getInt("blacksmithing");
-				character.enchanting	= rs.getInt("enchanting");
+				character.statPtsUsed	= rs.getInt("statPointsUsed");
+				character.statPtsTotal	= rs.getInt("statPointsTotal");
+				character.mining		= rs.getInt("mine");
+				character.mineSkillBar	= rs.getFloat("mineSkillBar");
+				character.mineRaceMod	= rs.getFloat("mineRaceMod");
+				character.farming		= rs.getInt("farm");
+				character.farmSkillBar	= rs.getFloat("farmSkillBar");
+				character.farmRaceMod	= rs.getFloat("farmRaceMod");
+				character.blacksmithing	= rs.getInt("blacksmith");
+				character.enchanting	= rs.getInt("enchant");
 				character.alchemy		= rs.getInt("alchemy");
-				character.cooking		= rs.getInt("cooking");
-				character.fishing		= rs.getInt("fishing");
-				character.trading		= rs.getInt("trading");
+				character.cooking		= rs.getInt("cook");
+				character.fishing		= rs.getInt("fish");
+				character.trading		= rs.getInt("trade");
 				character.Copper		= rs.getInt("copper");				
 			
+				character.optimizeCoin();
 				setCharacter(character);
 				rs.close();
+				
+				return true;
 			} // if(rs.next())
-		} catch (SQLException e) { e.printStackTrace(); }
+		} catch (SQLException e) { e.printStackTrace(); }		
 		
-	} // public void loadCharacterData()		
+		return false;
+	} // public void loadCharacterData()	
+	
 } // public class RPG_Player

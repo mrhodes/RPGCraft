@@ -4,6 +4,7 @@ package net.tigerstudios.RPGCraft;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -12,9 +13,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
@@ -32,7 +30,8 @@ public class CombatSystem implements Listener{
 			if(event.getEntityType() == EntityType.PLAYER)
 			{	// Player has been damaged.  Need to get the Character and
 				// process damage
-				mcPlayer = (Player)event.getEntity();	
+				mcPlayer = (Player)event.getEntity();
+				
 				sPlayer = SpoutManager.getPlayer(mcPlayer);
 				sPlayer.sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.DIAMOND_SWORD);
 			} // if(event.getEntityType() == EntityType.PLAYER)			
@@ -54,11 +53,22 @@ public class CombatSystem implements Listener{
 					rpgP.getSpoutPlayer().sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.APPLE);
 				}
 			} // if(event.getEntity() instanceof Player)			
-		} // if(event.getDamager() instanceof Projectile)		
+		} // if(event.getDamager() instanceof Projectile)	
+		
+		if(event.getDamager() instanceof Player)
+		{
+			Player p = (Player) event.getDamager();
+			//p.sendMessage("You hit someone for "+event.getDamage());
+		} // if(event.getDamager() instanceof Player)
+		
+		if(event.getDamager() instanceof Monster)
+		{
+			
+		} // if(event.getDamager() instanceof Monster)
 		
 	} // public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
 	
-	
+	/*
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(EntityDeathEvent event)
 	{
@@ -77,8 +87,9 @@ public class CombatSystem implements Listener{
 	public void onProjectileHit(ProjectileHitEvent event)
 	{
 		
+		
 	} // public void onProjectileHit(ProjectileHitEvent event)
-	
+	*/
 	
 	public CombatSystem(Plugin p)
 	{

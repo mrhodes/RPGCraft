@@ -5,31 +5,23 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Animals;
 import org.bukkit.entity.Blaze;
-import org.bukkit.entity.Chicken;
-import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.MagmaCube;
 import org.bukkit.entity.Monster;
-import org.bukkit.entity.Pig;
 import org.bukkit.entity.PigZombie;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Silverfish;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Spider;
-import org.bukkit.entity.Squid;
-import org.bukkit.entity.Wolf;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
@@ -44,38 +36,19 @@ public class listener_Entity implements Listener{
 	private int rndNum = 0;
 	private int rndNum2 = 0;
 	private Monster monsterEnt = null;
-	private Animals animalEnt = null;
 	private Player mcPlayer = null;
 	private SpoutPlayer sPlayer = null;
-	private ItemStack iStack = null;
+	private ItemStack iStack = null;	
 	
-	
-	@EventHandler(priority = EventPriority.NORMAL)
+	/*@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDamage(final EntityDamageEvent event)
 	{
 		
-	}
-	
-	@EventHandler(priority = EventPriority.NORMAL)
-	public void onEntityShootBow(final EntityShootBowEvent event)
-	{
-		/*Float force = Force.get(shooter);
-		Float dirX = (float) ((0 - (Math.sin((shooter.getLocation().getYaw() / 180) * Math.PI) * 3)) * force);
-		Float dirZ = (float) ((Math.cos((shooter.getLocation().getYaw() / 180) * Math.PI) * 3) * force);
-		 
-		event.getEntity().setVelocity(event.getEntity().getVelocity().setX(dirX));                       
-		event.getEntity().setVelocity(event.getEntity().getVelocity().setZ(dirZ));
-		*/
-		
-		Player p = (Player)event.getEntity();
-		p.sendMessage("ShootBow Event");
-		p.sendMessage("Force is: "+event.getForce());		
-	}
-	
+	}*/
 	
 	@EventHandler(priority = EventPriority.NORMAL)
 	public void onEntityDeath(final EntityDeathEvent event)
-	{
+	{				
 		FileConfiguration cfg = RPGCraft.config;
 		int dropRate = 0;
 		
@@ -90,7 +63,7 @@ public class listener_Entity implements Listener{
 			
 			iStack = mcPlayer.getItemInHand();
 			if(iStack.getType() == Material.FISHING_ROD)
-			{	mcPlayer.sendMessage("You can not gain anything by killing with a fishing rod.");
+			{	mcPlayer.sendMessage("[§2RPG§f] You can not gain anything by killing with a fishing rod.");
 				return;
 			}
 		   	
@@ -375,142 +348,6 @@ public class listener_Entity implements Listener{
 			return;
 		} // if(event.getEntity() instanceof Monster)	
 		
-		if(event.getEntity() instanceof Animals)
-		{	animalEnt = (Animals) event.getEntity();
-			mcPlayer = animalEnt.getKiller();
-			if(mcPlayer == null)
-				return;		
-			
-			if(rndSeed.nextInt(100) >= cfg.getInt("DropRates.animals"))
-				return;
-			
-			rndNum = rndSeed.nextInt(100);
-		
-			// Drop Chance 35 %
-			if(animalEnt instanceof Wolf)
-			{	dropRate = cfg.getInt("DropRates.Creature.Wolf");
-				if(rndNum > dropRate)
-					return;
-				
-				// Rare chance of Basic Mobs dropping 1 Silver
-				if(rndNum <= (dropRate / 10))
-				{	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 15));
-					return;	}
-								
-				if(rndSeed.nextInt(1000) <= 350)
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new ItemStack(Material.RAW_CHICKEN, 2));
-							
-				if(rndNum <= dropRate)
-				{	rndNum2 = rndSeed.nextInt(1000);
-					if(rndNum2 <= 150)
-					{ 	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
-						return;
-					}
-					if(rndNum2 <= 350)
-					{	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 3));
-						return;
-					}										
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 1));
-				} // if(rndNum < 437)
-				return;
-			} // if(animalEnt instanceof Wolf)
-			
-			
-			if(animalEnt instanceof Chicken)
-			{	dropRate = cfg.getInt("DropRates.Creature.Chicken");
-				if(rndNum > dropRate)
-					return;
-				
-				if(rndNum <= (dropRate / 10)){
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 15));
-					return;	}
-				
-				if(rndNum <= dropRate)
-				{	rndNum2 = rndSeed.nextInt(1000);
-				if(rndNum2 <= 150)
-				{ 	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
-					return;
-				}
-				if(rndNum2 <= 350)
-				{	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 3));
-					return;
-				}										
-				animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 1));
-				} // if(rndNum < 437)
-				return;
-			} // if(animalEnt instanceof Chicken)
-			
-			if(animalEnt instanceof Cow)
-			{	dropRate = cfg.getInt("DropRates.Creature.Cow");
-				if(rndNum > dropRate)
-					return;
-				
-				if(rndNum <= (dropRate / 10)){
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 15));
-					return;	}
-				
-				if(rndNum <= dropRate)
-				{	if(rndNum2 <= 150)
-					{ 	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
-						return;
-					}
-					if(rndNum2 <= 350)
-					{	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 3));
-						return;
-					}										
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 1));
-				} // if(rndNum < 437)
-				return;
-			} // if(animalEnt instanceof Cow)
-			
-			if(animalEnt instanceof Pig)
-			{	dropRate = cfg.getInt("DropRates.Creature.Pig");
-				if(rndNum > dropRate)
-					return;
-				
-				if(rndNum <= (dropRate / 10)){
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 15));
-					return;	}
-				
-				if(rndNum <= dropRate)
-				{	if(rndNum2 <= 150)
-					{ 	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
-						return;
-					}
-					if(rndNum2 <= 350)
-					{	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 3));
-						return;
-					}										
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 1));} // if(rndNum < 437)
-					return;
-				} // if(animalEnt instanceof Pig)
-			
-			if(animalEnt instanceof Squid)
-			{	dropRate = cfg.getInt("DropRates.Creature.Squid");
-				if(rndNum > dropRate)
-					return;
-				
-				if(rndNum <= (dropRate / 10)){
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 15));
-					return;	}
-				
-				if(rndNum <= dropRate)
-				{	if(rndNum2 <= 150)
-					{ 	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 5));
-						return;
-					}
-					if(rndNum2 <= 350)
-					{	animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 3));
-						return;
-					}										
-					animalEnt.getWorld().dropItem(animalEnt.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, 1));
-				} // if(rndNum < 437)
-				return;
-			} // if(animalEnt instanceof Squid)
-			
-			
-			return;
-		} // if(event.getEntity() instanceof Animals)		
 	} // public void onEntityDeath(final EntityDeathEvent event)
 		
 	

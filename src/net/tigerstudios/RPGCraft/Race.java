@@ -8,7 +8,7 @@ public class Race {
 	// Stat Modifiers
 	int dex_mod, str_mod, con_mod, int_mod;
 	float speed;
-	
+		
 	// Skill rate bonuses
 	float farming, cooking, mining, blacksmithing, alchemy, enchanting;
 	

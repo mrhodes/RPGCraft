@@ -3,6 +3,9 @@
 // 
 // Permission Nodes:
 //		rpgcraft.*
+//		rpgcraft.users.*
+//		rpgcraft.users.race
+//		rpgcraft.users.coin
 //		rpgcraft.rpg.*
 //		rpgcraft.rpg.mods
 //			/rpg <saveall | loadall>
@@ -22,7 +25,9 @@ import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Logger;
 
+//import net.milkbowl.vault.economy.Economy;
 import net.tigerstudios.RPGCraft.utils.SQLiteManager;
+import net.tigerstudios.RPGCraft.utils.SpoutFeatures;
 import net.tigerstudios.RPGCraft.utils.custom.CCoin;
 
 import org.bukkit.Server;
@@ -41,19 +46,21 @@ import ru.tehkode.permissions.bukkit.PermissionsEx;
 public class RPGCraft extends JavaPlugin{
 	private static String name;
 	private static String version;
+	//public static Economy economy = null;
 	public static Logger log = null;	
-	public static String divider = "****************************************************************";	
-	
+	public static String divider = "***************************************************************";
+		
 	private static Server mcServer;	
 	
 	// Listener Classes to handle the events
 	private static listener_Player	playerListener = null;
 	private static listener_Block blockListener = null;
-	private static listener_Currency currencyListener = null;
-	//private static listener_Bank bankListener = null;
+	private static listener_Currency currencyListener = null;	
 	private static listener_Entity entityListener = null;
 	private static CombatSystem combatSystem = null;
-	
+	private static FarmSystem farmSystem = null;
+	private static MiningSystem mineSystem = null;
+	private static AppearanceListener appearanceListener = null;
 	public static CustomItem copperCoin;
 	public static CustomItem silverCoin;
 	public static CustomItem goldCoin;
@@ -78,6 +85,8 @@ public class RPGCraft extends JavaPlugin{
 		log = null;
 	} // public void onDisable()
 
+	
+	
 	@Override
 	public void onEnable() {		
 		name = this.getDescription().getName();
@@ -95,7 +104,6 @@ public class RPGCraft extends JavaPlugin{
 	
 	private boolean initializeRPGCraft()
 	{
-		boolean result = true;
 		log = Logger.getLogger("Minecraft.RPGCraft");
 		mcServer = getBukkitServer();
 		
@@ -103,9 +111,47 @@ public class RPGCraft extends JavaPlugin{
 		// can be added to the config
 		loadConfig();	
 		
-		new File(logDirectory).mkdirs();		// Make the log Directory
-				
+		// Log Directory not needed right now (June 13 2012)
+		//new File(logDirectory).mkdirs();		// Make the log Directory
+			
+		setupPermissions();		
+		if(!setupDatabase())
+			return false;
 		
+	/*	if(setupEconomy())
+			log.info("§f[§2RPGCraft§f] Found Vault and will use it.");
+		*/
+		// Load the Race data files
+		RaceSystem.loadRaceFile("halfling.yml");	RaceSystem.loadRaceFile("human.yml");
+		RaceSystem.loadRaceFile("elf.yml");			RaceSystem.loadRaceFile("dwarf.yml");
+		
+		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
+		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
+		goldCoin = new CCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
+		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
+						
+		SpoutFeatures.setup(this);	
+		mgr_Player.initialize(this);
+				
+		playerListener = new listener_Player(this);
+		blockListener = new listener_Block(this);
+		currencyListener = new listener_Currency(this);
+		entityListener = new listener_Entity(this);
+		combatSystem = new CombatSystem(this);
+		farmSystem = new FarmSystem(this);
+		mineSystem = new MiningSystem(this);
+		appearanceListener = new AppearanceListener(this);
+		
+		FarmSystem.setup();
+		getServer().getPluginManager().registerEvents(this.appearanceListener, this);
+		//bankListener = new listener_Bank(this);
+						
+		return true;
+	} // private boolean initializeRPGCraft()	
+	
+	
+	private boolean setupDatabase()
+	{
 		if(SQLiteManager.initialize("RPGCraft")==false)
 		{	log.info("[RPGCraft]   Error when loading the SQLite library. RPGCraft cannot");
 			log.info("[RPGCraft]   run without this.  Please make sure you have sqlite-jdbc-3.7.2.jar");
@@ -113,37 +159,9 @@ public class RPGCraft extends JavaPlugin{
 			return false;
 		} // if(SQLiteManager.initialize()==false)
 		
+		
 		SQLiteManager.newConnection(mainDirectory+"RPGCraftDB.db", "RPGCraft");
 		
-		setupPermissions();
-		setupDatabase();
-		
-		RaceSystem.loadRaceFile("halfling.yml");
-		RaceSystem.loadRaceFile("human.yml");
-		RaceSystem.loadRaceFile("elf.yml");
-		RaceSystem.loadRaceFile("dwarf.yml");
-		
-		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
-		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
-		goldCoin = new CCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
-		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
-						
-		mgr_Player.initialize(this);
-		mgr_Player.LoadAllData();
-		
-		playerListener = new listener_Player(this);
-		blockListener = new listener_Block(this);
-		currencyListener = new listener_Currency(this);
-		entityListener = new listener_Entity(this);
-		combatSystem = new CombatSystem(this);
-		//bankListener = new listener_Bank(this);
-						
-		return result;
-	} // private boolean initializeRPGCraft()	
-	
-	
-	private void setupDatabase()
-	{
 		// Setup the account Table...
 		// When a new user joins the server this table will be updated with
 		// that new users info.  This is not character related.
@@ -163,15 +181,26 @@ public class RPGCraft extends JavaPlugin{
 					"char_id INTEGER PRIMARY KEY AUTOINCREMENT," + 	// Primary key
 					"account_id SMALLINT UNSIGNED NOT NULL," +		// Foreign key
 					"name varchar(16) NOT NULL," +
-					"namePrefix varchar(32), 	nameSuffix varchar(64),"+
-					"race tinyint, level tinyint, experience int, exp_to_levelup int," +
-					"strength int, dexterity int, constitution int, intelligence int," +
+					"namePrefix varchar(32), 	nameSuffix varchar(64), "+
+					"race varchar(10), level tinyint, experience int, exp_to_levelup int, " +
+					"strength int, dexterity int, constitution int, intelligence int, " +
+					"statPointsUsed int, statPointsTotal int, " +
 					"attack int, defense int, parry int," +
-					"mining int, farming int, blacksmithing int, "+
-					"enchanting int, alchemy int, cooking int, fishing int, trading int,"+
+					"mine int, mineSkillBar float, mineRaceMod float, " +
+					"farm int, farmSkillBar float, farmRaceMod float, " +
+					"blacksmith int, blacksmithSkillBar float, blacksmithRaceMod float, "+
+					"enchant int, enchantSkillBar float, enchantRaceMod float, " +
+					"alchemy int, alchemySkillBar float, alchemyRaceMod float, " +
+					"cook int, cookSkillBar float, cookRaceMod float, " +
+					"fish int, fishSkillBar float, fishRaceMod float, " +
+					"trade int, tradeSkillBar float, tradeRaceMod float, "+
+					"alcoholTolerance int, thrist int, "+
 					"copper int"+					
 					");");
-		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)			
+		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)
+		
+		// TODO: Make a table to Party groups.		
+		return true;
 	} // private void setupDatabase()	
 	
 	
@@ -184,28 +213,7 @@ public class RPGCraft extends JavaPlugin{
 				if(CommandProcessor.rpgCommands((Player)sender, args))
 					return true;			
 		} // if(sender instanceof Player)
-			
-			/*Player p = rpgServer.getPlayer(sender.getName());
 		
-			p.sendMessage("ï¿½aRPGCraft Help System - Page 1");
-			p.sendMessage(" ");
-			p.sendMessage("Currency Commands:");
-			p.sendMessage("    ï¿½2/balance ï¿½for ï¿½2/bal    ï¿½3Displays your current balance.");
-			p.sendMessage("    ï¿½2/givecoin ï¿½for ï¿½2/gc    ï¿½3Type /givecoin for usage info.");
-			p.sendMessage("    ï¿½2/deposit                ï¿½3Deposit Coins to the bank.");
-			p.sendMessage("    ï¿½2/withdraw               ï¿½3Type /withdraw for usage info.");
-			if(RPGCraft.pexMan.has(p, "rpgcraft.bank.banker"))
-			{ p.sendMessage("Bank Commands:");
-				p.sendMessage("Please type the following commands without options for");
-				p.sendMessage("more detailed help.");
-				p.sendMessage("    ï¿½2/banker ï¿½f<ï¿½6goldï¿½f> ï¿½f<ï¿½7silverï¿½f> ï¿½f<ï¿½ccopperï¿½f> ï¿½f<ï¿½2receiverï¿½f>");
-			} // if(RPGCraft.Permissions.has(p, "rpg.bank.banker"))
-			return true;*/
-			
-		
-	/*	if (bankListener.bankProcessor(sender, command, label, args))
-			return true;
-		*/
 		if(currencyListener.currencyProcessor(sender, command, label, args))
 			return true;
 		
@@ -225,6 +233,17 @@ public class RPGCraft extends JavaPlugin{
 		}
 	} // public void setupPermissions()	
 	
+	
+	public void makeWhiteList()
+	{
+		File f = new File("whitelist.txt");
+		String query = "select mc_Name from Accounts";
+		
+		
+		
+	}
+	
+	
 	public void loadConfig()
 	{	config = this.getConfig();
 		String path = "DropRates.Creature";
@@ -234,17 +253,7 @@ public class RPGCraft extends JavaPlugin{
 		config.addDefault("URL Images." + "silverIcon", "http://tigerstudios.net/minecraft/textures/silver.png");
 		config.addDefault("URL Images." +"goldIcon", "http://tigerstudios.net/minecraft/textures/gold.png");
 				
-		config.addDefault("DropRates.animals", 55);
 		config.addDefault("DropRates.monsters", 80);
-		
-		// Set Defaults rates for Animals
-		config.addDefault(path + ".Chicken", 20);
-		config.addDefault(path + ".Cow", 20);
-		config.addDefault(path + ".MushroomCow", 20);
-		config.addDefault(path + ".Pig", 20);
-		config.addDefault(path + ".Sheep", 20);
-		config.addDefault(path + ".Squid", 30);
-		config.addDefault(path + ".Wolf", 30);		
 		
 		// Set Defaults rates for Monsters
 		config.addDefault(path + ".Blaze", 75);
@@ -265,6 +274,19 @@ public class RPGCraft extends JavaPlugin{
 		config.options().copyDefaults(true);
 		saveConfig();
 	} // public void loadConfig()
+	
+	
+	/* private boolean setupEconomy()
+	 {
+		 RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+	        if (economyProvider != null) {
+	            economy = economyProvider.getProvider();
+	        }
+
+	        return (economy != null);
+	    }
+	
+	*/
 	public static Server getBukkitServer() {
         return mcServer;
     }		

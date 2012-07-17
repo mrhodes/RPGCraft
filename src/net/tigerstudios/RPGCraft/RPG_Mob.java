@@ -5,12 +5,14 @@
 
 package net.tigerstudios.RPGCraft;
 
+import org.bukkit.entity.Monster;
+
 
 // mobs need to have certain properties
 
-public class RPG_Mob {
-	int level;
-	int speed;
+public interface RPG_Mob extends Monster {
+	int level = 1;
+	int speed = 1;
 	
 	
 	
