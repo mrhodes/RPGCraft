@@ -1,5 +1,5 @@
 name: RPGCraft
-version: 0.7.0
+version: 0.8.0
 author: Michael Rhodes
 website: http://tigerstudios.net/minecraft
 main: net.tigerstudios.RPGCraft.RPGCraft
@@ -10,17 +10,18 @@ commands:
         description: 
         usage: Type /rpg help for usage instructions
     bal:
-        description: Retreive your currency balance
+        description: Retrieve your currency balance
         usage: /bal
         permission: rpgcraft.money
     balance:
         description: Retreive your currency balance
         usage: /balance
+        permission: rpgcraft.money
     deposit:
         description: Deposit money into the bank
         usage: /deposit <gold> <silver> <copper>
         permission: rpgcraft.money
     withdraw:
         description: Withdraw coins from your rpg account
-        usage: /withdrawl <gold> <silver> <copper>
+        usage: /withdraw <gold> <silver> <copper>
         permission: rpgcraft.money

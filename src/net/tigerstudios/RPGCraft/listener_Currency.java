@@ -1,30 +1,34 @@
 package net.tigerstudios.RPGCraft;
 
+import net.tigerstudios.RPGCraft.utils.CTextFileWriter;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.getspout.spoutapi.inventory.SpoutItemStack;
 
-public class listener_Currency implements Listener {
-	private Server rpgServer = null;
+public class listener_Currency{
 	private RPG_Player rpgPlayer = null;
-		
-	// public void onPlayerCommandPreprocess(PlayerChatEvent event)
+	private RPG_Character rpgChar = null;
+	private static CTextFileWriter fLog = null;
 	
 	public boolean currencyProcessor(CommandSender sender, Command command, String label, String[] cmd)
 	{
-		Player p = rpgServer.getPlayer(sender.getName());
+		Player p = Bukkit.getPlayer(sender.getName());
+		String playerName = p.getName();
+		rpgPlayer = mgr_Player.getPlayer(playerName.hashCode());
+		rpgChar = mgr_Player.getCharacter(p);
 		
+		if(rpgChar == null)
+		{	p.sendMessage("[§2RPG§f] You don't have a race selected.  Without a");
+			p.sendMessage("[§2RPG§f] race choosen you cannot use the currency commands.");
+			p.sendMessage("[§2RPG§f] Select a race with the '/rpg reset' command.");
+			return true;
+		}
 		if(command.getName().equalsIgnoreCase("balance") || command.getName().equalsIgnoreCase("bal"))
-		{
-			String playerName = p.getName();
-						
-			if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
+		{	if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
 			{
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have access to the currency");
 				p.sendMessage("[§2RPG§f] commands. Speak to a server admin to gain access.");
@@ -32,25 +36,19 @@ public class listener_Currency implements Listener {
 			} // if(!(RPGCraft.Permissions.has(p, "rpgcraft.money")))
 			
 			if(cmd.length == 1 && RPGCraft.pexMan.has(p, "rpgcraft.money.mods"))
-			{
-				playerName = cmd[0];
-				rpgPlayer = mgr_Player.getPlayer(playerName.hashCode());
-				if(rpgPlayer == null)
+			{	playerName = cmd[0];
+				rpgChar = mgr_Player.getCharacter(Bukkit.getPlayer(playerName));
+				if(rpgChar == null)
 				{	p.sendMessage("[§2RPG§f] The player cannot be found.  Either they are not online");
 					p.sendMessage("[§2RPG§f] or there may be a spelling mistake.");
 					return true;
 				} // if(rpgPlayer == null)
 			} // if(cmd.length == 2 && RPGCraft.Permissions.has(p, "rpgcraft.money.mods"))
-			
-			if(cmd.length == 0)
-			{	playerName = p.getName();
-				rpgPlayer = mgr_Player.getPlayer(playerName.hashCode());
-			} // if(cmd.length == 1)			
-			
-			p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getCharacter().getGold()+" Gold§f, §7"+rpgPlayer.getCharacter().getSilver()+" Silver§f, §c"+rpgPlayer.getCharacter().getCopper()+" Copper§f.");
+				
+			p.sendMessage("[§2RPG§f] Balance: §6"+rpgChar.getGold()+" Gold§f, §7"+rpgChar.getSilver()+
+					" Silver§f, §c"+rpgChar.getCopper()+" Copper§f.");
 			if(cmd.length == 0 && RPGCraft.pexMan.has(p, "rpgcraft.money.mods"))
-			{
-				p.sendMessage("[§2RPG§f] You may also check other players balances by adding");
+			{	p.sendMessage("[§2RPG§f] You may also check other players balances by adding");
 				p.sendMessage("[§2RPG§f] their name.");
 				p.sendMessage("[§2RPG§f] Ex: §2/balance §f<§bplayername§f>");
 			}
@@ -60,29 +58,19 @@ public class listener_Currency implements Listener {
 		
 		if(command.getName().equalsIgnoreCase("deposit"))
 		{
-			RPGCraft.log.info(command.getName());
 			if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
 			{
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have access to the currency");
 				p.sendMessage("[§2RPG§f] commands. Speak to a server admin to gain access.");
 				return true;				
 			} // if(!(RPGCraft.Permissions.has(p, "rpgcraft.money")))			
-			
-			
+					
 			if(p.getGameMode() == GameMode.CREATIVE)
-			{
-				p.sendMessage("[§2RPG§f] Nice try " + p.getDisplayName() + ". ");
+			{	p.sendMessage("[§2RPG§f] Nice try " + p.getDisplayName() + ". ");
 				p.sendMessage("[§2RPG§f] This attempt will be logged, and admins will");
 				p.sendMessage("[§2RPG§f] be notified.");
 				return true;
 			} // if(p.getGameMode() == GameMode.CREATIVE)
-			
-			if(mgr_Player.getCharacter(p) == null)
-			{
-				p.sendMessage("[§2RPG§f] You don't have a race selected.");
-				p.sendMessage("[§2RPG§f] Select a race with the '/rpg' command.");
-				return true;
-			}
 			
 			p.sendMessage("[§2RPG§f] To use the Deposit command please \"Use\" the");
 			p.sendMessage("[§2RPG§f] coin you want to deposit.");
@@ -112,14 +100,7 @@ public class listener_Currency implements Listener {
 				p.sendMessage("[§2RPG§f] in creative mode.");
 				return true;
 			} // if(p.getGameMode() == GameMode.CREATIVE)
-			
-			if(mgr_Player.getCharacter(p) == null)
-			{
-				p.sendMessage("[§2RPG§f] You don't have a race selected.");
-				p.sendMessage("[§2RPG§f] Select a race with the '/rpg' command");
-				p.sendMessage("[§2RPG§f] before trying to withdraw money.");
-				return true;
-			}
+				
 			
 			if(cmd.length == 0 || cmd.length > 3)
 			{	p.sendMessage("§5"+RPGCraft.divider);
@@ -165,9 +146,8 @@ public class listener_Currency implements Listener {
 		return false;
 	} // public boolean currencyProcessor(CommandSender sender, Command command, String label, String[] cmd)	
 	
-	public listener_Currency(Plugin p)
+	public listener_Currency()
 	{
-		Bukkit.getServer().getPluginManager().registerEvents(this, p);
-		this.rpgServer = p.getServer();
+		fLog = new CTextFileWriter(RPGCraft.logDirectory+"currency.log");
 	} // public listener_Currency(Plugin p)
 }

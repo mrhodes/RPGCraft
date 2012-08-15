@@ -1,11 +1,13 @@
 package net.tigerstudios.RPGCraft.utils;
 
+import java.util.Random;
+
 import org.bukkit.entity.Player;
 
 
 
 public class MathMethods {
-	
+	public static Random rnd = null;
 	public static boolean isLookingAtAndInRange(Player player, double x, double y, double z, double range) {
 		return inRange(player, x, y, z, range) && lookingAt(player, x, y, z);
 	}
@@ -48,5 +50,12 @@ public class MathMethods {
 		} else {
 			return false;
 		}
-	}	
+	}// public static boolean lookingAt(Player p, double x, double y, double z) 
+	
+		
+	public static void setup()
+	{
+		rnd = new Random();
+		rnd.setSeed(System.currentTimeMillis());
+	}
 }

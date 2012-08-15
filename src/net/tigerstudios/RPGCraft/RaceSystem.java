@@ -8,7 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 public class RaceSystem {
-	private static Map<String, Race> races = new HashMap<String, Race>();
+	public static Map<String, Race> races = new HashMap<String, Race>();
 	
 	public static void listRaces(Player p)
 	{
@@ -21,7 +21,7 @@ public class RaceSystem {
 	
 	public static Race getRace(String name)
 	{
-		if(races.isEmpty() || name.equalsIgnoreCase(null))
+		if(races.isEmpty() ||(name == null))
 			return null;
 		
 		return races.get(name.toLowerCase());

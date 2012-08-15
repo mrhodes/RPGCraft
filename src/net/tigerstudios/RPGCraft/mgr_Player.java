@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.tigerstudios.RPGCraft.utils.SQLiteManager;
+import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -45,7 +45,7 @@ public class mgr_Player {
 		// Need to create an entry in the Accounts Table with this players
 		// Name and Date joined.
 		query = "INSERT INTO Accounts (mc_Name, joined) VALUES ('"+p.getName()+"', DATE());";
-		SQLiteManager.SQLUpdate(query);	
+		SQLManager.SQLUpdate(query);	
 		
 		return true;
 	} // public boolean playerRegister(Player p, String name)
@@ -57,7 +57,7 @@ public class mgr_Player {
 		RPG_Player rpgPlayer;
 		
 		query = "SELECT account_id from Accounts WHERE mc_Name = '"+p.getName()+"'";
-		rs = SQLiteManager.SQLQuery(query);
+		rs = SQLManager.SQLQuery(query);
 		
 		// No reason this should fail
 		try {
@@ -68,11 +68,12 @@ public class mgr_Player {
 		} catch (SQLException e) { e.printStackTrace();	} 
 			
 		if(account_id == 0)
-			return false;	
+			return false;
 		
-		// New player, create a RPG Character for this player.
+		// Returning player, create a RPG Character for this player.
 		rpgPlayer = new RPG_Player(p.getName(), account_id);
-							
+			
+									
 		// Add this player to the Player map
 		rpgPlayers.put(p.getName().hashCode(), rpgPlayer);		
 				

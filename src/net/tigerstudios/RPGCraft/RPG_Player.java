@@ -3,8 +3,8 @@ package net.tigerstudios.RPGCraft;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import net.tigerstudios.RPGCraft.utils.SQLiteManager;
-import net.tigerstudios.RPGCraft.utils.SpoutFeatures;
+import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
+import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -18,15 +18,13 @@ import org.getspout.spoutapi.player.SpoutPlayer;
  * The RPG_Player class will be the main class for each in game player. 
  */
 public class RPG_Player {	
-	
-	int AccountID = 0;			// unique account ID.  Value stored in Database
+	private int AccountID = 0;			// unique account ID.  Value stored in Database
 		
 	private String mcName = null;					// Players Minecraft Name
 	private Player player = null;					// Minecraft Player class
 	private SpoutPlayer SptPlayer = null;			// Spout Player object.	
 	private RPG_Character rpgCharacter = null;		// This players rpg character	
 	private boolean bCharLoaded = false;
-	
 	
 	// TODO: Add universal MT Timer/Callback system.  Pull timer out of Player class
 	long lTimer = -1;		// Used for things that need a timer.  This
@@ -43,7 +41,10 @@ public class RPG_Player {
 		player = Bukkit.getPlayer(minecraftName);
 		SptPlayer = SpoutManager.getPlayer(player);
 		if(loadCharacterData())
-			bCharLoaded = true;		
+		{
+			SptPlayer.setWalkingMultiplier(rpgCharacter.fWalkSpeed);
+			bCharLoaded = true;
+		}
 	} // public void RPG_Player(Player p)
 	
 		
@@ -59,18 +60,17 @@ public class RPG_Player {
 	public Player getPlayer() { return player; }
 	public void setPlayer(Player p) { player = p; if(p!=null) SptPlayer = SpoutManager.getPlayer(p); }
 			
-		
+	public int getAccountID() { return AccountID; }
+	public long getTimer() { return lTimer; }
+	public void setTimer(long tMs) { lTimer = tMs; }
+	
 	public void resetCharacter()
 	{		
-		if(bCharLoaded)
-		{
-			rpgCharacter = null;
-			bCharLoaded = false;
-			SpoutFeatures.setSpeed(player, (float) 1.0);
-			SpoutFeatures.updateTitle(player, null);
-			return;
-		}
 		rpgCharacter = null;
+		bCharLoaded = false;
+		SpoutFeatures.setWalkingSpeed(SptPlayer, 1.0f);
+		SpoutFeatures.updateTitle(player, null);
+		return;
 	}
 	
 	public void saveCharacterData()
@@ -82,7 +82,7 @@ public class RPG_Player {
 	public boolean loadCharacterData()
 	{
 		String query = "SELECT * FROM Characters WHERE account_id = "+this.AccountID+";";
-		ResultSet rs = SQLiteManager.SQLQuery(query);
+		ResultSet rs = SQLManager.SQLQuery(query);
 			
 		try {
 			if(rs.next())
@@ -116,11 +116,20 @@ public class RPG_Player {
 				character.cooking		= rs.getInt("cook");
 				character.fishing		= rs.getInt("fish");
 				character.trading		= rs.getInt("trade");
+				character.alcoholTolerance = rs.getInt("alcoholTolerance");
 				character.Copper		= rs.getInt("copper");				
-			
-				character.optimizeCoin();
-				setCharacter(character);
 				rs.close();
+				
+				character.fWalkSpeed = RaceSystem.getRace(character.race).speed;
+				character.levelExpTotal = (float)(character.level * 100) * 1.25f;
+				
+				if(player != null)
+				{
+					player.setLevel(character.level);
+					player.setExp( (character.levelExpTotal - character.exp_to_level) / character.levelExpTotal ); 
+				}
+				character.optimizeCoin();
+				setCharacter(character);				
 				
 				return true;
 			} // if(rs.next())

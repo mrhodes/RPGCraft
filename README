@@ -1,37 +1,35 @@
-Last Updated: May 25, 2012
+Last Updated: August 14, 2012
 
 RPGCraft Readme
 
 This is a full featured Role Playing plugin developed by myself for my
 server, Tigerstudios.
 
-The main focus of this plugin at this point is to have a fully working
-currency system with coins that drop of Monsters and a very different and
-detailed combat / leveling system.
+Features implemented so far.
+1. Coins drop off Mobs.  Still needs to be rewriten.  But works fine for now 
+2. Able to select one of 4 Races (Halfling, Human, Dwarf, Elf)
+3. Each race has Pros and Cons
+4. Mining, and Farming are "fully" implemented
+5. Enchanting is next in line (after some code cleanup and database re organization.
 
-The other feature being worked on is a race system that includes: 
-  1: Humans
-  2: Halflings
-  3: Elves
-  4: Dwarfs
+Please see our Wiki for more info
+http://tigerstudios.net/wiki
+
   
-Each race will have different abilities and will all rely on each other
-to successfully live in the world.
+This plugin will require spoutcraft to work properly.  There is very little
+that will work without it.  
 
-At this point in time the plugin is under heavy development in conjuntion
-with the Grand opening of my server to the general public.  
 
-A lot of work is currently being done on the database code and internal
-organization of each structure.  As of now the code will compile and coins
-will drop off monsters.  However the commands will throw errors and as such
-should not be used.  I am currently adding in a multicharacter system and
-this is why the commands regarding money are broken.
+As of now the needed config files ARE NOT included in this repository.  I will 
+get these added shortly as I continue to work on organizing the code and database.
 
 If anyone is interested in this plugin and would like to help with testing
 please contact me at tigerstudios.mcr2@gmail.com
 
-This plugin requires SpoutPlugin and PermissionsEx
 
 Michael
 Tigerstudios Entertainment
 http://tigerstudios.net/minecraft
+
+This code is protected by CC Copyright.  See the following for more information.
+http://creativecommons.org/licenses/by-nc-nd/3.0/deed.en_US
