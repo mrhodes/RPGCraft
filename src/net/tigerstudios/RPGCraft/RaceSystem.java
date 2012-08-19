@@ -27,6 +27,22 @@ public class RaceSystem {
 		return races.get(name.toLowerCase());
 	} // public static Race getRace(String name)
 	
+	// Get the Races modifier for a givin skill
+	// This will need to be optimized later to not use
+	// strings.
+	public static float getModifier(String race, String mod)
+	{	if(mod.equalsIgnoreCase("mine"))
+			return races.get(race).mining;
+		if(mod.equalsIgnoreCase("farm"))
+			return races.get(race).farming;
+		if(mod.equalsIgnoreCase("enchant"))
+			return races.get(race).enchanting;
+		if(mod.equalsIgnoreCase("alchemy"))
+			return races.get(race).alchemy;
+		
+		return 1.0f;
+	} // public static float getModifier(String race, String mod)
+	
 	// The following method will load the data from a Race configuration file.
 	// TODO: Add error detection code here.
 	public static Race loadRaceFile(String filename)

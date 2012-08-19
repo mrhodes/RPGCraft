@@ -44,7 +44,6 @@ import net.tigerstudios.RPGCraft.utils.custom.CCoin;
 import net.tigerstudios.RPGCraft.utils.custom.CFood;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -170,7 +169,7 @@ public class RPGCraft extends JavaPlugin{
 		rpgPlugin = this;
 		MathMethods.setup();
 		PluginManager pm = getServer().getPluginManager();
-		pm.registerEvents(new listener_Player(rpgPlugin), this);
+		pm.registerEvents(new listener_Player(), this);
 		pm.registerEvents(new listener_Block(rpgPlugin), this);
 		pm.registerEvents(new listener_Entity(rpgPlugin), this);
 		pm.registerEvents(new FarmSystem(), this);

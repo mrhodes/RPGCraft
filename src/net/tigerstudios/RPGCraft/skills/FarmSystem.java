@@ -3,6 +3,7 @@ package net.tigerstudios.RPGCraft.skills;
 import java.util.Random;
 
 import net.tigerstudios.RPGCraft.RPG_Character;
+import net.tigerstudios.RPGCraft.RaceSystem;
 import net.tigerstudios.RPGCraft.mgr_Player;
 
 import org.bukkit.Material;
@@ -68,7 +69,7 @@ public class FarmSystem implements Listener {
 		Block bFarmland = bCrops.getRelative(0, -1, 0);
 		
 		float farmlevel 	= rpgChar.farming;
-		float farmMod 		= rpgChar.farmRaceMod;
+		float farmMod 		= RaceSystem.getModifier(rpgChar.race, "farm");
 				
 		// Values used to calculate the skill increase when farming
 		float harvestBonus = 1;	float lootBonus = 1;		

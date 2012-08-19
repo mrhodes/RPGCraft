@@ -1,7 +1,5 @@
 package net.tigerstudios.RPGCraft.SpoutFeatures;
 
-
-import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.mgr_Player;
 
 import org.bukkit.Bukkit;

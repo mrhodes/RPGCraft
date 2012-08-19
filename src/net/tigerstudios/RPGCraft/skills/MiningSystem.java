@@ -11,6 +11,7 @@ import java.util.Random;
 
 import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
+import net.tigerstudios.RPGCraft.RaceSystem;
 import net.tigerstudios.RPGCraft.mgr_Player;
 
 import org.bukkit.Location;
@@ -43,7 +44,7 @@ public class MiningSystem {
 		} // if(rpgChar == null)		
 		
 		int mineLevel = rpgChar.mining;
-		float mineMod = rpgChar.mineRaceMod;
+		float mineMod = RaceSystem.getModifier(rpgChar.race, "mine");
 				
 		float mineBonus, lootBonus;
 		float toolMod = 0.0F;

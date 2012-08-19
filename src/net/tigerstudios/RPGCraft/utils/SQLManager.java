@@ -125,25 +125,16 @@ public class SQLManager {
 		
 		SQLManager.newConnection(RPGCraft.mainDirectory+"RPGCraftDB.db", "RPGCraft");
 		
-		
-		// Setup the databases main table
-		if(!TableExists("RPGCraft", "RPGCraft"))
-		{	log.info("[RPGCraft] --->   Creating RPGCraft table.");
-			SQLUpdate("create table RPGCraft ("+
-				"dbVersion INTEGER PRIMARY KEY );");
-			SQLUpdate("insert into RPGCraft (dbVersion) values ('0');");
-		} // if(!TableExists("RPGCraft", "RPGCraft"))
-		
 		// Setup the account Table...
 		// When a new user joins the server this table will be updated with
 		// that new users info.  This is not character related.
 		if(TableExists("Accounts", "RPGCraft") == false)
 		{	log.info("[RPGCraft] --->   Creating Accounts table.");
 			SQLUpdate("create table Accounts ("+
-					"account_id INTEGER PRIMARY KEY AUTOINCREMENT,"+
-					"mc_Name VARCHAR(24),"+
-					"joined DATE"+
-					"lastOnline DATE,"+
+					"account_id INTEGER PRIMARY KEY AUTOINCREMENT, "+
+					"mc_Name VARCHAR(24), "+
+					"joined DATE, "+
+					"lastOnline DATE, "+
 					"totalTimeOnline TIME"+
 					");");
 		} // if(SQLiteManager.TableExists("accounts", "RPGCraft") == false)
@@ -171,7 +162,6 @@ public class SQLManager {
 					"alcoholTolerance int, thrist int"+										
 					");");
 		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)
-		
 				
 	// ----------------------------------------------------------------------
 	// The following 2 data tables will hold custom information about the
@@ -196,45 +186,8 @@ public class SQLManager {
 					"name VARCHAR(16), description VARCHAR(128));");
 		} // if(SQLManager.TableExists("itemCategory", "RPGCraft") == false)
 	// ------------------------------------------------------------------------
-		
-		// Update tables if needed.
-		dbUpdate(dbVersion);
-						
+								
 		return true;
 	} // private void setupDatabase()
-	
-	
-	// This method is here to contain any updating code needed for when making changes to
-	// the database structure.  This method will be changed over time as things change.
-	private static void dbUpdate(int ver)
-	{
-		ResultSet rs = SQLQuery("select dbVersion from RPGCraft;");
-	
-		try { rs.next();
-			if(ver == rs.getInt("dbVersion"))
-			{	// Database is up to date
-				rs.close();
-				return;
-			}
-			rs.close();
-		} catch (SQLException e) { e.printStackTrace();}								
-				
-		if(ver == 1)
-		{	// Need to update to newest version, 1
-			SQLUpdate("alter table Accounts add lastOnline DATE;");
-			SQLUpdate("alter table Accounts add totalTimeOnline TIME;");
-		}
 		
-		if(ver > 2)
-		{	rs = SQLQuery("select * from Accounts, Characters where Accounts.account_id = Characters.account_id and copper > 0;");
-			try{
-				while(rs.next()){;
-					RPGCraft.econ.depositPlayer(rs.getString("mc_Name"), rs.getInt("copper"));
-					RPGCraft.log.info("[RPGCraft] Transfered "+rs.getInt("copper")+" to "+rs.getString("mc_Name")+" account.");
-				}
-			}catch (SQLException e) { e.printStackTrace();}	
-		}
-		SQLUpdate("update RPGCraft set dbVersion = "+ver+";");		
-	} // private static void dbUpdate(int ver)
-	
 } // public class SQLiteManager

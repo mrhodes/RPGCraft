@@ -83,10 +83,8 @@ public class RPG_Player{
 				character.statPtsTotal	= rs.getInt("statPointsTotal");
 				character.mining		= rs.getInt("mine");
 				character.mineSkillBar	= rs.getFloat("mineSkillBar");
-				character.mineRaceMod	= rs.getFloat("mineRaceMod");
 				character.farming		= rs.getInt("farm");
 				character.farmSkillBar	= rs.getFloat("farmSkillBar");
-				character.farmRaceMod	= rs.getFloat("farmRaceMod");
 				character.blacksmithing	= rs.getInt("blacksmith");
 				character.enchanting	= rs.getInt("enchant");
 				character.alchemy		= rs.getInt("alchemy");

@@ -16,43 +16,8 @@ import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class listener_Entity implements Listener{
-		
-	// ----------------------------------------------------
-	// Entity Tame Event
-	// 
-	//	Event called when a player tried to tame a creature
-	//	This is something that is Race specific. Elves can
-	//  tame wolves, and humans can tame cats.
-	/*@EventHandler	// ------------------------------------
-	public void onEntityTame(EntityTameEvent event)
-	{
-		mcPlayer = Bukkit.getPlayer(event.getOwner().getName());
-		if(mcPlayer != null)
-		{
-			if(event.getEntityType().equals(EntityType.WOLF))
-			{
-				RPG_Character rpgChar = mgr_Player.getCharacter(mcPlayer);
-				if(rpgChar == null)
-					return;
-			
-				if(!rpgChar.race.equalsIgnoreCase("elf"))
-				{
-					mcPlayer.sendMessage("[§2RPG§f] You're not able to tame wolves as a "+rpgChar.race+".");
-					mcPlayer.sendMessage("[§2RPG§f] See an Elf if you'd like to have a pet wolf.");
-					event.setCancelled(true);
-					fLog.writeLine("TAME EVENT,"+mcPlayer.getName());
-					return;				
-				} // if(!rpgChar.race.equalsIgnoreCase("elf"))
-			} // if(event.getEntityType().equals(EntityType.WOLF))
-		
-			if(event.getEntityType().equals(EntityType.OCELOT))
-			{
-			
-			} // if(event.getEntityType().equals(EntityType.OCELOT))
-		} // if(p != null)
-	} // public void onEntityTame(final EntityTameEvent event)
-	*/
-		
+	
+	
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event)
 	{

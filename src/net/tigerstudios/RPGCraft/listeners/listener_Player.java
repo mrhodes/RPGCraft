@@ -10,24 +10,19 @@ import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 
-import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
-import org.getspout.spoutapi.SpoutManager;
+
 
 public class listener_Player implements Listener {
-	private Plugin rpgPlugin = null;
-	
+		
 			
 	@EventHandler
 	public void onPlayerInteract(final PlayerInteractEvent event)
@@ -37,32 +32,6 @@ public class listener_Player implements Listener {
 			return;
 		
 		ItemStack item = event.getItem();
-				
-		// Water the crops only if the targetd block is farmland
-		if(item.getType() == Material.WATER_BUCKET)
-		{
-			Block bTarget = event.getClickedBlock();
-			if(bTarget == null)
-				return;			
-			
-			if((bTarget.getType() == Material.CROPS) || (bTarget.getType() == Material.SOIL))
-			{
-				Player p = event.getPlayer();
-				p.sendMessage("Dumped water on crops or soil.");
-				if(bTarget.getType() == Material.CROPS)
-					bTarget = bTarget.getRelative(0, -1, 0);
-				
-				p.sendMessage("Soil Dryness was: "+bTarget.getData());
-				if(bTarget.getData() < 0x7)
-					bTarget.setData((byte) 7);						
-				p.sendMessage("Soil dryness is now: "+bTarget.getData());
-				p.setItemInHand(new ItemStack(Material.BUCKET));
-				event.setCancelled(true);
-				return;				
-			} // if((bTarget.getType() == Material.CROPS) || (bTarget.getType() == Material.SOIL))
-			return;
-		} // if(item.getType() == Material.WATER_BUCKET)
-			
 				
 		if(item.getDurability() > 1023)
 		{	
@@ -85,7 +54,7 @@ public class listener_Player implements Listener {
 					sp.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 400, character.drunkenLevel + 300));
 										
 					return;
-				} // if(id == RPGCraft.aleID)	*/
+				} // if(id == RPGCraft.aleID)*/	
 				
 				RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
 				// Important, only do this if within the 10 second timer.
@@ -171,23 +140,6 @@ public class listener_Player implements Listener {
 		return;
 	} // public void onPlayerQuit(PlayerEvent event)
 	
-
-	@EventHandler
-	public void onPlayerExpChange(PlayerExpChangeEvent event)
-	{	RPG_Character rpgChar = mgr_Player.getCharacter(event.getPlayer());
-		if(rpgChar == null)
-		{	// Player has not chosen a race yet...  just let the event
-			// go ahead
-			return;
-		}		
-		Player p = event.getPlayer();		
-		rpgChar.addExperience(0, SpoutManager.getPlayer(p));		
-	} // public void onPlayerExpChange(PlayerExpChangeEvent event)
-	
-	
-	public listener_Player(Plugin p)
-	{
-		rpgPlugin = p;
-	} // public listener_Player(Plugin p)
+	public listener_Player(){} // public listener_Player(Plugin p)
 			
 } // public class listener_Player implements Listener

@@ -17,16 +17,15 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 public class RPG_Character extends RPG_Entity
 {
 	private static int[] expTable;	
-	
 	int CharacterID = 0;		// ID for this particular rpg character
 	int AccountID = 0;			// Account of player that owns this character
 	
 	String Name;				// Players Role Play name
-	String displayPrefix;	
-	String displaySuffix;
+	String displayPrefix;		// Choosen Title
+	String displaySuffix;		// Suffix
 	
 	// Race Stats
-	public String race;		
+	public String race;			// Race of this character
 	public float experience;		// Players total experience
 		
 	//public ItemStack itemInHand;
@@ -34,8 +33,7 @@ public class RPG_Character extends RPG_Entity
 	// Character Stats
 	int statPtsUsed, statPtsTotal;	
 	
-	int alcoholTolerance;	
-	int drunkenLevel;
+	int alcoholTolerance;	int drunkenLevel;
 			
 	// Character Ablities
 	public int mining;
@@ -45,13 +43,10 @@ public class RPG_Character extends RPG_Entity
 	int fishing, trading;
 	
 	public float mineSkillBar;
-	public float mineRaceMod;
 	public float farmSkillBar;
-	public float farmRaceMod;
 	float blacksmithSkillBar;
-	float blacksmithRaceMod;
-	float enchantSkillBar, enchantRaceMod, alchemySkillBar, alchemyRaceMod, cookSkillBar, cookRaceMod;
-	float fishSkillBar, fishRaceMod, tradeSkillBar, tradeRaceMod;
+	float enchantSkillBar, alchemySkillBar, cookSkillBar;
+	float fishSkillBar, tradeSkillBar;
 	
 	// Modifier values
 	public float fSwimSpeed;
@@ -79,12 +74,7 @@ public class RPG_Character extends RPG_Entity
 		intelligence		+= r.int_mod;
 		EntID = mgr_Player.getMCPlayer(acc_id).getEntityId();
 		setSpeed(r.speed);		
-		
-		farmRaceMod			= r.farming;
-		mineRaceMod			= r.mining;
-		blacksmithRaceMod 	= r.blacksmithing;
-		enchantRaceMod		= r.enchanting;
-		
+				
 		saveCharacter();
 	} // public RPG_Character(Race r)
 	
@@ -134,7 +124,7 @@ public class RPG_Character extends RPG_Entity
 		setDisplaySuffix("");	
 				
 		race = "unknown"; level = 1; experience = 0; 
-		dexterity = 5; constitution = 5; strength = 5; intelligence = 5;
+		dexterity = 3; constitution = 3; strength = 3; intelligence = 3;
 		attack = 1; defense = 1; parry = 1;
 		
 		// Character Ablities
@@ -169,28 +159,20 @@ public class RPG_Character extends RPG_Entity
 					"parry					= "+parry+"," +
 					"mine					= "+mining+","+
 					"mineSkillBar			= "+mineSkillBar+","+
-					"mineRaceMod			= "+mineRaceMod+","+
 					"farm					= "+farming+","+
 					"farmSkillBar			= "+farmSkillBar+","+
-					"farmRaceMod			= "+farmRaceMod+","+
 					"blacksmith				= "+blacksmithing+","+
 					"blacksmithSkillBar		= "+blacksmithSkillBar+","+
-					"blacksmithRaceMod		= "+blacksmithRaceMod+","+
 					"enchant				= "+enchanting+","+					
 					"enchantSkillBar		= "+enchantSkillBar+","+
-					"enchantRaceMod			= "+enchantRaceMod+","+
 					"alchemy				= "+alchemy+","+
 					"alchemySkillBar		= "+alchemySkillBar+","+
-					"alchemyRaceMod			= "+alchemyRaceMod+","+
 					"cook					= "+cooking+","+
 					"cookSkillBar			= "+cookSkillBar+","+
-					"cookRaceMod			= "+cookRaceMod+","+
 					"fish					= "+fishing+","+
 					"fishSkillBar			= "+fishSkillBar+","+
-					"fishRaceMod			= "+fishRaceMod+","+
 					"trade                	= "+trading+","+
 					"tradeSkillBar			= "+tradeSkillBar+","+
-					"tradeRaceMod			= "+tradeRaceMod+","+
 					"alcoholTolerance       = "+alcoholTolerance+
 					" where char_id="+CharacterID+";";
 			SQLManager.SQLUpdate(query);
@@ -199,17 +181,14 @@ public class RPG_Character extends RPG_Entity
 		
 		query = "insert into characters (account_id, name, namePrefix, nameSuffix, race, level,"+
 				"experience, statPointsUsed, statPointsTotal, strength, dexterity, " +
-				"constitution, intelligence, attack, defense, parry, mine, mineSkillBar, mineRaceMod, " +
-				"farm, farmSkillBar, farmRaceMod, blacksmith, blacksmithSkillBar, blacksmithRaceMod, " +
-				"enchant, enchantSkillBar, enchantRaceMod, alchemy, alchemySkillBar, alchemyRaceMod, " +
-				"cook, cookSkillBar, cookRaceMod, fish, fishSkillBar, fishRaceMod, trade, tradeSkillBar, tradeRaceMod, " +
-				"alcoholTolerance) " +
+				"constitution, intelligence, attack, defense, parry, mine, mineSkillBar, " +
+				"farm, farmSkillBar, blacksmith, blacksmithSkillBar, enchant, enchantSkillBar, alchemy, "+
+				"alchemySkillBar, cook, cookSkillBar, fish, fishSkillBar, trade, tradeSkillBar, alcoholTolerance) "+
 				"VALUES ("+AccountID+", '"+Name+"', '"+displayPrefix+"', '"+getDisplaySuffix()+"', '"+race+"', "+level+","+
 				experience+","+statPtsUsed+","+statPtsTotal+","+strength+","+dexterity+","+constitution+","+intelligence+","+
-				attack+","+defense+","+parry+","+mining+","+mineSkillBar+","+mineRaceMod+","+farming+","+farmSkillBar+","+farmRaceMod+"," +
-				blacksmithing+","+blacksmithSkillBar+","+blacksmithRaceMod+","+enchanting+","+enchantSkillBar+"," +
-				enchantRaceMod+","+alchemy+","+alchemySkillBar+","+alchemyRaceMod+","+cooking+","+cookSkillBar+","+cookRaceMod+"," +
-				fishing+","+fishSkillBar+","+fishRaceMod+","+trading+","+tradeSkillBar+","+tradeRaceMod+","+alcoholTolerance+")"; 
+				attack+","+defense+","+parry+","+mining+","+mineSkillBar+","+farming+","+farmSkillBar+","+blacksmithing+","+
+				blacksmithSkillBar+","+enchanting+","+enchantSkillBar+","+alchemy+","+alchemySkillBar+","+cooking+","+
+				cookSkillBar+","+fishing+","+fishSkillBar+","+trading+","+tradeSkillBar+","+alcoholTolerance+")"; 
 		
 		SQLManager.SQLUpdate(query);
 		

@@ -18,8 +18,7 @@ public class mgr_Mob {
 	} // public static void createMob(LivingEntity ent)
 	
 	public static RPG_Mob getMob(int id)
-	{
-		return mobList.get(id);
+	{	return mobList.get(id);
 	} // public static RPG_Mob getMob(int id)
 	
 	public static void removeMob(int id)
