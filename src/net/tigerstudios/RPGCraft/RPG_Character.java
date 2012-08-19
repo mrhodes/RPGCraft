@@ -3,6 +3,7 @@ package net.tigerstudios.RPGCraft;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import net.tigerstudios.RPGCraft.CombatSystem.RPG_Entity;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.Bukkit;
@@ -13,29 +14,28 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 
 // The RPG Character class represents an ingame character and what events
 // happen to the character.
-public class RPG_Character 
+public class RPG_Character extends RPG_Entity
 {
+	private static int[] expTable;	
+	
 	int CharacterID = 0;		// ID for this particular rpg character
 	int AccountID = 0;			// Account of player that owns this character
 	
 	String Name;				// Players Role Play name
-	String mcName;
 	String displayPrefix;	
-	private String displaySuffix;
+	String displaySuffix;
 	
 	// Race Stats
-	public String race;		int level;
-	float experience;		float exp_to_level;
-	float levelExpTotal;
+	public String race;		
+	public float experience;		// Players total experience
+		
+	//public ItemStack itemInHand;
 		
 	// Character Stats
-	int statPtsUsed, statPtsTotal;
-	int dexterity; 	int constitution;
-	int strength;	int intelligence;
-	int attack, defense, parry;
-	int alcoholTolerance;
+	int statPtsUsed, statPtsTotal;	
 	
-	public int drunkenLevel;
+	int alcoholTolerance;	
+	int drunkenLevel;
 			
 	// Character Ablities
 	public int mining;
@@ -54,7 +54,6 @@ public class RPG_Character
 	float fishSkillBar, fishRaceMod, tradeSkillBar, tradeRaceMod;
 	
 	// Modifier values
-	public float fWalkSpeed;
 	public float fSwimSpeed;
 	public float fJumpMult, fGravityMult;
 	
@@ -64,16 +63,12 @@ public class RPG_Character
 	float avgLootBonus, avgHarvestBonus, avgSkillIncrease;
 	int totalSeeds, totalWheat;
 	
-	// Currency Methods
-	int Copper, Silver, Gold;
-		
 	public RPG_Character(Race r, int acc_id)
 	{
-		if(r == null)
-			return;
-		
+		if(r == null || acc_id == 0)
+			return;		
 		// First initialize character to default stats
-		initialize(acc_id);		
+		initialize(acc_id);	
 		// Now adjust the stats for the given race.
 		
 		race 				= r.Name;
@@ -82,7 +77,8 @@ public class RPG_Character
 		constitution 		+= r.con_mod;
 		strength			+= r.str_mod;
 		intelligence		+= r.int_mod;
-		fWalkSpeed			= r.speed;		
+		EntID = mgr_Player.getMCPlayer(acc_id).getEntityId();
+		setSpeed(r.speed);		
 		
 		farmRaceMod			= r.farming;
 		mineRaceMod			= r.mining;
@@ -92,95 +88,52 @@ public class RPG_Character
 		saveCharacter();
 	} // public RPG_Character(Race r)
 	
-	
-	public RPG_Character(){	}
-	
-	public int getGold() { return Gold; }
-	public int getSilver() { return Silver; }
-	public int getCopper() { return Copper; }
-	public void addGold(int gp)	{	Gold += gp; }
-	public void addSilver(int sp) {	 Silver += sp; optimizeCoin(); }
-	public void addCopper(int cp) { Copper += cp; optimizeCoin(); }	
-	public int getAccountID() { return AccountID; }
-	public int getTotalCopper()
-	{	return Copper + (Silver * 100) + (Gold * 10000); }
-	
-	public void optimizeCoin()
-	{	if(Copper > 0)
-		{	while(Copper > 100) { Copper -= 100; Silver += 1; }
-			while(Silver > 100)	{ Silver -= 100; Gold += 1; }
-			return;
-		}		
-		if(Copper < 0)
-		{	while(Copper < 0) { Silver -= 1; Copper += 100;}
-			while(Silver < 0) { Gold -= 1; Silver += 100; }
-			return;
-		}
-		
-	} // public void optimizeCoin()
-	
-	public void removeCopper(int cp, Player p)
+	@Override
+	public void setSpeed(float spd)
 	{
-		if(getTotalCopper() < cp)
-		{	
-			p.sendMessage("[§2RPG§f] Error trying to remove " + cp + " from you.");
-			p.sendMessage("[§2RPG§f] You only have "+ Copper);
-			return;
-		} // if(Copper > cp)
-		
-		Copper -= cp;
-		optimizeCoin();
-				
-	} // public void removeCopper(int cp)
-	
+		if(spd != 0.0)
+			this.speed = spd;
+		SpoutManager.getPlayerFromId(EntID).setWalkingMultiplier(this.speed);
+	}
+	public int getAccountID() { return AccountID; }
 	public String getName() { return Name; }
 	public void setName(String name) { Name = name;  }
-	public void setMCName(String n) { mcName = n; }
-	public String getMCName() { return mcName; }
-	
 	public void addExperience(float exp, SpoutPlayer p)
-	{
-		if(level == 50)
-			return;
-		exp_to_level -= exp;
+	{				
 		experience += exp;
 		
-		if(exp_to_level <= 0)
-		{
-			// Leveled up!
-			// Play Sound, increase level, and recalculate next exp_to_level value
-			level += 1;		
-			exp_to_level = (float)(level * 100) * 1.25f;
-			levelExpTotal = exp_to_level;		
+		if(experience >= expTable[level])
+		{	// Leveled up!
+			level += 1;
+			p.setLevel(level);		
 			
-			SpoutManager.getSoundManager().playCustomSoundEffect(RPGCraft.getPlugin(), p, 
-					"http://tigerstudios.net/minecraft/sounds/levelup.ogg", false);
+			SpoutManager.getSoundManager().playCustomSoundEffect(RPGCraft.getPlugin(), p, "http://tigerstudios.net/minecraft/sounds/levelup.ogg", false);
 			p.sendNotification("Level Up!", "You are now level "+level, Material.DIAMOND);
-			Bukkit.broadcastMessage("   [§2RPG§f] "+p.getName()+" just leveled up! Now "+p.getName()+" is a level "
+			
+			Bukkit.broadcastMessage("    [§2RPG§f] "+p.getName()+" just leveled up! Now "+p.getName()+" is a level "
 					+level+" "+race+".");
-		} // if(exp_to_level <= 0)
-		
-		p.setLevel(level);
-		p.setExp( (levelExpTotal - exp_to_level) / levelExpTotal );				
+		} // if(exp_to_level <= 0)		
+		updateExpBar();			
 	} // public void addExperience(float exp, SpoutPlayer p)
-	
-	public String getDisplaySuffix() {
-		return displaySuffix;
-	}
-
-	public void setDisplaySuffix(String displaySuffix) {
-		this.displaySuffix = displaySuffix;
-	}
-
+	public void updateExpBar()
+	{
+		Player p = mgr_Player.getMCPlayer(AccountID);
+		if(p == null)
+			return;
+		p.setLevel(level);
+		p.setTotalExperience((int)experience);	
+		p.setExp((experience - expTable[level-1]) / (expTable[level] - expTable[level-1]));				
+	} // public void updateExpBar()
+	public String getDisplaySuffix() {return displaySuffix;}
+	public void setDisplaySuffix(String displaySuffix) { this.displaySuffix = displaySuffix; }
 	public void initialize(int acc_id)
 	{	
-		Name = "unnamed";
-		mcName = null;
+		Name = "Commoner";
 		AccountID = acc_id;
 		displayPrefix = "";	
 		setDisplaySuffix("");	
 				
-		race = "default"; level = 1; experience = 0; exp_to_level = 100; 
+		race = "unknown"; level = 1; experience = 0; 
 		dexterity = 5; constitution = 5; strength = 5; intelligence = 5;
 		attack = 1; defense = 1; parry = 1;
 		
@@ -189,9 +142,8 @@ public class RPG_Character
 		enchanting = 1; alchemy = 1; cooking = 1;
 		fishing = 1; trading = 1;
 		
-		Copper = 0;
+		updateExpBar();		
 	} // public void initialize()
-	
 	public int saveCharacter()
 	{ 		
 		String query = null;
@@ -206,7 +158,6 @@ public class RPG_Character
 					"race					= '"+race+"',"+
 					"level					= "+level+","+
 					"experience				= "+experience+","+
-					"exp_to_levelup			= "+exp_to_level+","+
 					"statPointsUsed			= "+statPtsUsed+","+
 					"statPointsTotal        = "+statPtsTotal+","+
 					"strength				= "+strength+","+
@@ -240,26 +191,25 @@ public class RPG_Character
 					"trade                	= "+trading+","+
 					"tradeSkillBar			= "+tradeSkillBar+","+
 					"tradeRaceMod			= "+tradeRaceMod+","+
-					"alcoholTolerance       = "+alcoholTolerance+","+
-					"copper					= "+getTotalCopper()+					
+					"alcoholTolerance       = "+alcoholTolerance+
 					" where char_id="+CharacterID+";";
 			SQLManager.SQLUpdate(query);
 			return CharacterID;
 		} // if(CharacterID != 0)	
 		
 		query = "insert into characters (account_id, name, namePrefix, nameSuffix, race, level,"+
-				"experience, exp_to_levelup, statPointsUsed, statPointsTotal, strength, dexterity, " +
+				"experience, statPointsUsed, statPointsTotal, strength, dexterity, " +
 				"constitution, intelligence, attack, defense, parry, mine, mineSkillBar, mineRaceMod, " +
 				"farm, farmSkillBar, farmRaceMod, blacksmith, blacksmithSkillBar, blacksmithRaceMod, " +
 				"enchant, enchantSkillBar, enchantRaceMod, alchemy, alchemySkillBar, alchemyRaceMod, " +
 				"cook, cookSkillBar, cookRaceMod, fish, fishSkillBar, fishRaceMod, trade, tradeSkillBar, tradeRaceMod, " +
-				"alcoholTolerance, copper) " +
+				"alcoholTolerance) " +
 				"VALUES ("+AccountID+", '"+Name+"', '"+displayPrefix+"', '"+getDisplaySuffix()+"', '"+race+"', "+level+","+
-				experience+","+exp_to_level+","+statPtsUsed+","+statPtsTotal+","+strength+","+dexterity+","+constitution+","+intelligence+","+
+				experience+","+statPtsUsed+","+statPtsTotal+","+strength+","+dexterity+","+constitution+","+intelligence+","+
 				attack+","+defense+","+parry+","+mining+","+mineSkillBar+","+mineRaceMod+","+farming+","+farmSkillBar+","+farmRaceMod+"," +
 				blacksmithing+","+blacksmithSkillBar+","+blacksmithRaceMod+","+enchanting+","+enchantSkillBar+"," +
 				enchantRaceMod+","+alchemy+","+alchemySkillBar+","+alchemyRaceMod+","+cooking+","+cookSkillBar+","+cookRaceMod+"," +
-				fishing+","+fishSkillBar+","+fishRaceMod+","+trading+","+tradeSkillBar+","+tradeRaceMod+","+alcoholTolerance+","+Copper+")"; 
+				fishing+","+fishSkillBar+","+fishRaceMod+","+trading+","+tradeSkillBar+","+tradeRaceMod+","+alcoholTolerance+")"; 
 		
 		SQLManager.SQLUpdate(query);
 		
@@ -273,5 +223,12 @@ public class RPG_Character
 		
 		return CharacterID;
 	} // public boolean savePlayerData()
+	public static void initialize()
+	{
+		expTable = new int[51];
+		expTable[0]=0;
+		for(int i=1; i <= 50; i++)
+			expTable[i] = (int)Math.pow((2 * i), 2) * 50;		
+	}
 	
 } // public class RPG_Character

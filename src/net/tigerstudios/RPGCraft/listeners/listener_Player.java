@@ -23,11 +23,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.player.SpoutPlayer;
-
 
 public class listener_Player implements Listener {
 	private Plugin rpgPlugin = null;
@@ -78,7 +74,7 @@ public class listener_Player implements Listener {
 				short id = item.getDurability();
 				
 				// See if this item is the Cider Ale
-				if(id == RPGCraft.aleID)
+				/*if(id == RPGCraft.aleID)
 				{
 					SpoutPlayer sp = SpoutManager.getPlayer(p);
 					// Increase Drunkeness by 1
@@ -89,7 +85,7 @@ public class listener_Player implements Listener {
 					sp.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 400, character.drunkenLevel + 300));
 										
 					return;
-				} // if(id == RPGCraft.aleID)	
+				} // if(id == RPGCraft.aleID)	*/
 				
 				RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
 				// Important, only do this if within the 10 second timer.
@@ -99,17 +95,23 @@ public class listener_Player implements Listener {
 					return; 
 				}				
 				// Check for Copper, Silver, or Gold
+				double total = 0;
 				if(id == RPGCraft.cp)
-					character.addCopper(item.getAmount());
+					total += item.getAmount();
 				
 				if(id == RPGCraft.sp)
-					character.addSilver(item.getAmount());
+					total += item.getAmount() * 100;
 	
 				if(id == RPGCraft.gp)
-					character.addGold(item.getAmount());
+					total += item.getAmount() * 10000;
 							
 				p.setItemInHand(null);
-				p.sendMessage("[§2RPG§f] Balance: §6"+rpgPlayer.getCharacter().getGold()+" Gold§f, §7"+rpgPlayer.getCharacter().getSilver()+" Silver§f, §c"+rpgPlayer.getCharacter().getCopper()+" Copper§f.");
+				RPGCraft.econ.depositPlayer(p.getName(), total);
+				double g = 0, s = 0, c;
+				c = RPGCraft.econ.getBalance(p.getName());
+				while(c >= 100){ s+=1; c-=100;}
+				while(s >= 100){ g+=1; s-=100;}
+				p.sendMessage("[§2RPG§f] Balance: §6"+g+" Gold§f, §7"+s+" Silver§f, §c"+c+" Copper§f.");	
 			} // if(character != null)
 		 }// if(item.getDurability() > 1023)
 	} // public void onPlayerInteract(final PlayerInteractEvent event)
@@ -157,13 +159,7 @@ public class listener_Player implements Listener {
 			}			
 		} catch (SQLException e) { e.printStackTrace();	}
 		
-		mgr_Player.playerLogin(p);		
-		/*GUIListener.fullTwoWay(p);
-		
-		RPG_Character rpgChar = mgr_Player.getCharacter(p);
-		if(rpgChar != null)
-			SpoutFeatures.setWalkingSpeed(SpoutManager.getPlayer(p), rpgChar.fWalkSpeed);
-		*/
+		mgr_Player.playerLogin(p);			
 		return;		
 	} // public void onPlayerJoin(final PlayerJoinEvent event)
 	

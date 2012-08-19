@@ -16,31 +16,24 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.ClientOnly;
 import org.getspout.spoutapi.SpoutManager;
 
+import com.massivecraft.factions.Faction;
+
 
 
 import ru.tehkode.permissions.PermissionUser;
 
 public class SpoutFeatures {
 	private static Plugin rpgPlugin = null;
-	//private static CTextFileWriter fLog = null;
-	
 	private static boolean enabled = false;
 	public static boolean isEnabled() { return enabled; }
 
-	// -------------------------------------------- //
-	// SETUP AND AVAILABILITY
-	// -------------------------------------------- //
-
-	
 	public static boolean setup(Plugin plug)
 	{
 		Plugin plugin = Bukkit.getPluginManager().getPlugin("Spout");
-		//fLog = new CTextFileWriter(RPGCraft.logDirectory + "spoutFeatures.log");
-		
+				
 		rpgPlugin = plug;
-		if (plugin == null || ! plugin.isEnabled())
-		{
-			if (enabled == false) return false;
+		if (plugin == null || !plugin.isEnabled())
+		{	if (enabled == false) return false;
 			enabled = false;
 			return false;
 		}
@@ -66,17 +59,7 @@ public class SpoutFeatures {
 		SpoutManager.getFileManager().addToPreLoginCache(rpgPlugin, "http://tigerstudios.net/minecraft/sounds/levelup.ogg");
 		SpoutManager.getFileManager().addToPreLoginCache(rpgPlugin, "http://tigerstudios.net/minecraft/sounds/ZombieComeHere.ogg");
 	} // public void preLoadResources()
-	
-	
-	@ClientOnly
-	public static void setWalkingSpeed(SpoutPlayer p, float spd)
-	{
-		// make sure speed is not set too high... ( > 6) 
-		if(spd > 6.0F) spd = 6.0F;  if(spd < 0.0F) spd = 0.5F;
-			p.setWalkingMultiplier(spd);
-	} // public static void setWalkingSpeed(Player p, float spd)   
 		
-	
 	public static void updateTitle(final Object ofrom, final Object oto, boolean onlyIfDifferent)
 	{	// Enabled and non-null?
 		if ( ! isEnabled()) return;
@@ -110,13 +93,8 @@ public class SpoutFeatures {
 	public static void updateTitleShortly(final Object ofrom, final Object oto)
 	{
 		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(rpgPlugin, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				updateTitle(ofrom, oto, false);
-			}
-		}, 5);
+		{	@Override
+			public void run()	{	updateTitle(ofrom, oto, false);	}	}, 5);
 	} // public static void updateTitleShortly(final Object ofrom, final Object oto)
 		
 	
@@ -131,10 +109,8 @@ public class SpoutFeatures {
 		
 		String color = null;		
 		int health = player.getHealth();
-		if(health >= 0) color = "&4";
-		if(health >= 5) color = "&6";
-		if(health >= 10) color = "&e";
-		if(health >= 15) color = "&2";		
+		if(health >= 0) color = "&4";	if(health >= 5) color = "&6";
+		if(health >= 10) color = "&e";	if(health >= 15) color = "&2";		
 		
 		ret = ret + color + player.getDisplayName();
 		
@@ -161,16 +137,16 @@ public class SpoutFeatures {
 		else if (o instanceof RPG_Character)
 		{
 			RPG_Character rpgPlayer = (RPG_Character)o;
-			Player player = Bukkit.getPlayer(rpgPlayer.getMCName());
+			Player player = mgr_Player.getMCPlayer(rpgPlayer.getAccountID());
 			if (player != null)
 			{
 				ret.add(player);
 			}
-		}/*
+		}
 		else if (o instanceof Faction)
 		{
 			ret.addAll(((Faction)o).getOnlinePlayers());
-		}*/
+		}
 		else
 		{
 			ret.addAll(Arrays.asList(Bukkit.getOnlinePlayers()));

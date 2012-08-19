@@ -102,7 +102,6 @@ public class RaceSelection extends GenericPopup{
 		btnSelect.setX(x + (width - 45)).setY(y + (height - 15));
 					
 		this.attachWidget(plugin, lstRaces);
-		
 		this.attachWidget(plugin, btnSelect);			
 							
 		sPlayer.getMainScreen().attachPopupScreen(this);
@@ -121,12 +120,8 @@ public class RaceSelection extends GenericPopup{
 		RPG_Player play = mgr_Player.getPlayer(sPlayer.getName().hashCode());
 		RPG_Character rc = new RPG_Character(RaceSystem.getRace(race), play.getAccountID());
 				
-		rc.saveCharacter();			
 		play.setCharacter(rc);
-		sPlayer.setLevel(0);
-		sPlayer.setExp(0);
-				
-		SpoutFeatures.setWalkingSpeed(sPlayer, rc.fWalkSpeed);
+						
 		SpoutFeatures.updateTitle(sPlayer, null);
 		
 		sPlayer.sendMessage("[§2RPG§f] You are now a "+race);

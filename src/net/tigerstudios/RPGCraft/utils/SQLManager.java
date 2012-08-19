@@ -43,7 +43,6 @@ public class SQLManager {
 		
 		// Set the Version of the Database
 		dbVersion = config.getInt("version");
-		System.out.println("Version: "+dbVersion);
 		
 		return true;		
 	} // static public boolean initialize(String name)
@@ -157,20 +156,19 @@ public class SQLManager {
 					"account_id SMALLINT UNSIGNED NOT NULL," +		// Foreign key
 					"name varchar(16) NOT NULL," +
 					"namePrefix varchar(32), 	nameSuffix varchar(64), "+
-					"race varchar(10), level tinyint, experience int, exp_to_levelup int, " +
+					"race varchar(10), level tinyint, experience int, " +
 					"strength int, dexterity int, constitution int, intelligence int, " +
 					"statPointsUsed int, statPointsTotal int, " +
 					"attack int, defense int, parry int," +
-					"mine int, mineSkillBar float, mineRaceMod float, " +
-					"farm int, farmSkillBar float, farmRaceMod float, " +
-					"blacksmith int, blacksmithSkillBar float, blacksmithRaceMod float, "+
-					"enchant int, enchantSkillBar float, enchantRaceMod float, " +
-					"alchemy int, alchemySkillBar float, alchemyRaceMod float, " +
-					"cook int, cookSkillBar float, cookRaceMod float, " +
-					"fish int, fishSkillBar float, fishRaceMod float, " +
-					"trade int, tradeSkillBar float, tradeRaceMod float, "+
-					"alcoholTolerance int, thrist int, "+
-					"copper int"+					
+					"mine int, mineSkillBar float, " +
+					"farm int, farmSkillBar float, " +
+					"blacksmith int, blacksmithSkillBar float, "+
+					"enchant int, enchantSkillBar float, " +
+					"alchemy int, alchemySkillBar float, " +
+					"cook int, cookSkillBar float, " +
+					"fish int, fishSkillBar float, " +
+					"trade int, tradeSkillBar float, "+
+					"alcoholTolerance int, thrist int"+										
 					");");
 		} // if(SQLiteManager.TableExists("characters", "RPGCraft") == false)
 		
@@ -210,10 +208,10 @@ public class SQLManager {
 	// the database structure.  This method will be changed over time as things change.
 	private static void dbUpdate(int ver)
 	{
-		ResultSet rs = SQLManager.SQLQuery("select dbVersion from RPGCraft;");
+		ResultSet rs = SQLQuery("select dbVersion from RPGCraft;");
 	
 		try { rs.next();
-			if(ver == rs.getInt(dbVersion))
+			if(ver == rs.getInt("dbVersion"))
 			{	// Database is up to date
 				rs.close();
 				return;
@@ -221,9 +219,21 @@ public class SQLManager {
 			rs.close();
 		} catch (SQLException e) { e.printStackTrace();}								
 				
-		// Need to update to newest version, 1
-		SQLUpdate("alter table Accounts add lastOnline DATE;");
-		SQLUpdate("alter table Accounts add totalTimeOnline TIME;");
+		if(ver == 1)
+		{	// Need to update to newest version, 1
+			SQLUpdate("alter table Accounts add lastOnline DATE;");
+			SQLUpdate("alter table Accounts add totalTimeOnline TIME;");
+		}
+		
+		if(ver > 2)
+		{	rs = SQLQuery("select * from Accounts, Characters where Accounts.account_id = Characters.account_id and copper > 0;");
+			try{
+				while(rs.next()){;
+					RPGCraft.econ.depositPlayer(rs.getString("mc_Name"), rs.getInt("copper"));
+					RPGCraft.log.info("[RPGCraft] Transfered "+rs.getInt("copper")+" to "+rs.getString("mc_Name")+" account.");
+				}
+			}catch (SQLException e) { e.printStackTrace();}	
+		}
 		SQLUpdate("update RPGCraft set dbVersion = "+ver+";");		
 	} // private static void dbUpdate(int ver)
 	

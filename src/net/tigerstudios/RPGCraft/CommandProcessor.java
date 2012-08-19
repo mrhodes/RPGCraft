@@ -1,8 +1,8 @@
 package net.tigerstudios.RPGCraft;
 
+import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
 
 import org.bukkit.entity.Player;
-
 
 public class CommandProcessor{
 		
@@ -47,9 +47,9 @@ public class CommandProcessor{
 				} // if(rc == null)
 				else
 				{
-					sender.sendMessage("Level "+rc.level+" "+rc.race);
-					sender.sendMessage("Strength: "+rc.strength+",  Dexterity: "+rc.dexterity+",  Constitution: "+rc.constitution+",  Intelligence: "+rc.intelligence);			
-					sender.sendMessage("Attack: "+rc.attack+",  Defense: "+rc.defense+",  Parry: "+rc.parry);
+					sender.sendMessage("Level "+rc.getLevel()+" "+rc.race);
+					sender.sendMessage("Strength: "+rc.getStrength()+",  Dexterity: "+rc.getDexterity()+",  Constitution: "+rc.getConstitution()+",  Intelligence: "+rc.getIntelligence());			
+					sender.sendMessage("Attack: "+rc.getAttack()+",  Defense: "+rc.getDefense()+",  Parry: "+rc.getParry());
 					sender.sendMessage("Farming: "+rc.farming+",  Mining: "+rc.mining+",  Enchanting: "+rc.enchanting+", Alchemy: "+rc.alchemy);
 				}				
 				sender.sendMessage(RPGCraft.divider);
@@ -57,6 +57,25 @@ public class CommandProcessor{
 				return true;				
 			} // if(args[0].equalsIgnoreCase("stats"))
 		} // if(args.length == 1)
+		
+		if(args.length == 2)
+		{
+			if(args[0].equalsIgnoreCase("choose"))
+			{
+				String race = args[1];
+				
+				RPG_Player play = mgr_Player.getPlayer(sender.getName().hashCode());
+				RPG_Character rc = new RPG_Character(RaceSystem.getRace(race), play.getAccountID());
+								
+				play.setCharacter(rc);
+			
+				SpoutFeatures.updateTitle(sender, null);
+				
+				sender.sendMessage("[§2RPG§f] You are now a "+race);
+				sender.sendMessage("[§2RPG§f] Have fun!");				
+			}
+			return true;
+		} // if(args.length == 2)
 		
 		return true;
 	} // public static boolean rpgCommands(Player sender, String[] args)

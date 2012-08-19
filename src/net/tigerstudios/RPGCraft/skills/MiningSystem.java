@@ -1,11 +1,15 @@
 package net.tigerstudios.RPGCraft.skills;
 
-import java.util.Collection;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
+import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.mgr_Player;
 
@@ -22,8 +26,6 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 public class MiningSystem {
 	private static Random randomizer = new Random();
 	
-	// TODO: Save this value to the database when server shuts down
-	// ad load from database when server starts
 	public static Map<Location,Integer> placedBlocks = new HashMap<Location,Integer>();
 	
 	public static boolean mine(Block bTarget, Player pMiner, ItemStack iPickaxe)
@@ -55,8 +57,7 @@ public class MiningSystem {
 		if(matPick == Material.STONE_PICKAXE) {toolValue = 10; toolMod = 1.0f;maxUses = 132;}
 		if(matPick == Material.IRON_PICKAXE) {toolValue = 20; toolMod = 1.2f;maxUses = 251;}
 		if(matPick == Material.GOLD_PICKAXE) {toolValue = 50; toolMod = 2.0f;maxUses = 33;}
-		if(matPick == Material.DIAMOND_PICKAXE) {toolValue = 35; toolMod = 1.5f;maxUses = 1562;}
-		
+		if(matPick == Material.DIAMOND_PICKAXE) {toolValue = 35; toolMod = 1.5f;maxUses = 1562;}		
 		
 	// TODO: Make this check based on skill and not race directly
 		// Make sure the player can use this tool
@@ -117,17 +118,22 @@ public class MiningSystem {
 		case GOLD_BLOCK:
 			matDrop = Material.GOLD_BLOCK;	blockValue = 25;lootMax = 1; bNoExp = false; break;
 		case REDSTONE_ORE:
+		case GLOWING_REDSTONE_ORE:
 			matDrop = Material.REDSTONE;	blockValue = 25;lootMax = 8;	break;
+		
+		case EMERALD_ORE:
+			matDrop = Material.EMERALD;	blockValue = 25;lootMax = 3;	break;			
 			
 		case DIAMOND_ORE:
 			matDrop = Material.DIAMOND;		blockValue = 30;lootMax = 3;	break;	
+		
+		case EMERALD_BLOCK:
+			matDrop = Material.EMERALD_BLOCK;	blockValue = 30;lootMax = 1;	break;	
 			
 		case DIAMOND_BLOCK:
 			matDrop = Material.DIAMOND_BLOCK; blockValue = 35; lootMax = 1; bNoExp = false; break;
 		case OBSIDIAN:
 			matDrop = Material.OBSIDIAN;	blockValue = 35;lootMax = 2;	break;
-			
-		// Emerald: 40
 			
 			default:
 				blockValue = 0;							
@@ -135,8 +141,7 @@ public class MiningSystem {
 		
 		// Make sure player can mine this block
 		if(mineLevel < blockValue)
-		{
-			pMiner.sendMessage("[§2RPG§f] You are not able to mine "+bTarget.getType().name());
+		{	pMiner.sendMessage("[§2RPG§f] You are not able to mine "+bTarget.getType().name());
 			pMiner.sendMessage("[§2RPG§f] at your level.  You need at least "+blockValue+" in mining.");
 			return true;
 		}// if(mineLevel < blockValue)
@@ -151,14 +156,11 @@ public class MiningSystem {
 		// Prepare and drop loot
 		ItemStack loot = new ItemStack(matDrop, 1);
 		if(matDrop.equals(Material.INK_SACK))
-		{	loot.setDurability((short) 4);
-		}
-		
+			loot.setDurability((short) 4);
 		
 		Location loc = bTarget.getLocation();
 		if(!placedBlocks.isEmpty())
-		{
-			if(placedBlocks.containsKey(loc))
+		{	if(placedBlocks.containsKey(loc))
 			{	// ok, this player has placed blocks.... check for duping
 				// exploit
 				bTarget.getWorld().dropItemNaturally(loc, loot);
@@ -167,9 +169,7 @@ public class MiningSystem {
 				pMiner.sendMessage("[§2RPG§f] You can't gain experience with placed blocks.");
 				placedBlocks.remove(loc);
 			}// if(placedBlocks.containsKey(loc))
-		} // if(!placedBlocks.isEmpty())
-		
-		
+		} // if(!placedBlocks.isEmpty())		
 		
 		// Special Checks for enchanted Items
 		float dropPercent = 1.0f;
@@ -177,7 +177,7 @@ public class MiningSystem {
 		{
 			// Need to get a random number.
 			int chance = randomizer.nextInt(10000 + 1);
-					
+			
 			boolean bDmgTool = false;
 			
 			// Fortune Enchantment - Somewhat modified
@@ -250,9 +250,47 @@ public class MiningSystem {
 	
 	
 	public MiningSystem(Plugin p)
-	{
-		randomizer.setSeed(System.nanoTime());
-		placedBlocks.clear();	
+	{	randomizer.setSeed(System.nanoTime());
+		placedBlocks = loadPlacedBlocks();
 	} // public MiningSystem(Plugin p)
+	
+	
+	public static void shutDown()
+	{
+		if(!placedBlocks.isEmpty())
+			save((HashMap<Location, Integer>) placedBlocks);		
+	} // public static void shutDown()
+	// --------------------------------------------------------------
+	// Save and load the Map of player placed blocks.  This is to 
+	// prevent players from cheating by placing blocks and rebreaking
+	// them to level up fast and dupe blocks from multiple drops 
+	public static void save(HashMap<Location,Integer> map)
+	{	try
+		{	ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(RPGCraft.mainDirectory+"placedBlocks.bin"));
+			oos.writeObject(map);
+			oos.flush();
+			oos.close();
+			//Handle I/O exceptions
+		}
+		catch(Exception e)
+		{	e.printStackTrace();	}
+	} // public void save(HashMap<Location,Integer> map, String path)
+	
+	@SuppressWarnings(value = {"resource", "unchecked" })
+	public HashMap<Location,Integer> loadPlacedBlocks()
+	{	placedBlocks.clear();
+		
+		ObjectInputStream ois;
+		try {
+			ois = new ObjectInputStream(new FileInputStream(RPGCraft.mainDirectory+"placedBlocks.bin"));
+			Object result = ois.readObject();
+			RPGCraft.log.info("[RPGCraft-INFO] - Placed Blocks file loaded successfully.");
+			return (HashMap<Location,Integer>)result;	
+		} catch (Exception e)
+		{
+			RPGCraft.log.info("[RPGCraft-INFO] - Placed Blocks file does not exist.");
+		}
+		return (HashMap<Location, Integer>) placedBlocks;
+	} // public HashMap<Location,Integer> loadPlacedBlocks()
 	
 } // public class MiningSystem

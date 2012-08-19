@@ -56,6 +56,7 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 		int width = 175; int height = 150;
 		int x = screenXCenter - (width / 2);
 		int y = screenYCenter - (height / 2);
+		int btnPosX = x - 80;  int btnPosY = 0;
 		
 		this.setX(x).setY(y);
 		this.setWidth(width).setHeight(height);
@@ -94,10 +95,17 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 				exit();
 				RaceSelection.create(rpgPlugin, sPlayer);}
 		};
-		button.setX(x - 80).setY(y);
+		button.setX(btnPosX).setY(btnPosY);
 		button.setWidth(75).setHeight(15);
 		this.attachWidget(rpgPlugin, button);	
 		
+		btnPosY+=20;
+		button = new GenericButton("Character"){
+			
+		};
+		button.setX(btnPosX).setY(btnPosY);
+		button.setWidth(75).setHeight(15);
+		this.attachWidget(rpgPlugin, button);		
 		
 		// Setup the advanced users buttons.
 		// Only admin buttons available for now
@@ -109,7 +117,7 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 					AdminConfig.create(RPGCraft.getPlugin(), sPlayer.getPlayer());
 				} // public void onButtonClick(ButtonClickEvent ev)			
 			};
-			button.setX(x - 80).setY(y + 20);
+			button.setX(btnPosX).setY(btnPosY);
 			button.setWidth(75).setHeight(15);
 			this.attachWidget(rpgPlugin, button);
 			

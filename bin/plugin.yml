@@ -3,7 +3,7 @@ version: 0.8.0
 author: Michael Rhodes
 website: http://tigerstudios.net/minecraft
 main: net.tigerstudios.RPGCraft.RPGCraft
-depend: [Spout]
+depend: [Spout, Essentials]
 
 commands:
     rpg:

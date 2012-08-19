@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import net.milkbowl.vault.economy.Economy;
+import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
+import net.tigerstudios.RPGCraft.CombatSystem.mgr_Mob;
 import net.tigerstudios.RPGCraft.SpoutFeatures.GUIListener;
 import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
 import net.tigerstudios.RPGCraft.gui.RPGMainWindow;
@@ -34,12 +37,14 @@ import net.tigerstudios.RPGCraft.listeners.listener_Block;
 import net.tigerstudios.RPGCraft.listeners.listener_Entity;
 import net.tigerstudios.RPGCraft.listeners.listener_Player;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
+import net.tigerstudios.RPGCraft.skills.MiningSystem;
 import net.tigerstudios.RPGCraft.utils.MathMethods;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 import net.tigerstudios.RPGCraft.utils.custom.CCoin;
 import net.tigerstudios.RPGCraft.utils.custom.CFood;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -50,6 +55,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import org.getspout.spoutapi.SpoutManager;
@@ -68,6 +74,7 @@ public class RPGCraft extends JavaPlugin{
 	public static Logger log = null;	
 		
 	private static Server mcServer;	
+	public static Economy econ = null;
 
 		
 	// Listener Classes to handle the events
@@ -87,15 +94,17 @@ public class RPGCraft extends JavaPlugin{
 	
 	// All items that need to have some sort of category associated to them.
 	public static Map<String, String> itemCategories = new HashMap<String,String>();
-	
+		
 	static FileConfiguration config = null;				
 
 	@Override
 	public void onDisable() {		
 		// Shutdown all Manager classes
 		try {
+			mgr_Mob.shutdown();
 			mgr_Player.SaveAllData();
 			mgr_Player.logoutAllPlayers();
+			MiningSystem.shutDown();
 			SQLManager.closeConnection("RPGCraft");
 		} catch (SQLException e1) { e1.printStackTrace();}		
 	
@@ -132,10 +141,10 @@ public class RPGCraft extends JavaPlugin{
 		loadConfig();
 		
 		new File(logDirectory).mkdirs();		// Make the log Directory
-			
-		
-		//setupCitizens();
-		setupPermissions();		
+					
+		setupCitizens();
+		setupPermissions();	
+		setupEconomy();
 		if(!SQLManager.setupDatabase())
 			return false;		
 	
@@ -150,10 +159,11 @@ public class RPGCraft extends JavaPlugin{
 		aleMug = new CFood(this, "Cider Ale", webBase+"textures/mug1.png", 0);
 						
 		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
-		aleID = aleMug.getCustomId();		
+		aleID = aleMug.getCustomId();
 		
-		setupRecipies();		
+		setupRecipies();
 		mgr_Player.initialize(this);
+		RPG_Character.initialize();
 						
 		currencyListener = new listener_Currency();
 									
@@ -171,7 +181,7 @@ public class RPGCraft extends JavaPlugin{
 		KeyBindingManager kMan = SpoutManager.getKeyBindingManager();
 		kMan.registerBinding("net.tigerstudios.rpgcraft.mainwin",
 			Keyboard.KEY_R, "Load the RPGCraft Main Window", new RPGMainWindow(), RPGCraft.getPlugin());
-		
+				
 		return true;
 	} // private boolean initializeRPGCraft()	
 	
@@ -205,7 +215,7 @@ public class RPGCraft extends JavaPlugin{
 	} // public void setupPermissions()	
 	
 	
-	/*public void setupCitizens()
+	public void setupCitizens()
 	{	PluginManager pm = getServer().getPluginManager();
 	    Plugin test = pm.getPlugin("Citizens");
 	    if (test != null) {
@@ -213,8 +223,7 @@ public class RPGCraft extends JavaPlugin{
 	        bCitizensLoaded = true;
 	    } else {
 	        System.out.println("[RPGCraft] ---> Citizens isn't loaded.");
-	        bCitizensLoaded = false;
-	    }
+	        bCitizensLoaded = false;	    }
 	    
 	    test = pm.getPlugin("Factions");
 	    if (test != null) {
@@ -225,42 +234,32 @@ public class RPGCraft extends JavaPlugin{
 	        bFactionsLoaded = false;
 	    }
 	} // public void setupCitizens()
-	*/
 	
-	
+	private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        econ = rsp.getProvider();
+        return econ != null;
+    } //private boolean setupEconomy()
+		
 	public void loadConfig()
 	{	config = this.getConfig();
-		String path = "DropRates.Creature";
-		
+				
 		config.createSection("URL Images");
 		config.addDefault("URL Images."+ "copperIcon", webBase+"textures/copper.png");
 		config.addDefault("URL Images." + "silverIcon", webBase+"textures/silver.png");
 		config.addDefault("URL Images." +"goldIcon", webBase+"textures/gold.png");
-				
-		config.addDefault("DropRates.monsters", 80);
-		
-		// Set Defaults rates for Monsters
-		config.addDefault(path + ".Blaze", 75);
-		config.addDefault(path + ".CaveSpider", 65);
-		config.addDefault(path + ".Creeper", 70);
-		config.addDefault(path + ".EnderDragon", 100);
-		config.addDefault(path + ".EnderMan", 8);
-		config.addDefault(path + ".Ghast", 75);
-		config.addDefault(path + ".Giant", 80);
-		config.addDefault(path + ".MagmaCube", 60);
-		config.addDefault(path + ".PigZombie", 55);
-		config.addDefault(path + ".SilverFish", 50);
-		config.addDefault(path + ".Skeleton", 70);
-		config.addDefault(path + ".Slime", 60);
-		config.addDefault(path + ".Zombie", 70);
-		config.addDefault(path + ".Spider", 75);		
-				
+						
 		config.options().copyDefaults(true);
 		saveConfig();
 	} // public void loadConfig()
 	
-	public static FileConfiguration getRPGConfig() { return config; }
-	
+	public static FileConfiguration getRPGConfig() { return config; }	
 	
 	private void setupRecipies()
 	{
@@ -270,13 +269,10 @@ public class RPGCraft extends JavaPlugin{
 		ciderAle.addIngredient(Material.APPLE);
 		ciderAle.addIngredient(Material.POTION);	
 		ciderAle.addIngredient(Material.SUGAR);
-		
+				
 		Bukkit.addRecipe(ciderAle);		
 	} // private void setupRecipies()
 	
-
-	
 	public static Plugin getPlugin() { return rpgPlugin; }
-	public static Server getBukkitServer() { return mcServer; }
-	
+	public static Server getBukkitServer() { return mcServer; }	
 } // public class RPGCraft extends JavaPlugin{

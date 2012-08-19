@@ -1,6 +1,5 @@
 package net.tigerstudios.RPGCraft.gui;
 
-
 import java.util.List;
 
 import net.tigerstudios.RPGCraft.RPGCraft;

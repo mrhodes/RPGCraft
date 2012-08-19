@@ -11,17 +11,29 @@ import net.tigerstudios.RPGCraft.utils.SQLManager;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
-
 public class mgr_Player {
 	private static Map<Integer, RPG_Player> rpgPlayers = new HashMap<Integer, RPG_Player>(); 
+	private static Map<Integer, Player> mcPlayers = new HashMap<Integer, Player>();
 		
+	
 	public static RPG_Player getPlayer(int nameHash)
 	{	// If there are no player loaded or the name provided is null, just return
 		if(rpgPlayers.isEmpty() || nameHash == 0)
-			return null;		
+			return null;
 		
 		return rpgPlayers.get(nameHash);				
 	} // public static RPG_Player getPlayer(String name)
+	
+	
+	public static Player getMCPlayer(int id)
+	{		
+		if(mcPlayers.size() == 0 || id == 0)
+			return null;
+		
+		return mcPlayers.get(id);
+	} // public static Player getMCPlayer(int id)
+	
+	
 	public static RPG_Character getCharacter(Player player)
 	{
 		if(rpgPlayers.isEmpty() || (player == null))
@@ -51,13 +63,10 @@ public class mgr_Player {
 	} // public boolean playerRegister(Player p, String name)
 	public static boolean playerLogin(Player p)
 	{
-		String query;
-		ResultSet rs;
-		int account_id = 0;
-		RPG_Player rpgPlayer;
+		int account_id = 0;		
 		
-		query = "SELECT account_id from Accounts WHERE mc_Name = '"+p.getName()+"'";
-		rs = SQLManager.SQLQuery(query);
+		String query = "SELECT account_id from Accounts WHERE mc_Name = '"+p.getName()+"'";
+		ResultSet rs = SQLManager.SQLQuery(query);
 		
 		// No reason this should fail
 		try {
@@ -70,12 +79,9 @@ public class mgr_Player {
 		if(account_id == 0)
 			return false;
 		
-		// Returning player, create a RPG Character for this player.
-		rpgPlayer = new RPG_Player(p.getName(), account_id);
-			
-									
-		// Add this player to the Player map
-		rpgPlayers.put(p.getName().hashCode(), rpgPlayer);		
+		// Store Player object in Map for safe keeping, AccountID is the Key
+		mcPlayers.put(account_id, p);
+		rpgPlayers.put(p.getName().hashCode(), new RPG_Player(p.getName(), account_id));		
 				
 		return true;
 	} // public static boolean playerLogin(Player p)
@@ -90,17 +96,13 @@ public class mgr_Player {
 		{	rpgPlayer.saveCharacterData();				
 			rpgPlayer.setPlayer(null);
 			
-			// Remove this player from the collection on player data
+			// Remove this player from the collection of player data
 			rpgPlayers.remove(p.getName().hashCode());
+			mcPlayers.remove(rpgPlayer.getAccountID());
 		} // if(rpgPlayer != null)
 		return;
 	} // public boolean playerLogout(Player p, String name)	
 	
-	public static int getPlayerCount()
-	{
-		return rpgPlayers.size();
-	} // public static int getPlayerCount()
-				
 	public static void SaveAllData()
 	{
 		Collection<RPG_Player> players = rpgPlayers.values();
