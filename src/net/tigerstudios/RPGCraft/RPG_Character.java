@@ -78,6 +78,8 @@ public class RPG_Character extends RPG_Entity
 		saveCharacter();
 	} // public RPG_Character(Race r)
 	
+	public RPG_Character() {}
+
 	@Override
 	public void setSpeed(float spd)
 	{
@@ -207,7 +209,7 @@ public class RPG_Character extends RPG_Entity
 		expTable = new int[51];
 		expTable[0]=0;
 		for(int i=1; i <= 50; i++)
-			expTable[i] = (int)Math.pow((2 * i), 2) * 50;		
+			expTable[i] = (int)Math.pow((2 * i), 2) * 50;
 	}
 	
 } // public class RPG_Character

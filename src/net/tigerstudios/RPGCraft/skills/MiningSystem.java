@@ -92,7 +92,7 @@ public class MiningSystem {
 		switch(matBlock)
 		{
 		case STONE:
-			matDrop = Material.COBBLESTONE;	blockValue = 1;	lootMax = 2;	break;			
+			matDrop = Material.COBBLESTONE;	blockValue = 1;	lootMax = 1;	break;			
 		case COBBLESTONE:
 			matDrop = Material.COBBLESTONE;	blockValue = 1;	lootMax = 1;	break;			
 		
@@ -118,18 +118,23 @@ public class MiningSystem {
 			
 		case GOLD_BLOCK:
 			matDrop = Material.GOLD_BLOCK;	blockValue = 25;lootMax = 1; bNoExp = false; break;
+		
 		case REDSTONE_ORE:
+			matDrop = Material.REDSTONE; blockValue = 25; lootMax = 8; break;
 		case GLOWING_REDSTONE_ORE:
-			matDrop = Material.REDSTONE;	blockValue = 25;lootMax = 8;	break;
+			matDrop = Material.REDSTONE; blockValue = 25; lootMax = 8; break;
 		
 		case EMERALD_ORE:
-			matDrop = Material.EMERALD;	blockValue = 25;lootMax = 3;	break;			
+			matDrop = Material.EMERALD;	blockValue = 25; lootMax = 3; break;			
 			
 		case DIAMOND_ORE:
 			matDrop = Material.DIAMOND;		blockValue = 30;lootMax = 3;	break;	
 		
 		case EMERALD_BLOCK:
-			matDrop = Material.EMERALD_BLOCK;	blockValue = 30;lootMax = 1;	break;	
+			matDrop = Material.EMERALD_BLOCK;
+			blockValue = 30;
+			lootMax = 1;
+			break;	
 			
 		case DIAMOND_BLOCK:
 			matDrop = Material.DIAMOND_BLOCK; blockValue = 35; lootMax = 1; bNoExp = false; break;

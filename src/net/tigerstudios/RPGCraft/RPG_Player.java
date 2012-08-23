@@ -67,10 +67,12 @@ public class RPG_Player{
 		try {
 			if(rs.next())
 			{
-				RPG_Character character = new RPG_Character(RaceSystem.getRace(rs.getString("race")), rs.getInt("account_id"));				
-									
+				RPG_Character character = new RPG_Character();				
+					
+				character.AccountID 	= AccountID;
 				character.CharacterID	= rs.getInt("char_id");
 				character.setName(rs.getString("name"));
+				character.race			= rs.getString("race");
 				character.displayPrefix	= rs.getString("namePrefix");
 				character.setDisplaySuffix(rs.getString("nameSuffix"));
 				character.setLevel(rs.getInt("level"));
@@ -94,7 +96,7 @@ public class RPG_Player{
 				character.alcoholTolerance = rs.getInt("alcoholTolerance");
 				rs.close();
 				
-				character.setSpeed(RaceSystem.getRace(character.race).speed);
+				//character.setSpeed(RaceSystem.getRace(character.race).speed);
 								
 				character.updateExpBar();				
 				setCharacter(character);				

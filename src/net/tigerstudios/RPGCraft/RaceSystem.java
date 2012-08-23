@@ -32,13 +32,13 @@ public class RaceSystem {
 	// strings.
 	public static float getModifier(String race, String mod)
 	{	if(mod.equalsIgnoreCase("mine"))
-			return races.get(race).mining;
+			return races.get(race.toLowerCase()).mining;
 		if(mod.equalsIgnoreCase("farm"))
-			return races.get(race).farming;
+			return races.get(race.toLowerCase()).farming;
 		if(mod.equalsIgnoreCase("enchant"))
-			return races.get(race).enchanting;
+			return races.get(race.toLowerCase()).enchanting;
 		if(mod.equalsIgnoreCase("alchemy"))
-			return races.get(race).alchemy;
+			return races.get(race.toLowerCase()).alchemy;
 		
 		return 1.0f;
 	} // public static float getModifier(String race, String mod)

@@ -12,8 +12,8 @@ public class mgr_Mob {
 		
 	
 	public static void createMob(LivingEntity ent)
-	{
-		RPG_Mob mob = new RPG_Mob(ent);		
+	{		
+		RPG_Mob mob = new RPG_Mob(ent, 1);
 		mobList.put(ent.getEntityId(), mob);
 	} // public static void createMob(LivingEntity ent)
 	
@@ -23,8 +23,7 @@ public class mgr_Mob {
 	
 	public static void removeMob(int id)
 	{		
-		mobList.remove(id);
-		
+		mobList.remove(id);		
 	} // public static void removeMob(int id)
 	
 	// Empty Constructor

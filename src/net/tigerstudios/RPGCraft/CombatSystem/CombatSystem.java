@@ -13,12 +13,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.getspout.spoutapi.player.SpoutPlayer;
+import org.bukkit.inventory.ItemStack;
 
 // 
 public class CombatSystem implements Listener{
 	private Player mcPlayer = null;
-	private SpoutPlayer sPlayer = null;
+	
 	
 	@EventHandler
 	public void onEntityDamageByEntity(final EntityDamageByEntityEvent event)
@@ -49,15 +49,6 @@ public class CombatSystem implements Listener{
 		if(event.getEntity() instanceof Monster)defender = mgr_Mob.getMob(event.getEntity().getEntityId());
 		
 		event.setDamage(calculateDamage(attacker, defender, 0));
-				
-		/*if(event.getDamager() instanceof Zombie)
-		{
-			// Play random sound effect...
-			if(MathMethods.rnd.nextInt(1000 + 1) <= 100)
-				SpoutManager.getSoundManager().playCustomSoundEffect(RPGCraft.getPlugin(),
-					SpoutManager.getPlayer((Player)event.getEntity()), 
-					RPGCraft.webBase+"sounds/ZombieComeHere.ogg", false);			
-		} // if(event.getDamager() instanceof Monster)*/
 		
 	} // public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
 	
@@ -102,29 +93,90 @@ public class CombatSystem implements Listener{
 		
 		// Attacker rolls a D20, if a 1 auto miss, 20 is auto hit.
 		int attackRoll = MathMethods.rnd.nextInt(20) + 1;
-		if(attackRoll == 1)
-		{	p.sendMessage("Missed!");
-			return 0;
-		}
+		int armorClass = defender.getArmorClass();
+		
+		if(attackRoll == 1)	{ return 0; }
+				
+		if(type == 0) attackBonus+=attacker.getStrength() + attacker.getAttack();
+		if(type == 1) attackBonus+=attacker.getDexterity() + attacker.getAttack();
+		
+		// Add Weapon Damage to the attack
+		if(attacker instanceof RPG_Character)
+			updateWeaponStats(p);
+			
+		attackBonus+=attacker.getWeaponDamage();		
+				
+		// Calculate the damage done to the defender
+		dmg+=MathMethods.rnd.nextInt(attackBonus/2) + 1;
+		dmg*=2;	
+		
 		if(attackRoll == 20)
 		{	// Chance of Critical hit
-			p.sendMessage("Crit!");
-			dmg+=2;
-		}
-		
-		if(type == 0)		// Melee Attack
-			attackBonus+=attacker.getStrength();
-		if(type == 1)		// Range Attack
-			attackBonus+=attacker.getDexterity();
-		
-		// Calculate the damage done to the defender
-		dmg+=attackBonus;		
+			if((MathMethods.rnd.nextInt(20) + 1) > armorClass);	
+				dmg*=1.5;						
+		} // if(attackRoll == 20)
 		
 		if(attacker instanceof RPG_Character) {p.sendMessage("Hit for "+dmg+" HP"); }
+		
+		// Now calculate how much of this attack is going to be defended		
+		
+		
 		return dmg;
 	} // public void calculateDamage(RPG_Character rpgChar, RPG_Mob mob, boolean bcharHit)
 	
 	
-	public CombatSystem(){	} // public CombatSystem(Plugin p)	
+	public static void updateWeaponStats(Player p)
+	{
+		int DamageValue = 1;
+		// Find out if the player has switched to a weapon
+		// and update their weaponDamage value accordingly.  If not using 
+		// a weapon, then weaponDamage must be set to 1
+		int typeID = 0;
+		if(p.getInventory().getItemInHand() != null) 
+			typeID = p.getInventory().getItemInHand().getTypeId();
+				
+		// Set the Dmg value based on the sword the player is now
+		// holding
+		if(typeID == 268) DamageValue = 2;	// Wooden Sword
+		if(typeID == 283) DamageValue = 2;	// Gold Sword
+		if(typeID == 272) DamageValue = 3;	// Stone Sword
+		if(typeID == 267) DamageValue = 6;	// Iron Sword
+		if(typeID == 276) DamageValue = 8;	// Diamond Sword
+		
+		// Put in error detection to make sure player has a character made
+		mgr_Player.getCharacter(p).setWeaponDamage(DamageValue);		
+	} // public static void updateWeaponStats(Player p, int slot)
+	
+	public static void updateArmorStats(Player p)
+	{
+		int ac = 15;	// Default for wearing nothing
+						
+		// Check Helmet
+		ItemStack armor = p.getInventory().getHelmet();
+		
+		if(armor.getTypeId() == 298) { ac+= 3; }			// Leather
+		if(armor.getTypeId() == 306) { ac+= 8; }			// Iron
+		if(armor.getTypeId() == 310) { ac+= 10; }			// Diamond
+		
+		armor = p.getInventory().getChestplate();
+		if(armor.getTypeId() == 299) { ac+= 8; }		
+		if(armor.getTypeId() == 307) { ac+= 14; }
+		if(armor.getTypeId() == 311) { ac+= 15; }
+				
+		armor = p.getInventory().getLeggings();
+		if(armor.getTypeId() == 300) { ac+= 6; }		
+		if(armor.getTypeId() == 308) { ac+= 10; }
+		if(armor.getTypeId() == 312) { ac+= 15; }
+		
+		armor = p.getInventory().getBoots();
+		if(armor.getTypeId() == 301) { ac+= 3; }		
+		if(armor.getTypeId() == 309) { ac+= 8; }		
+		if(armor.getTypeId() == 313) { ac+= 10; }		
+		
+		mgr_Player.getCharacter(p).setArmorClass(ac);
+		p.sendMessage("Armor Rating: "+ac);		
+	} // public static void updateArmorStats(Player p)
+	
+	public CombatSystem(){	} // public CombatSystem()	
 	
 } // public class CombatSystem implements Listener

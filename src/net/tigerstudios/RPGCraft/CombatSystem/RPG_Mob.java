@@ -19,10 +19,24 @@ public class RPG_Mob extends RPG_Entity {
 	// ----------------------------------------------------
 	// Constructor
 	// Set all the nessicary values for this Monster type
-	public RPG_Mob(LivingEntity ent)
+	public RPG_Mob(LivingEntity ent, int level)
 	{
 		EntID = ent.getEntityId();
 		mobType = ent.getType();
+		
+		if(mobType == EntityType.ZOMBIE)
+		{	this.strength = 4;
+			this.intelligence = 2;
+			this.dexterity = 2;
+			this.constitution = 3;
+			
+			this.armorClass = 10;
+			this.attack = 3;
+			this.defense = 2;
+		}
+		
+		this.level = level;		
+		
 	} // public Mob(LivingEntity ent)
 	
 } // public class RPG_Monster

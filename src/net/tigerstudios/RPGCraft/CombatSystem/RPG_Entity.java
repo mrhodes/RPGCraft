@@ -11,6 +11,7 @@ public abstract class RPG_Entity {
 	protected int health, maxHealth;
 	protected int defense, attack, parry;
 	protected int armorClass;
+	protected int weaponDamage;
 	protected int strength, intelligence, dexterity, constitution;
 		
 	protected int EntID;	
@@ -23,10 +24,10 @@ public abstract class RPG_Entity {
 	public int getAttack() { return attack; }				public void setAttack(int atk) { this.attack = atk; }
 	public int getParry() { return parry; }					public void setParry(int par) { this.parry = par; }
 	public int getArmorClass() {return armorClass; }		public void setArmorClass(int ac) { this.armorClass = ac; }
+	public int getWeaponDamage() {return weaponDamage;}		public void setWeaponDamage(int wd) {this.weaponDamage = wd; }
 	public int getStrength() { return strength; }			public void setStrength(int str) { this.strength = str; }
 	public int getIntelligence() { return intelligence; }	public void setIntelligence(int intel) { this.intelligence = intel; }
 	public int getDexterity() { return dexterity; }			public void setDexterity(int dex) { this.dexterity = dex; }
 	public int getConstitution() { return constitution; }	public void setConstitution(int con) { this.constitution = con; }
-	
 	
 } // public abstract class RPG_Entity

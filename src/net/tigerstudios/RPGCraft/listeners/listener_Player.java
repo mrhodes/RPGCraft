@@ -7,6 +7,7 @@ import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.RPG_Player;
 import net.tigerstudios.RPGCraft.mgr_Player;
+import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 
@@ -14,16 +15,30 @@ import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
-
-public class listener_Player implements Listener {
-		
+public class listener_Player implements Listener {		
 			
+	
+	@EventHandler
+	public void onInventoryClose(InventoryCloseEvent event)
+	{
+		CombatSystem.updateArmorStats((Player) event.getPlayer());
+	} // public void onInventoryClose(InventoryCloseEvent event)
+	
+	@EventHandler
+	public void onPlayerItemBreak(PlayerItemBreakEvent event)
+	{
+		CombatSystem.updateArmorStats(event.getPlayer());
+	}// public void onPlayerItemBreak(PlayerItemBreakEvent event)
+	
+	
 	@EventHandler
 	public void onPlayerInteract(final PlayerInteractEvent event)
 	{
@@ -41,21 +56,7 @@ public class listener_Player implements Listener {
 			if(character != null)
 			{													
 				short id = item.getDurability();
-				
-				// See if this item is the Cider Ale
-				/*if(id == RPGCraft.aleID)
-				{
-					SpoutPlayer sp = SpoutManager.getPlayer(p);
-					// Increase Drunkeness by 1
-					character.drunkenLevel += 100;
-					// Burp 75% chance....
-					SpoutManager.getSoundManager().playGlobalCustomSoundEffect(rpgPlugin,  
-							"http://tigerstudios.net/minecraft/sounds/Burp.ogg", false, sp.getLocation(), 6);
-					sp.addPotionEffect(new PotionEffect(PotionEffectType.CONFUSION, 400, character.drunkenLevel + 300));
-										
-					return;
-				} // if(id == RPGCraft.aleID)*/	
-				
+					
 				RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
 				// Important, only do this if within the 10 second timer.
 				if( (rpgPlayer.getTimer() + 10000) <= System.currentTimeMillis())
@@ -65,14 +66,9 @@ public class listener_Player implements Listener {
 				}				
 				// Check for Copper, Silver, or Gold
 				double total = 0;
-				if(id == RPGCraft.cp)
-					total += item.getAmount();
-				
-				if(id == RPGCraft.sp)
-					total += item.getAmount() * 100;
-	
-				if(id == RPGCraft.gp)
-					total += item.getAmount() * 10000;
+				if(id == RPGCraft.cp)	total += item.getAmount();
+				if(id == RPGCraft.sp)	total += item.getAmount() * 100;
+				if(id == RPGCraft.gp)	total += item.getAmount() * 10000;
 							
 				p.setItemInHand(null);
 				RPGCraft.econ.depositPlayer(p.getName(), total);
@@ -94,22 +90,9 @@ public class listener_Player implements Listener {
 			event.setCancelled(true);
 			return;
 		} // if(event.getRightClicked() instanceof Animals)
-	
-		/*if(RPGCraft.bCitizensLoaded)
-		{	
-			Entity ent = event.getRightClicked();
-			if(CitizensManager.isNPC(ent))
-			{
-				NPC npc =   get(ent);
-				//((SpoutPlayer) npc).setSkin("http://tigerstudios.net/minecraft/textures/bankerSkin1.png");
-				SpoutPlayer sp = SpoutManager.getPlayer(event.getPlayer());
-				sp.getMainScreen().closePopup();
-				sp.getMainScreen().attachPopupScreen(new BankerWindow(event.getPlayer(), npc));				
-			}
-		}*/
+		
 	} // public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
 	
-		
 	@EventHandler
 	public void onPlayerJoin(final PlayerJoinEvent event)
 	{
