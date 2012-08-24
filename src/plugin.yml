@@ -1,9 +1,9 @@
 name: RPGCraft
-version: 0.8.0
+version: 0.8.5
 author: Michael Rhodes
 website: http://tigerstudios.net/minecraft
 main: net.tigerstudios.RPGCraft.RPGCraft
-depend: [Spout, Essentials]
+depend: [Spout, Vault]
 
 commands:
     rpg:

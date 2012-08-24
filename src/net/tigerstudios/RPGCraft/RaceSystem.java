@@ -13,11 +13,10 @@ public class RaceSystem {
 	public static void listRaces(Player p)
 	{
 		for(Race race: races.values())
-		{
 			p.sendMessage("[§2RPG§f] "+race.Name +": "+race.Description);
-		}		
+		
 		return;
-	}
+	} // public static void listRaces(Player p)
 	
 	public static Race getRace(String name)
 	{
