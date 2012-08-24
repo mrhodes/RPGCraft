@@ -56,7 +56,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.keyboard.KeyBindingManager;
 import org.getspout.spoutapi.keyboard.Keyboard;
@@ -66,12 +65,12 @@ import org.getspout.spoutapi.material.item.GenericCustomFood;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+
 public class RPGCraft extends JavaPlugin{
 	private static String name;
 	private static String version;
 	private static Plugin rpgPlugin;
 	public static Logger log = null;	
-		
 	private static Server mcServer;	
 	public static Economy econ = null;
 

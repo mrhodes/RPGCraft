@@ -48,8 +48,7 @@ public class CombatSystem implements Listener{
 		if(event.getEntity() instanceof Player)	defender = mgr_Player.getCharacter((Player)event.getEntity());
 		if(event.getEntity() instanceof Monster)defender = mgr_Mob.getMob(event.getEntity().getEntityId());
 		
-		event.setDamage(calculateDamage(attacker, defender, 0));
-		
+		event.setDamage(calculateDamage(attacker, defender, 0));		
 	} // public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
 	
 	
@@ -83,43 +82,51 @@ public class CombatSystem implements Listener{
 	// type = 0 for a  melee attack, and 1 for range attack.
 	public static int calculateDamage(RPG_Entity attacker, RPG_Entity defender, int type)
 	{
+		// Overall damage to be done to the entity
 		int dmg = 0;
-		int attackBonus = 0;
-		
-		// Temporary values for debugging
-		Player p = null;
-		if(attacker instanceof RPG_Character) p = mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID());
-		if(defender instanceof RPG_Character) p = mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID());
+		int attackBonus = 0;	// This is the entities bonus to their attack based on other skills
 		
 		// Attacker rolls a D20, if a 1 auto miss, 20 is auto hit.
 		int attackRoll = MathMethods.rnd.nextInt(20) + 1;
-		int armorClass = defender.getArmorClass();
-		
 		if(attackRoll == 1)	{ return 0; }
-				
-		if(type == 0) attackBonus+=attacker.getStrength() + attacker.getAttack();
-		if(type == 1) attackBonus+=attacker.getDexterity() + attacker.getAttack();
+					
+		if(type == 0) attackBonus+=attacker.getStrength() + attacker.getAttack();	// Melee
+		if(type == 1) attackBonus+=attacker.getDexterity() + attacker.getAttack();	// Ranged
 		
 		// Add Weapon Damage to the attack
 		if(attacker instanceof RPG_Character)
-			updateWeaponStats(p);
-			
+			updateWeaponStats(mgr_Player.getMCPlayer(((RPG_Character)attacker).getAccountID()));
+					
 		attackBonus+=attacker.getWeaponDamage();		
-				
-		// Calculate the damage done to the defender
-		dmg+=MathMethods.rnd.nextInt(attackBonus/2) + 1;
-		dmg*=2;	
-		
+								
 		if(attackRoll == 20)
 		{	// Chance of Critical hit
-			if((MathMethods.rnd.nextInt(20) + 1) > armorClass);	
-				dmg*=1.5;						
-		} // if(attackRoll == 20)
-		
-		if(attacker instanceof RPG_Character) {p.sendMessage("Hit for "+dmg+" HP"); }
-		
+			if((MathMethods.rnd.nextInt(20) + 1) > 18);		// 10 % chance to crit
+				attackBonus*=1.5;						
+		} // if(attackRoll == 20)		
+				
 		// Now calculate how much of this attack is going to be defended		
+		// Defense, ArmorClass, Strength
+		int defenseBonus = defender.getArmorClass() + defender.getDefense();
+		float t = 0;
+		if(defender.getArmorClass() != 0)
+			t = defenseBonus / defender.getArmorClass();
+		float dmgAbsorbed = t * defender.getArmorClass();
 		
+		dmg = (int)(attackBonus - dmgAbsorbed);
+		
+		
+		if(attacker instanceof RPG_Character){
+			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Your attackBonus is: "+attackBonus);
+			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Zombie's defenseBonus is: "+defenseBonus);
+			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Damage: "+dmg);
+		}
+		
+		if(defender instanceof RPG_Character){
+			mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID()).sendMessage("Zombie's attackBonus is: "+attackBonus);
+			mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID()).sendMessage("Your defenseBonus is: "+defenseBonus);
+			mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID()).sendMessage("Damage: "+dmg);
+		}
 		
 		return dmg;
 	} // public void calculateDamage(RPG_Character rpgChar, RPG_Mob mob, boolean bcharHit)
@@ -149,29 +156,40 @@ public class CombatSystem implements Listener{
 	
 	public static void updateArmorStats(Player p)
 	{
-		int ac = 15;	// Default for wearing nothing
+		int ac = 0;	// Default for wearing nothing
 						
 		// Check Helmet
 		ItemStack armor = p.getInventory().getHelmet();
-		
-		if(armor.getTypeId() == 298) { ac+= 3; }			// Leather
-		if(armor.getTypeId() == 306) { ac+= 8; }			// Iron
-		if(armor.getTypeId() == 310) { ac+= 10; }			// Diamond
+		if(armor != null)
+		{	if(armor.getTypeId() == 298) { ac+= 3; }			// Leather
+			if(armor.getTypeId() == 306) { ac+= 8; }			// Iron
+			if(armor.getTypeId() == 310) { ac+= 10; }			// Diamond
+		}else
+			ac+=1;
 		
 		armor = p.getInventory().getChestplate();
-		if(armor.getTypeId() == 299) { ac+= 8; }		
-		if(armor.getTypeId() == 307) { ac+= 14; }
-		if(armor.getTypeId() == 311) { ac+= 15; }
-				
+		if(armor == null) ac+=4;
+		else{
+			if(armor.getTypeId() == 299) { ac+= 8; }		
+			if(armor.getTypeId() == 307) { ac+= 14; }
+			if(armor.getTypeId() == 311) { ac+= 15; }
+		}
+		
 		armor = p.getInventory().getLeggings();
-		if(armor.getTypeId() == 300) { ac+= 6; }		
-		if(armor.getTypeId() == 308) { ac+= 10; }
-		if(armor.getTypeId() == 312) { ac+= 15; }
+		if(armor == null) ac+=3;
+		else{
+			if(armor.getTypeId() == 300) { ac+= 6; }		
+			if(armor.getTypeId() == 308) { ac+= 10; }
+			if(armor.getTypeId() == 312) { ac+= 15; }
+		}
 		
 		armor = p.getInventory().getBoots();
-		if(armor.getTypeId() == 301) { ac+= 3; }		
-		if(armor.getTypeId() == 309) { ac+= 8; }		
-		if(armor.getTypeId() == 313) { ac+= 10; }		
+		if(armor == null) ac+=2;
+		else{
+			if(armor.getTypeId() == 301) { ac+= 3; }		
+			if(armor.getTypeId() == 309) { ac+= 8; }		
+			if(armor.getTypeId() == 313) { ac+= 10; }		
+		}
 		
 		mgr_Player.getCharacter(p).setArmorClass(ac);
 		p.sendMessage("Armor Rating: "+ac);		

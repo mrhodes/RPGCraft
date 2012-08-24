@@ -30,8 +30,9 @@ public class RPG_Mob extends RPG_Entity {
 			this.dexterity = 2;
 			this.constitution = 3;
 			
-			this.armorClass = 10;
-			this.attack = 3;
+			this.weaponDamage = 2;
+			this.armorClass = 5;
+			this.attack = 2;
 			this.defense = 2;
 		}
 		
