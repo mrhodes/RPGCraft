@@ -58,6 +58,9 @@ public class RPG_Character extends RPG_Entity
 	float avgLootBonus, avgHarvestBonus, avgSkillIncrease;
 	int totalSeeds, totalWheat;
 	
+	
+	// This Method only gets called when a New character is created.
+	// Otherwise, if the character already exists then the empty constructor is called
 	public RPG_Character(Race r, int acc_id)
 	{
 		if(r == null || acc_id == 0)
@@ -73,6 +76,7 @@ public class RPG_Character extends RPG_Entity
 		strength			+= r.str_mod;
 		intelligence		+= r.int_mod;
 		EntID = mgr_Player.getMCPlayer(acc_id).getEntityId();
+		RPGCraft.log.info("[CONSTRUCTOR] Player Entity ID: "+this.EntID);
 		setSpeed(r.speed);		
 				
 		saveCharacter();
@@ -83,8 +87,10 @@ public class RPG_Character extends RPG_Entity
 	@Override
 	public void setSpeed(float spd)
 	{
-		if(spd != 0.0)
+		if(spd > 0)
 			this.speed = spd;
+		
+		RPGCraft.log.info("[SETSPEED] Player Entity ID: "+this.EntID);
 		SpoutManager.getPlayerFromId(EntID).setWalkingMultiplier(this.speed);
 	}
 	public int getAccountID() { return AccountID; }
@@ -104,9 +110,14 @@ public class RPG_Character extends RPG_Entity
 			
 			Bukkit.broadcastMessage("    [§2RPG§f] "+p.getName()+" just leveled up! Now "+p.getName()+" is a level "
 					+level+" "+race+".");
+			p.sendMessage(" You now have an extra point to increase one of your primary stats!");
+			p.sendMessage(" See your stats page for more info.");
+			this.statPtsTotal++;
 		} // if(exp_to_level <= 0)		
 		updateExpBar();			
 	} // public void addExperience(float exp, SpoutPlayer p)
+	
+	
 	public void updateExpBar()
 	{
 		Player p = mgr_Player.getMCPlayer(AccountID);
@@ -133,6 +144,9 @@ public class RPG_Character extends RPG_Entity
 		mining = 1; farming = 1; blacksmithing = 1;
 		enchanting = 1; alchemy = 1; cooking = 1;
 		fishing = 1; trading = 1;
+		
+		// Set to a default speed.  This will be updated when a race is loaded
+		speed = 1.0f;
 		
 		updateExpBar();		
 	} // public void initialize()

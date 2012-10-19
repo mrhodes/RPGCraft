@@ -13,6 +13,7 @@ import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -29,13 +30,40 @@ public class listener_Player implements Listener {
 	@EventHandler
 	public void onInventoryClose(InventoryCloseEvent event)
 	{
-		CombatSystem.updateArmorStats((Player) event.getPlayer());
+		if(mgr_Player.getCharacter((Player) event.getPlayer()) != null)
+		{
+			CombatSystem.updateArmorStats((Player) event.getPlayer());
+			CombatSystem.updateWeaponStats((Player) event.getPlayer());
+			return;
+		}
+		Player p = (Player)event.getPlayer();
+		if(p != null)
+		{	p.sendMessage(RPGCraft.divider);
+			p.sendMessage("Please select a race for yourself.");
+			p.sendMessage("Type /§arpg list §fto see race choices.");
+			p.sendMessage("and then type /§arpg choose §f<§drace§f> to choose the race.");
+			p.sendMessage(RPGCraft.divider);
+		}		
 	} // public void onInventoryClose(InventoryCloseEvent event)
 	
 	@EventHandler
 	public void onPlayerItemBreak(PlayerItemBreakEvent event)
 	{
-		CombatSystem.updateArmorStats(event.getPlayer());
+		// When an Item breaks, update the players armor and weapon
+		// values to reflect the changes.
+		if(mgr_Player.getCharacter(event.getPlayer()) != null)
+		{	CombatSystem.updateArmorStats(event.getPlayer());
+			CombatSystem.updateWeaponStats(event.getPlayer());
+			return;
+		}
+		Player p = (Player)event.getPlayer();
+		if(p != null)
+		{	p.sendMessage(RPGCraft.divider);
+			p.sendMessage("Please select a race for yourself.");
+			p.sendMessage("Type /§arpg list §fto see race choices.");
+			p.sendMessage("and then type /§arpg choose §f<§drace§f> to choose the race.");
+			p.sendMessage(RPGCraft.divider);
+		}		
 	}// public void onPlayerItemBreak(PlayerItemBreakEvent event)
 	
 	
@@ -85,11 +113,16 @@ public class listener_Player implements Listener {
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
 	{	if(event.getRightClicked() instanceof Animals)
-		{
-			FarmSystem.animalInteractions(event.getPlayer(), (Animals)event.getRightClicked());
+		{	FarmSystem.animalInteractions(event.getPlayer(), (Animals)event.getRightClicked());
 			event.setCancelled(true);
 			return;
 		} // if(event.getRightClicked() instanceof Animals)
+	
+		if(event.getRightClicked() instanceof Villager)
+		{
+			
+			
+		} // if(event.getRightClicked() instanceof Villager)
 		
 	} // public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
 	
@@ -111,7 +144,11 @@ public class listener_Player implements Listener {
 			}			
 		} catch (SQLException e) { e.printStackTrace();	}
 		
-		mgr_Player.playerLogin(p);			
+		mgr_Player.playerLogin(p);
+		
+		// Update the Weapon and Armor stats for this player
+		CombatSystem.updateArmorStats(p);
+		CombatSystem.updateWeaponStats(p);
 		return;		
 	} // public void onPlayerJoin(final PlayerJoinEvent event)
 	

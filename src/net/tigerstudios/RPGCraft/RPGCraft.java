@@ -83,7 +83,7 @@ public class RPGCraft extends JavaPlugin{
 			
 	public static String mainDirectory = "plugins" + File.separatorChar + "RPGCraft" + File.separatorChar;
 	public static String logDirectory = mainDirectory + "logs" + File.separatorChar;
-	public static String divider = "***************************************************************";
+	public static String divider = "§5***************************************************************";
 	public static String webBase = "http://tigerstudios.net/minecraft/";
 	
 	public static PermissionManager pexMan = null;

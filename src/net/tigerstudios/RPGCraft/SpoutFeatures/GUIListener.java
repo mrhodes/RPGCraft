@@ -35,8 +35,7 @@ public class GUIListener implements Listener {
 			{
 				@Override
 				public void run()
-				{
-					fullTwoWay(event.getPlayer());
+				{	fullTwoWay(event.getPlayer());
 					mgr_Player.getCharacter(event.getPlayer());
 					//SpoutFeatures.setWalkingSpeed(event.getPlayer(), (rpg != null) ? rpg.fWalkSpeed : 1.0f);
 				}
@@ -71,12 +70,11 @@ public class GUIListener implements Listener {
 		nameLabel.setX(1).setY(1).setWidth(20).setHeight(9).setAnchor(WidgetAnchor.TOP_LEFT);
 		screen.attachWidget(rpgPlugin, nameLabel);
 		
-		player.getMainScreen().getHealthBar()
+		/*player.getMainScreen().getHealthBar()
 		.setX(20).setY(1).setWidth(20).setHeight(9)
 		.setPriority(RenderPriority.Highest).setFixed(true).setMargin(0, 3).setAnchor(WidgetAnchor.TOP_LEFT)
-		.setDirty(true);
-	}
-	
+		.setDirty(true);*/
+	}	
 	
 	public static void fullTwoWay(Player player)
 	{

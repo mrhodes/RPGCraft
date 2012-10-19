@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.entity.Player;
@@ -83,6 +84,15 @@ public class mgr_Player {
 		mcPlayers.put(account_id, p);
 		rpgPlayers.put(p.getName().hashCode(), new RPG_Player(p.getName(), account_id));		
 				
+		if(getCharacter(p) == null)
+		{
+			p.sendMessage(RPGCraft.divider);
+			p.sendMessage("Please select a race for yourself.");
+			p.sendMessage("Type /§arpg list §fto see race choices.");
+			p.sendMessage("and then type /§arpg choose §f<§drace§f> to choose the race.");
+			p.sendMessage(RPGCraft.divider);
+		}
+		
 		return true;
 	} // public static boolean playerLogin(Player p)
 	

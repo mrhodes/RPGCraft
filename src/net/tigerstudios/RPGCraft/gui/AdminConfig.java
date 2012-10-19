@@ -56,16 +56,17 @@ public class AdminConfig extends GenericPopup{
 		rpgPlugin = instance;
 	} // public AdminConfig(Plugin instance, Player p)
 	
+		
 	// Create the window for the player to interact with
 	public void init()
 	{	
+		sPlayer.getMainScreen().closePopup();
 		screenWidth = sPlayer.getMainScreen().getWidth();
 		screenHeight = sPlayer.getMainScreen().getHeight();
 		width = 250; height = 175;
 		x = screenWidth / 2 - (width / 2);	y = screenHeight / 2 - (height / 2);
 		this.setX(x).setY(y);
-		this.setWidth(width).setHeight(height);
-				
+		this.setWidth(width).setHeight(height);				
 		
 		// Setup the 3 Containers to hold the GUI
 // --------------------------
@@ -136,18 +137,25 @@ public class AdminConfig extends GenericPopup{
 		button.setTooltip("Access Player settings and Control Panel.");
 		optionButtons.addChild(button);
 		
+		button = new GenericButton("Race Config"){
+			
+		};
+		button.setX(0).setY(40).setWidth(75).setHeight(15);
+		button.setTooltip("Set the many Racial Config Options");
+		optionButtons.addChild(button);
+		
 		button = new GenericButton("Skills Config"){
 			@Override
 			public void onButtonClick(ButtonClickEvent ev)	{ skillsConfig(); }		
 		};
-		button.setX(0).setY(40);
+		button.setX(0).setY(60);
 		button.setWidth(75).setHeight(15);
 		button.setTooltip("Configure the many different skill options.");
 		optionButtons.addChild(button);
 		this.attachWidgets(rpgPlugin, optionButtons.getChildren());
 		
-		setupCategoryConfig();
-				
+		
+		setupCategoryConfig();				
 		sPlayer.getMainScreen().attachPopupScreen(this);
 	} // public void init()
 	
@@ -226,15 +234,14 @@ public class AdminConfig extends GenericPopup{
 	{
 		categoryConfig = new GenericContainer();
 		categoryConfig.setLayout(ContainerType.OVERLAY);
-		categoryConfig.setWidth(width).setHeight(height - 25);
+		categoryConfig.setWidth(width - 10).setHeight(height - 25);
 		//categoryConfig.setPriority(RenderPriority.Highest);
-		categoryConfig.setX(x).setY(y);
+		categoryConfig.setX(x + 5).setY(y);
 		
 		label = new GenericLabel("Item Types Creation");
-		label.setWidth((int)(width * 0.8f)).setHeight(15);	
+		label.setWidth(width).setHeight(15);	
 		label.setX(10).setY(10);
-		categoryConfig.addChild(label);	
-		
+		categoryConfig.addChild(label);			
 		
 		catInput = new GenericTextField();
 		catInput.setPlaceholder("<Enter New Category>");

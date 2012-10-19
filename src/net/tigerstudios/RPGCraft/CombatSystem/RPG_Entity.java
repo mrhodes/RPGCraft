@@ -1,7 +1,5 @@
 package net.tigerstudios.RPGCraft.CombatSystem;
 
-
-
 // ---------------------------------------------------------------------------
 // Base Entity interface for the Character and Mob classes to derive from
 // This interface will hold the common properties of each type of entity
@@ -14,7 +12,7 @@ public abstract class RPG_Entity {
 	protected int weaponDamage;
 	protected int strength, intelligence, dexterity, constitution;
 		
-	protected int EntID;	
+	public int EntID;	
 	
 	// Getters and Setters
 	public int getLevel(){ return level; }                	public void setLevel(int lvl) { this.level = lvl; }

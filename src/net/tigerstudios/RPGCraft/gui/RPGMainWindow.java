@@ -31,8 +31,7 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 	int screenXCenter, screenYCenter;
 	
 	public static void create(SpoutPlayer p)
-	{
-		RPGMainWindow win = new RPGMainWindow(RPGCraft.getPlugin(), p);		
+	{	RPGMainWindow win = new RPGMainWindow(RPGCraft.getPlugin(), p);		
 		win.init();
 	} // public static void create(RPGCraft plug, Player p)
 	
@@ -53,10 +52,10 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 	// Create the window for the player to interact with
 	public void init()	
 	{
-		int width = 175; int height = 150;
+		int width = 180; int height = 150;
 		int x = screenXCenter - (width / 2);
 		int y = screenYCenter - (height / 2);
-		int btnPosX = x - 80;  int btnPosY = 0;
+		int btnPosX = x - 80;  int btnPosY = y;
 		
 		this.setX(x).setY(y);
 		this.setWidth(width).setHeight(height);
@@ -70,7 +69,7 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 		texture = new GenericTexture(RPGCraft.webBase+"textures/guiWindow.png");
 		texture.setX(x).setY(y).setWidth(width).setHeight(height);
 		texture.setPriority(RenderPriority.Highest);
-		texture.setUrl(RPGCraft.webBase+"textures/guiWindow.png");
+		texture.setDrawAlphaChannel(false);
 		this.attachWidget(rpgPlugin, texture);
 		
 		label = new GenericLabel("RPGCraft Feature Menu");
@@ -92,8 +91,9 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 		button = new GenericButton("Choose Race"){
 			@Override
 			public void onButtonClick(ButtonClickEvent event) { 
-				exit();
-				RaceSelection.create(rpgPlugin, sPlayer);}
+				RaceSelection.create(rpgPlugin, sPlayer);
+				//exit();
+			}
 		};
 		button.setX(btnPosX).setY(btnPosY);
 		button.setWidth(75).setHeight(15);
@@ -113,10 +113,12 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 		{	button = new GenericButton("Admin Config"){
 				@Override
 				public void onButtonClick(ButtonClickEvent ev)
-				{	exit();
-					AdminConfig.create(RPGCraft.getPlugin(), sPlayer.getPlayer());
+				{	AdminConfig.create(RPGCraft.getPlugin(), sPlayer.getPlayer());
+					//exit();
 				} // public void onButtonClick(ButtonClickEvent ev)			
 			};
+			
+			btnPosY+=20;
 			button.setX(btnPosX).setY(btnPosY);
 			button.setWidth(75).setHeight(15);
 			this.attachWidget(rpgPlugin, button);

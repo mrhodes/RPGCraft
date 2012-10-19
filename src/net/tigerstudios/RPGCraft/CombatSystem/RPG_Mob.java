@@ -36,7 +36,7 @@ public class RPG_Mob extends RPG_Entity {
 			this.defense = 2;
 		}
 		
-		this.level = level;		
+		setLevel(level);		
 		
 	} // public Mob(LivingEntity ent)
 	

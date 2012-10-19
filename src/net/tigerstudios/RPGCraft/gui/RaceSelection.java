@@ -50,6 +50,7 @@ public class RaceSelection extends GenericPopup{
 	
 	private void init()
 	{		
+		sPlayer.getMainScreen().closePopup();
 		screenWidth = sPlayer.getMainScreen().getWidth();
 		screenHeight = sPlayer.getMainScreen().getHeight();
 		width = 250; height = 175;

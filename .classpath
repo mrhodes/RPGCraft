@@ -3,8 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/bukkit"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spoutplugin"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/plugins/Factions.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/ebean-2.7.7/ebean-2.7.7.jar"/>
 	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/plugins/Vault.jar"/>

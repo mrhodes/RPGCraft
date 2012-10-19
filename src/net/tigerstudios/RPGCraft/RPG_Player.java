@@ -3,6 +3,7 @@ package net.tigerstudios.RPGCraft;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.Bukkit;
@@ -68,7 +69,8 @@ public class RPG_Player{
 			if(rs.next())
 			{
 				RPG_Character character = new RPG_Character();				
-					
+				
+				character.EntID			= player.getEntityId();
 				character.AccountID 	= AccountID;
 				character.CharacterID	= rs.getInt("char_id");
 				character.setName(rs.getString("name"));
@@ -94,10 +96,9 @@ public class RPG_Player{
 				character.fishing		= rs.getInt("fish");
 				character.trading		= rs.getInt("trade");
 				character.alcoholTolerance = rs.getInt("alcoholTolerance");
+				character.setSpeed(RaceSystem.getRace(character.race).speed);
 				rs.close();
-				
-				//character.setSpeed(RaceSystem.getRace(character.race).speed);
-								
+									
 				character.updateExpBar();				
 				setCharacter(character);				
 				

@@ -16,9 +16,6 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 import org.getspout.spoutapi.ClientOnly;
 import org.getspout.spoutapi.SpoutManager;
 
-import com.massivecraft.factions.Faction;
-
-
 
 import ru.tehkode.permissions.PermissionUser;
 
@@ -142,10 +139,6 @@ public class SpoutFeatures {
 			{
 				ret.add(player);
 			}
-		}
-		else if (o instanceof Faction)
-		{
-			ret.addAll(((Faction)o).getOnlinePlayers());
 		}
 		else
 		{

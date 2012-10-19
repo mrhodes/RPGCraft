@@ -34,10 +34,11 @@ public class CombatSystem implements Listener{
 			{	//defender = mgr_Player.getCharacter((Player)event.getEntity());
 				mcPlayer = (Player) event.getEntity();
 				RPG_Player rpgP = mgr_Player.getPlayer(mcPlayer.getName().hashCode());
-				
+								
 				if(rpgP != null)
 					rpgP.getSpoutPlayer().sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.APPLE);
 				
+			
 				return;
 			} // if(event.getEntity() instanceof Player)			
 		} // if(event.getDamager() instanceof Projectile)	
@@ -59,7 +60,7 @@ public class CombatSystem implements Listener{
 		{	mcPlayer = (Player) event.getEntity();
 			RPG_Character rpgChar = mgr_Player.getCharacter(mcPlayer);
 			if(rpgChar != null)
-			{	if(rpgChar.race.equalsIgnoreCase("elf"))
+			{	if(rpgChar.race.equalsIgnoreCase("elf"))	// TODO: Remove Race specific reference
 				{	event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(1.5f));
 					return;
 				}
@@ -82,6 +83,16 @@ public class CombatSystem implements Listener{
 	// type = 0 for a  melee attack, and 1 for range attack.
 	public static int calculateDamage(RPG_Entity attacker, RPG_Entity defender, int type)
 	{
+		if(attacker == null)
+		{	System.out.println("Attacker = Null");
+		return 0;
+		}
+		
+		if(defender == null)
+		{	System.out.println("Defender = Null");
+		return 0;
+		}
+		
 		// Overall damage to be done to the entity
 		int dmg = 0;
 		int attackBonus = 0;	// This is the entities bonus to their attack based on other skills
@@ -90,13 +101,9 @@ public class CombatSystem implements Listener{
 		int attackRoll = MathMethods.rnd.nextInt(20) + 1;
 		if(attackRoll == 1)	{ return 0; }
 					
-		if(type == 0) attackBonus+=attacker.getStrength() + attacker.getAttack();	// Melee
-		if(type == 1) attackBonus+=attacker.getDexterity() + attacker.getAttack();	// Ranged
+		if(type == 0) attackBonus+=attacker.getAttack();	// Melee
+		if(type == 1) attackBonus+=attacker.getAttack();	// Ranged
 		
-		// Add Weapon Damage to the attack
-		if(attacker instanceof RPG_Character)
-			updateWeaponStats(mgr_Player.getMCPlayer(((RPG_Character)attacker).getAccountID()));
-					
 		attackBonus+=attacker.getWeaponDamage();		
 								
 		if(attackRoll == 20)
@@ -107,14 +114,13 @@ public class CombatSystem implements Listener{
 				
 		// Now calculate how much of this attack is going to be defended		
 		// Defense, ArmorClass, Strength
+		
+		// Add Code to detect a Villager being attacked, animals 2
 		int defenseBonus = defender.getArmorClass() + defender.getDefense();
-		float t = 0;
-		if(defender.getArmorClass() != 0)
-			t = defenseBonus / defender.getArmorClass();
-		float dmgAbsorbed = t * defender.getArmorClass();
 		
-		dmg = (int)(attackBonus - dmgAbsorbed);
-		
+		// Highest armor rating is 65
+		// Lowest is 10
+		dmg = attackBonus;		
 		
 		if(attacker instanceof RPG_Character){
 			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Your attackBonus is: "+attackBonus);
@@ -144,11 +150,11 @@ public class CombatSystem implements Listener{
 				
 		// Set the Dmg value based on the sword the player is now
 		// holding
-		if(typeID == 268) DamageValue = 2;	// Wooden Sword
-		if(typeID == 283) DamageValue = 2;	// Gold Sword
-		if(typeID == 272) DamageValue = 3;	// Stone Sword
-		if(typeID == 267) DamageValue = 6;	// Iron Sword
-		if(typeID == 276) DamageValue = 8;	// Diamond Sword
+		if(typeID == 268) DamageValue = 5;	// Wooden Sword
+		if(typeID == 283) DamageValue = 6;	// Gold Sword
+		if(typeID == 272) DamageValue = 8;	// Stone Sword
+		if(typeID == 267) DamageValue = 12;	// Iron Sword
+		if(typeID == 276) DamageValue = 17;	// Diamond Sword
 		
 		// Put in error detection to make sure player has a character made
 		mgr_Player.getCharacter(p).setWeaponDamage(DamageValue);		
@@ -192,7 +198,7 @@ public class CombatSystem implements Listener{
 		}
 		
 		mgr_Player.getCharacter(p).setArmorClass(ac);
-		p.sendMessage("Armor Rating: "+ac);		
+		p.sendMessage("DEBUG: Armor Rating: "+ac);		
 	} // public static void updateArmorStats(Player p)
 	
 	public CombatSystem(){	} // public CombatSystem()	
