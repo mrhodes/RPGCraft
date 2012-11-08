@@ -1,9 +1,9 @@
 name: RPGCraft
 version: 0.8.5
 author: Michael Rhodes
-website: http://tigerstudios.net/minecraft
+website: http://tigerstudios.net/rpgcraft
 main: net.tigerstudios.RPGCraft.RPGCraft
-depend: [Spout, Vault]
+depend: []
 
 commands:
     rpg:

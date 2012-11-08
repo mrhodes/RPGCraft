@@ -10,7 +10,7 @@ import org.bukkit.entity.LivingEntity;
 
 
 // mobs need to have certain properties
-public class RPG_Mob extends RPG_Entity {
+public abstract class RPG_Mob implements RPG_Entity {
 	boolean bBossMob = false;
 	boolean bCanMove = true;
 	
@@ -24,20 +24,18 @@ public class RPG_Mob extends RPG_Entity {
 		EntID = ent.getEntityId();
 		mobType = ent.getType();
 		
-		if(mobType == EntityType.ZOMBIE)
-		{	this.strength = 4;
-			this.intelligence = 2;
-			this.dexterity = 2;
-			this.constitution = 3;
+		// Set Default values, and modify them afterwards
+		this.strength = 3;
+		this.intelligence = 3;
+		this.dexterity = 3;
+		this.constitution = 3;
 			
-			this.weaponDamage = 2;
-			this.armorClass = 5;
-			this.attack = 2;
-			this.defense = 2;
-		}
+		this.weaponDamage = 2;
+		this.armorClass = 5;
+		this.attack = 2;
+		this.defense = 2;		
 		
 		setLevel(level);		
-		
 	} // public Mob(LivingEntity ent)
 	
 } // public class RPG_Monster

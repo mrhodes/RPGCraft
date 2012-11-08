@@ -1,11 +1,9 @@
 package net.tigerstudios.RPGCraft.CombatSystem;
 
 import net.tigerstudios.RPGCraft.RPG_Character;
-import net.tigerstudios.RPGCraft.RPG_Player;
 import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.utils.MathMethods;
 
-import org.bukkit.Material;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -19,6 +17,10 @@ import org.bukkit.inventory.ItemStack;
 public class CombatSystem implements Listener{
 	private Player mcPlayer = null;
 	
+	// Since a lot of calculations will be based off random numbers, we will pregenerate the numbers
+	// at setup to avoid calling Random.nextInt().
+	// Interally this plugin will use a D&D like system, so Dice variables will be used.	
+	
 	
 	@EventHandler
 	public void onEntityDamageByEntity(final EntityDamageByEntityEvent event)
@@ -27,29 +29,32 @@ public class CombatSystem implements Listener{
 		if(!(event.getEntity() instanceof Player) && !(event.getDamager() instanceof Player))
 			return;	
 		
-		RPG_Entity attacker = null; RPG_Entity defender = null;
-		
 		if(event.getDamager() instanceof Projectile)
 		{	if(event.getEntity() instanceof Player)
-			{	//defender = mgr_Player.getCharacter((Player)event.getEntity());
-				mcPlayer = (Player) event.getEntity();
-				RPG_Player rpgP = mgr_Player.getPlayer(mcPlayer.getName().hashCode());
-								
-				if(rpgP != null)
-					rpgP.getSpoutPlayer().sendNotification("Damage", "You've been hit for "+event.getDamage(), Material.APPLE);
+			{	
+				mcPlayer = (Player) event.getEntity();				
+				//defender = 			
 				
-			
-				return;
+				//return;
 			} // if(event.getEntity() instanceof Player)			
 		} // if(event.getDamager() instanceof Projectile)	
 				
 		// Get the Attacker and Defender
-		if(event.getDamager() instanceof Player) attacker = mgr_Player.getCharacter((Player)event.getDamager());
-		if(event.getDamager() instanceof Monster)attacker = mgr_Mob.getMob(event.getDamager().getEntityId());
-		if(event.getEntity() instanceof Player)	defender = mgr_Player.getCharacter((Player)event.getEntity());
-		if(event.getEntity() instanceof Monster)defender = mgr_Mob.getMob(event.getEntity().getEntityId());
+		RPG_Entity attacker = null, defender = null;
 		
-		event.setDamage(calculateDamage(attacker, defender, 0));		
+		if(event.getDamager() instanceof Player) 
+		{	attacker = mgr_Player.getCharacter((Player)event.getDamager());	}	
+		if(event.getDamager() instanceof Monster)
+		{	attacker = mgr_Mob.getMob(event.getDamager().getEntityId());		}
+				
+		if(event.getEntity() instanceof Player)	{defender = mgr_Player.getCharacter((Player)event.getEntity());}
+		if(event.getEntity() instanceof Monster){defender = mgr_Mob.getMob(event.getEntity().getEntityId());}
+		
+		if(calculateDamage( attacker,  defender, 0) >= 0)
+		{	event.setDamage(calculateDamage(attacker, defender, 0));
+			return;
+		}
+		
 	} // public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
 	
 	
@@ -83,15 +88,8 @@ public class CombatSystem implements Listener{
 	// type = 0 for a  melee attack, and 1 for range attack.
 	public static int calculateDamage(RPG_Entity attacker, RPG_Entity defender, int type)
 	{
-		if(attacker == null)
-		{	System.out.println("Attacker = Null");
-		return 0;
-		}
-		
-		if(defender == null)
-		{	System.out.println("Defender = Null");
-		return 0;
-		}
+		if(attacker == null){	System.out.println("Attacker = Null");	return -1;	}
+		if(defender == null){	System.out.println("Defender = Null");	return -1;	}
 		
 		// Overall damage to be done to the entity
 		int dmg = 0;
@@ -120,12 +118,14 @@ public class CombatSystem implements Listener{
 		
 		// Highest armor rating is 65
 		// Lowest is 10
-		dmg = attackBonus;		
+		dmg = attackBonus - MathMethods.rnd.nextInt(defenseBonus + 1);
+		if(dmg < 1) dmg = 1;
 		
 		if(attacker instanceof RPG_Character){
 			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Your attackBonus is: "+attackBonus);
-			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Zombie's defenseBonus is: "+defenseBonus);
-			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Damage: "+dmg);
+			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Defenders defenseBonus is: "+defenseBonus);
+			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Damage done: "+dmg);
+			
 		}
 		
 		if(defender instanceof RPG_Character){

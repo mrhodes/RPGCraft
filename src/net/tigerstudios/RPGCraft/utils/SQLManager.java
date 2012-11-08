@@ -1,8 +1,5 @@
 package net.tigerstudios.RPGCraft.utils;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.tigerstudios.RPGCraft.RPGCraft;
@@ -20,7 +16,6 @@ public class SQLManager {
 	static Boolean bIsConnected = false;	
 	static Connection conn = null;
 	static Statement statement = null;
-	static int dbVersion = 0;
 	static YamlConfiguration config;
 	
 	static public boolean initialize(final String name)
@@ -34,15 +29,13 @@ public class SQLManager {
 			return false;
 		}		
 	
-		config = new YamlConfiguration();
+		/*config = new YamlConfiguration();
 		try {
 			config.load(new File(RPGCraft.mainDirectory+"db.yml"));
 		} catch (FileNotFoundException e) {	e.printStackTrace();} 
 		catch (IOException e) {e.printStackTrace();}
 		catch (InvalidConfigurationException e) {e.printStackTrace();}
-		
-		// Set the Version of the Database
-		dbVersion = config.getInt("version");
+		*/
 		
 		return true;		
 	} // static public boolean initialize(String name)
@@ -186,8 +179,22 @@ public class SQLManager {
 					"name VARCHAR(16), description VARCHAR(128));");
 		} // if(SQLManager.TableExists("itemCategory", "RPGCraft") == false)
 	// ------------------------------------------------------------------------
+				
+		/* --------------------------------------------------------------------
+		 * Spawn Groups
+		 * An Admin or Mod can create groups of LivingEntities to be spawned 
+		 * at once.  These groups will consist of just the Entities themselves
+		 * and not contain lvl information.  */
+		if(TableExists("spawnGroup", "RPGCraft") == false)
+		{	log.info("[SQL] --->   Creating spawnGroup table.");
+			SQLUpdate("create table spawnGroup("+
+					"id INTEGER PRIMARY KEY AUTOINCREMENT,"+
+					"name VARCHAR(16), description VARCHAR(128));");
+		} // if(SQLManager.TableExists("spawnGroup", "RPGCraft") == false)
+		 
+		
+		
 								
 		return true;
-	} // private void setupDatabase()
-		
+	} // private void setupDatabase()		
 } // public class SQLiteManager

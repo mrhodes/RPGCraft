@@ -27,12 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import net.milkbowl.vault.economy.Economy;
 import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.CombatSystem.mgr_Mob;
-import net.tigerstudios.RPGCraft.SpoutFeatures.GUIListener;
 import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
-import net.tigerstudios.RPGCraft.gui.RPGMainWindow;
 import net.tigerstudios.RPGCraft.listeners.listener_Block;
 import net.tigerstudios.RPGCraft.listeners.listener_Entity;
 import net.tigerstudios.RPGCraft.listeners.listener_Player;
@@ -40,8 +37,6 @@ import net.tigerstudios.RPGCraft.skills.FarmSystem;
 import net.tigerstudios.RPGCraft.skills.MiningSystem;
 import net.tigerstudios.RPGCraft.utils.MathMethods;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
-import net.tigerstudios.RPGCraft.utils.custom.CCoin;
-import net.tigerstudios.RPGCraft.utils.custom.CFood;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -54,17 +49,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.keyboard.KeyBindingManager;
-import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.material.item.GenericCustomFood;
 
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
-
 
 public class RPGCraft extends JavaPlugin{
 	private static String name;
@@ -72,9 +62,9 @@ public class RPGCraft extends JavaPlugin{
 	private static Plugin rpgPlugin;
 	public static Logger log = null;	
 	private static Server mcServer;	
-	public static Economy econ = null;
-
-		
+	private static int timerID = 0;
+	private static RPGCraftTimer timer;
+			
 	// Listener Classes to handle the events
 	private static listener_Currency currencyListener = null;	
 	public static CustomItem copperCoin, silverCoin, goldCoin;
@@ -87,8 +77,6 @@ public class RPGCraft extends JavaPlugin{
 	public static String webBase = "http://tigerstudios.net/minecraft/";
 	
 	public static PermissionManager pexMan = null;
-	public static boolean bCitizensLoaded = false;
-	public static boolean bFactionsLoaded = false;
 	
 	// All items that need to have some sort of category associated to them.
 	public static Map<String, String> itemCategories = new HashMap<String,String>();
@@ -125,14 +113,13 @@ public class RPGCraft extends JavaPlugin{
 			log.info(name + " is not loaded.");
 			log = null;
 			this.setEnabled(false);
-		}					
-	} // public void onEnable()
-	
+		}		
+	} // public void onEnable()	
 	
 	private boolean initializeRPGCraft()
 	{
-		log = Logger.getLogger("Minecraft.RPGCraft");
-		mcServer = getBukkitServer();
+		log = this.getLogger();
+		mcServer = getServer();
 		
 		// Load the config file before anything else.  This way settings for other systems
 		// can be added to the config
@@ -140,9 +127,7 @@ public class RPGCraft extends JavaPlugin{
 		
 		new File(logDirectory).mkdirs();		// Make the log Directory
 					
-		setupCitizens();
 		setupPermissions();	
-		setupEconomy();
 		if(!SQLManager.setupDatabase())
 			return false;		
 	
@@ -151,16 +136,19 @@ public class RPGCraft extends JavaPlugin{
 		RaceSystem.loadRaceFile("elf.yml");			RaceSystem.loadRaceFile("dwarf.yml");
 		
 		SpoutFeatures.setup(this);
-		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
+		
+		/*copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
 		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
 		goldCoin = new CCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
 		aleMug = new CFood(this, "Cider Ale", webBase+"textures/mug1.png", 0);
 						
 		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
 		aleID = aleMug.getCustomId();
-		
+		*/
 		setupRecipies();
+		mgr_Entity.initialize();
 		mgr_Player.initialize(this);
+		
 		RPG_Character.initialize();
 						
 		currencyListener = new listener_Currency();
@@ -169,17 +157,21 @@ public class RPGCraft extends JavaPlugin{
 		MathMethods.setup();
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new listener_Player(), this);
-		pm.registerEvents(new listener_Block(rpgPlugin), this);
-		pm.registerEvents(new listener_Entity(rpgPlugin), this);
+		pm.registerEvents(new listener_Block(), this);
+		pm.registerEvents(new listener_Entity(), this);
 		pm.registerEvents(new FarmSystem(), this);
 		pm.registerEvents(new CombatSystem(), this);
-		pm.registerEvents(new GUIListener(rpgPlugin), this);					
+		//pm.registerEvents(new GUIListener(rpgPlugin), this);					
 		
-		// Bind the 'R' key to the RPGMainWindow interface.
+	/*	// Bind the 'R' key to the RPGMainWindow interface.
 		KeyBindingManager kMan = SpoutManager.getKeyBindingManager();
 		kMan.registerBinding("net.tigerstudios.rpgcraft.mainwin",
 			Keyboard.KEY_R, "Load the RPGCraft Main Window", new RPGMainWindow(), RPGCraft.getPlugin());
-				
+	*/			
+		// Set up the repeating 'tick listener'
+		timer = new RPGCraftTimer();
+		mcServer.getScheduler().scheduleSyncRepeatingTask(this, timer, 20L, 100L);
+		
 		return true;
 	} // private boolean initializeRPGCraft()	
 	
@@ -205,46 +197,14 @@ public class RPGCraft extends JavaPlugin{
 		if (RPGCraft.pexMan == null) {
 			if (permissionsPlugin != null) {
 				RPGCraft.pexMan = PermissionsEx.getPermissionManager();
-				log.info("[RPGCraft] ---> Permissions plugin detected.");
+				log.info(" --> Permissions plugin detected.");
 			} else {
-				log.info("[RPGCraft] ---> Permissions plugin not detected, defaulting to Bukkit's built-in system.");
+				log.info(" --> Permissions plugin not detected, defaulting to Bukkit's built-in system.");
 			}
 		}
 	} // public void setupPermissions()	
 	
-	
-	public void setupCitizens()
-	{	PluginManager pm = getServer().getPluginManager();
-	    Plugin test = pm.getPlugin("Citizens");
-	    if (test != null) {
-	        System.out.println("[RPGCraft] ---> Successfully hooked into Citizens!");
-	        bCitizensLoaded = true;
-	    } else {
-	        System.out.println("[RPGCraft] ---> Citizens isn't loaded.");
-	        bCitizensLoaded = false;	    }
-	    
-	    test = pm.getPlugin("Factions");
-	    if (test != null) {
-	        System.out.println("[RPGCraft] ---> Successfully hooked into Factions!");
-	        bFactionsLoaded = true;
-	    } else {
-	        System.out.println("[RPGCraft] ---> Factions isn't loaded.");
-	        bFactionsLoaded = false;
-	    }
-	} // public void setupCitizens()
-	
-	private boolean setupEconomy() {
-        if (getServer().getPluginManager().getPlugin("Vault") == null) {
-            return false;
-        }
-        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
-        if (rsp == null) {
-            return false;
-        }
-        econ = rsp.getProvider();
-        return econ != null;
-    } //private boolean setupEconomy()
-		
+			
 	public void loadConfig()
 	{	config = this.getConfig();
 				

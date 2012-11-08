@@ -99,12 +99,12 @@ public class listener_Player implements Listener {
 				if(id == RPGCraft.gp)	total += item.getAmount() * 10000;
 							
 				p.setItemInHand(null);
-				RPGCraft.econ.depositPlayer(p.getName(), total);
+				//RPGCraft.econ.depositPlayer(p.getName(), total);
 				double g = 0, s = 0, c;
-				c = RPGCraft.econ.getBalance(p.getName());
-				while(c >= 100){ s+=1; c-=100;}
+				//c = RPGCraft.econ.getBalance(p.getName());
+				//while(c >= 100){ s+=1; c-=100;}
 				while(s >= 100){ g+=1; s-=100;}
-				p.sendMessage("[§2RPG§f] Balance: §6"+g+" Gold§f, §7"+s+" Silver§f, §c"+c+" Copper§f.");	
+				//p.sendMessage("[§2RPG§f] Balance: §6"+g+" Gold§f, §7"+s+" Silver§f, §c"+c+" Copper§f.");	
 			} // if(character != null)
 		 }// if(item.getDurability() > 1023)
 	} // public void onPlayerInteract(final PlayerInteractEvent event)

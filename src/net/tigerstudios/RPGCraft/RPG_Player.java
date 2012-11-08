@@ -3,7 +3,6 @@ package net.tigerstudios.RPGCraft;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.Bukkit;

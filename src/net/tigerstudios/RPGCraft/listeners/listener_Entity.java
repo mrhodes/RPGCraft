@@ -1,48 +1,54 @@
 package net.tigerstudios.RPGCraft.listeners;
 
+import net.tigerstudios.RPGCraft.RPGCraftTimer;
 import net.tigerstudios.RPGCraft.RPG_Character;
+import net.tigerstudios.RPGCraft.mgr_Entity;
 import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.CombatSystem.mgr_Mob;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.entity.Animals;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.vehicle.VehicleCollisionEvent;
+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
 import org.bukkit.plugin.Plugin;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
-public class listener_Entity implements Listener{
+public class listener_Entity implements Listener{	
 	
 	
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event)
-	{
-		// Get the type of creature, if it is a Mob create a new
-		// Mob entry for it.
-		if(event.getEntity() instanceof Monster)
-		{	mgr_Mob.createMob(event.getEntity());
-		} // if(event.getEntity() instanceof Monster)
-				
+	{	
+		if(mgr_Entity.bControlAllSpawns)
+		{ 	// Cancel all spawnning unless this plugin is the reason
+			if(!event.getSpawnReason().equals(SpawnReason.CUSTOM))
+			{	event.setCancelled(true); 
+				return;
+			}			
+		}				
 	} // public void onCreatureSpawn(CreatureSpawnEvent event)
-		
+	
 		
 	@EventHandler
 	public void onEntityDeath(final EntityDeathEvent event)
 	{	
-		if((event.getEntity() instanceof Monster) && (event.getEntity().getKiller() instanceof Player))
+		if(event.getEntity().getKiller() instanceof Player)
 		{			
-			SpoutPlayer sPlayer = SpoutManager.getPlayer(event.getEntity().getKiller());
-			if(sPlayer == null)
+			Player player = event.getEntity().getKiller();
+			if(player == null)
 				return;
 			
-			if(sPlayer.getGameMode() != GameMode.CREATIVE)
+			if(player.getGameMode() != GameMode.CREATIVE)
 			{
-				RPG_Character rpgChar = mgr_Player.getCharacter(sPlayer);				
-				rpgChar.addExperience(event.getDroppedExp(), sPlayer);
+				RPG_Character rpgChar = mgr_Player.getCharacter(player);				
+				rpgChar.addExperience(event.getDroppedExp(), player);
 			}
 			mgr_Mob.removeMob(event.getEntity().getEntityId());		
 		} // if(event.getEntity() instanceof Monster)
@@ -50,8 +56,5 @@ public class listener_Entity implements Listener{
 		event.setDroppedExp(0);
 	} // public void onEntityDeath(final EntityDeathEvent event)
 		
-	
-	public listener_Entity(Plugin p)
-	{		
-	} // public listener_Entity(Plugin p)	
+	public listener_Entity(){	} // public listener_Entity(Plugin p)	
 } // public class listener_Entity implements Listener

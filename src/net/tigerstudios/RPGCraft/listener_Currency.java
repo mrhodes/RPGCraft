@@ -5,7 +5,7 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.getspout.spoutapi.inventory.SpoutItemStack;
+//import org.getspout.spoutapi.inventory.SpoutItemStack;
 
 public class listener_Currency{
 	private RPG_Player rpgPlayer = null;
@@ -43,7 +43,7 @@ public class listener_Currency{
 				} // if(rpgPlayer == null)
 			} // if(cmd.length == 2 && RPGCraft.Permissions.has(p, "rpgcraft.money.mods"))
 			
-			c = RPGCraft.econ.getBalance(p.getName());
+		/*	c = RPGCraft.econ.getBalance(p.getName());
 			while(c >= 100){ s+=1; c-=100;}
 			while(s >= 100){ g+=1; s-=100;}
 			p.sendMessage("[§2RPG§f] Balance: §6"+(int)g+" Gold§f, §7"+(int)s+" Silver§f, §c"+(int)c+" Copper§f.");			
@@ -52,7 +52,7 @@ public class listener_Currency{
 			{	p.sendMessage("[§2RPG§f] You may also check other players balances by adding");
 				p.sendMessage("[§2RPG§f] their name.");
 				p.sendMessage("[§2RPG§f] Ex: §2/balance §f<§bplayername§f>");
-			}
+			}*/
 			return true;
 		} // if(cmd[0].equalsIgnoreCase("/balance") || cmd[0].equalsIgnoreCase("/bal"))
 		
@@ -112,7 +112,7 @@ public class listener_Currency{
 			int gp, sp, cp;
 			gp = Integer.parseInt(cmd[0]);	sp = Integer.parseInt(cmd[1]);	cp = Integer.parseInt(cmd[2]);
 			
-			if(RPGCraft.econ.getBalance(p.getName()) < ( cp + (sp * 100) + (gp * 10000)))
+			/*if(RPGCraft.econ.getBalance(p.getName()) < ( cp + (sp * 100) + (gp * 10000)))
 			{ 
 				p.sendMessage("[§2RPG§f] Sorry, but you do not have enough coin.");
 				
@@ -123,7 +123,7 @@ public class listener_Currency{
 
 				return true;
 			} // if(RPGCraft.econ.getBalance(p.getName()) < ( cp + (sp * 100) + (gp * 10000)))
-			if(cp > 0)
+			/*if(cp > 0)
 				p.getWorld().dropItem(p.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, cp));
 			if(sp > 0)
 				p.getWorld().dropItem(p.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, sp));
@@ -136,7 +136,7 @@ public class listener_Currency{
 			while(c >= 100){ s+=1; c-=100;}
 			while(s >= 100){ g+=1; s-=100;}
 			p.sendMessage("[§2RPG§f] Balance: §6"+(int)g+" Gold§f, §7"+(int)s+" Silver§f, §c"+(int)c+" Copper§f.");	
-			return true;
+			*/return true;
 		} // if(command.getName().equalsIgnoreCase("withdraw"))		
 			
 		return false;

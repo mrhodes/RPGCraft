@@ -31,13 +31,13 @@ public class MiningSystem {
 	
 	public static boolean mine(Block bTarget, Player pMiner, ItemStack iPickaxe)
 	{
-		SpoutPlayer sp = SpoutManager.getPlayer(pMiner);		
+		//SpoutPlayer sp = SpoutManager.getPlayer(pMiner);		
 		RPG_Character rpgChar = mgr_Player.getCharacter(pMiner);
 		boolean bNoExp = false;
 				
 		if(rpgChar == null)
 		{	// Player cannot harvest without chosing a race first
-			sp.sendNotification("Mining", "Must choose a Race!", bTarget.getType());
+			//sp.sendNotification("Mining", "Must choose a Race!", bTarget.getType());
 			pMiner.sendMessage("[§2RPG§f] You cannot mine until you have first choosen a race.");
 			pMiner.sendMessage("[§2RPG§f] Please type /rpg for more information.");
 			return true;
@@ -237,7 +237,7 @@ public class MiningSystem {
 			{
 				float lvlExp = skillIncrease / 10;
 				skillIncrease -= lvlExp;
-				rpgChar.addExperience(lvlExp, sp);			
+				rpgChar.addExperience(lvlExp, pMiner);			
 			}
 			rpgChar.mineSkillBar += skillIncrease;
 						
@@ -246,7 +246,7 @@ public class MiningSystem {
 				rpgChar.mining += 1;
 				rpgChar.mineSkillBar = 0;
 			
-				sp.sendNotification("Mining "+rpgChar.mining, "Mining skill increased!", Material.DIAMOND_PICKAXE);
+				//sp.sendNotification("Mining "+rpgChar.mining, "Mining skill increased!", Material.DIAMOND_PICKAXE);
 				pMiner.sendMessage("[§2RPG§f] Mining is now: "+rpgChar.mining);	
 			} // if(rpgChar.mineSkillBar >= 75)	
 		} // if(!bNoExp)		

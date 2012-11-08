@@ -11,18 +11,17 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 
 
 public class listener_Block implements Listener {
 		
-	
-	@EventHandler(priority = EventPriority.NORMAL)
+				
+	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event)
 	{		
 		// If the player is in Creative mode then completely ignore this
@@ -88,8 +87,7 @@ public class listener_Block implements Listener {
 				event.setCancelled(true);
 				return;
 			} // if(item != null)
-		}
-				
+		}				
 		return;
 	} // public void onBlockBreak(BlockBreakEvent event)
 	
@@ -107,11 +105,16 @@ public class listener_Block implements Listener {
 			return;
 		}		
 	} // public void onBlockPlace(BlockPlaceEvent event)
+		
 	
-	
-	
-	public listener_Block(Plugin p)
+	@EventHandler
+	public void onSignChange(SignChangeEvent event)
 	{
 		
-	} // public listener_Player(Plugin p)
+		
+		
+	}
+	
+	
+	public listener_Block()	{	} // public listener_Player(Plugin p)
 }

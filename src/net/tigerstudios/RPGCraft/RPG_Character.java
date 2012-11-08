@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import net.tigerstudios.RPGCraft.CombatSystem.RPG_Entity;
+import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.Bukkit;
@@ -87,6 +88,8 @@ public class RPG_Character extends RPG_Entity
 	@Override
 	public void setSpeed(float spd)
 	{
+		if(SpoutFeatures.isEnabled() != true) return;
+		
 		if(spd > 0)
 			this.speed = spd;
 		
@@ -96,7 +99,7 @@ public class RPG_Character extends RPG_Entity
 	public int getAccountID() { return AccountID; }
 	public String getName() { return Name; }
 	public void setName(String name) { Name = name;  }
-	public void addExperience(float exp, SpoutPlayer p)
+	public void addExperience(float exp, Player p)
 	{				
 		experience += exp;
 		
@@ -105,9 +108,11 @@ public class RPG_Character extends RPG_Entity
 			level += 1;
 			p.setLevel(level);		
 			
-			SpoutManager.getSoundManager().playCustomSoundEffect(RPGCraft.getPlugin(), p, "http://tigerstudios.net/minecraft/sounds/levelup.ogg", false);
-			p.sendNotification("Level Up!", "You are now level "+level, Material.DIAMOND);
-			
+			if(SpoutFeatures.isEnabled())
+			{
+				SpoutManager.getSoundManager().playCustomSoundEffect(RPGCraft.getPlugin(), (SpoutPlayer)p, "http://tigerstudios.net/minecraft/sounds/levelup.ogg", false);
+				((SpoutPlayer) p).sendNotification("Level Up!", "You are now level "+level, Material.DIAMOND);
+			}
 			Bukkit.broadcastMessage("    [§2RPG§f] "+p.getName()+" just leveled up! Now "+p.getName()+" is a level "
 					+level+" "+race+".");
 			p.sendMessage(" You now have an extra point to increase one of your primary stats!");

@@ -9,7 +9,14 @@ import org.bukkit.entity.LivingEntity;
 
 public class mgr_Mob {
 	private static Map<Integer,RPG_Mob> mobList = new HashMap<Integer,RPG_Mob>();
-		
+	
+	// A list of places that can spawn mobs will be held.  These are locations marked
+	// with an itemframe on an emeraldore with a particular object in it. 
+	
+	// Wood Sword - 45  deg	= 1 - 2 Mob
+	//              135 deg = 2 - 4 Mob
+	// 				205 deg = 4 - 8 Mob
+	//				295 deg = 8 - 11 Mob
 	
 	public static void createMob(LivingEntity ent)
 	{		
