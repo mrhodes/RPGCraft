@@ -3,7 +3,7 @@ version: 0.8.5
 author: Michael Rhodes
 website: http://tigerstudios.net/rpgcraft
 main: net.tigerstudios.RPGCraft.RPGCraft
-depend: []
+depend: [Spout]
 
 commands:
     rpg:
