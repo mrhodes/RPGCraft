@@ -52,28 +52,39 @@ public class mgr_Player {
 	// server.  This method does not create any new characters 
  	public static boolean playerRegister(Player p)
 	{
-		String query = null;
-		
 		// Need to create an entry in the Accounts Table with this players
 		// Name and Date joined.
-		query = "INSERT INTO Accounts (mc_Name, joined) VALUES ('"+p.getName()+"', DATE());";
-		SQLManager.SQLUpdate(query);	
+		String query = "INSERT INTO Accounts (mc_Name, joined) VALUES ('"+p.getName()+"', DATE());";
+		SQLManager.SQLUpdate(query);
 		
 		return true;
 	} // public boolean playerRegister(Player p, String name)
 	public static boolean playerLogin(Player p)
 	{
-		int account_id = 0;		
+		int account_id = 0;	
+		RPG_Player rpgPlayer = null;
 		
 		String query = "SELECT account_id from Accounts WHERE mc_Name = '"+p.getName()+"'";
 		ResultSet rs = SQLManager.SQLQuery(query);
-		
-		// No reason this should fail
+				
 		try {
 			if(rs.next())
 			{	account_id = rs.getInt("account_id");
-				rs.close();				
-			} // if(rs.next())		
+				rs.close();
+			}else
+			{	// Need to create an entry in the Accounts Table with this players
+				// Name and Date joined.
+				query = "INSERT INTO Accounts (mc_Name, joined) VALUES ('"+p.getName()+"', DATE());";
+				SQLManager.SQLUpdate(query);
+				rs.close();
+			
+				query = "SELECT account_id from Accounts WHERE mc_Name = '"+p.getName()+"'";
+				rs = SQLManager.SQLQuery(query);
+				if(rs.next())
+				{	account_id = rs.getInt("account_id");
+					rs.close();
+				}			
+			}				
 		} catch (SQLException e) { e.printStackTrace();	} 
 			
 		if(account_id == 0)
@@ -81,15 +92,18 @@ public class mgr_Player {
 		
 		// Store Player object in Map for safe keeping, AccountID is the Key
 		mcPlayers.put(account_id, p);
-		rpgPlayers.put(p.getName().hashCode(), new RPG_Player(p.getName(), account_id));		
-				
-		if(getCharacter(p) == null)
+		rpgPlayer = new RPG_Player(p.getName(), account_id);
+		if(rpgPlayer != null)
 		{
-			p.sendMessage(RPGCraft.divider);
-			p.sendMessage("Please select a race for yourself.");
-			p.sendMessage("Type /§arpg list §fto see race choices.");
-			p.sendMessage("and then type /§arpg choose §f<§drace§f> to choose the race.");
-			p.sendMessage(RPGCraft.divider);
+			rpgPlayers.put(p.getName().hashCode(), rpgPlayer);		
+			if(rpgPlayer.isLoaded() == false)
+			{
+				p.sendMessage(RPGCraft.divider);
+				p.sendMessage("Please select a race for yourself.");
+				p.sendMessage("Type /§arpg list §fto see race choices.");
+				p.sendMessage("and then type /§arpg choose §f<§drace§f> to choose the race.");
+				p.sendMessage(RPGCraft.divider);
+			} // if(rpgPlayer.isLoaded() == false)
 		}
 		
 		return true;
@@ -102,9 +116,9 @@ public class mgr_Player {
 		RPG_Player rpgPlayer = getPlayer(p.getName().hashCode());
 		
 		if(rpgPlayer != null)
-		{	rpgPlayer.saveCharacterData();				
-			rpgPlayer.setPlayer(null);
-			
+		{	
+			rpgPlayer.saveCharacterData();				
+						
 			// Remove this player from the collection of player data
 			rpgPlayers.remove(p.getName().hashCode());
 			mcPlayers.remove(rpgPlayer.getAccountID());
@@ -119,7 +133,7 @@ public class mgr_Player {
 		for(RPG_Player p: players)
 			p.saveCharacterData();		
 		
-		RPGCraft.log.info("[RPGCraft] ---> Successfully saved all player data.");
+		RPGCraft.log.info("---> Successfully saved all player data.");
 	} // public static void SaveAllData()
 		
 	

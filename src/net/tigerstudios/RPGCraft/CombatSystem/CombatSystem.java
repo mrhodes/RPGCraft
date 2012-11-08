@@ -3,6 +3,7 @@ package net.tigerstudios.RPGCraft.CombatSystem;
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.utils.MathMethods;
+import net.tigerstudios.RPGCraft.utils.RandomGen;
 
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -17,11 +18,7 @@ import org.bukkit.inventory.ItemStack;
 public class CombatSystem implements Listener{
 	private Player mcPlayer = null;
 	
-	// Since a lot of calculations will be based off random numbers, we will pregenerate the numbers
-	// at setup to avoid calling Random.nextInt().
-	// Interally this plugin will use a D&D like system, so Dice variables will be used.	
-	
-	
+		
 	@EventHandler
 	public void onEntityDamageByEntity(final EntityDamageByEntityEvent event)
 	{
@@ -29,15 +26,6 @@ public class CombatSystem implements Listener{
 		if(!(event.getEntity() instanceof Player) && !(event.getDamager() instanceof Player))
 			return;	
 		
-		if(event.getDamager() instanceof Projectile)
-		{	if(event.getEntity() instanceof Player)
-			{	
-				mcPlayer = (Player) event.getEntity();				
-				//defender = 			
-				
-				//return;
-			} // if(event.getEntity() instanceof Player)			
-		} // if(event.getDamager() instanceof Projectile)	
 				
 		// Get the Attacker and Defender
 		RPG_Entity attacker = null, defender = null;
@@ -96,7 +84,7 @@ public class CombatSystem implements Listener{
 		int attackBonus = 0;	// This is the entities bonus to their attack based on other skills
 		
 		// Attacker rolls a D20, if a 1 auto miss, 20 is auto hit.
-		int attackRoll = MathMethods.rnd.nextInt(20) + 1;
+		int attackRoll = RandomGen.getRandom((byte) 20);
 		if(attackRoll == 1)	{ return 0; }
 					
 		if(type == 0) attackBonus+=attacker.getAttack();	// Melee
@@ -106,7 +94,7 @@ public class CombatSystem implements Listener{
 								
 		if(attackRoll == 20)
 		{	// Chance of Critical hit
-			if((MathMethods.rnd.nextInt(20) + 1) > 18);		// 10 % chance to crit
+			if(RandomGen.getRandom((byte) 100) <= 10);		// 10 % chance to crit
 				attackBonus*=1.5;						
 		} // if(attackRoll == 20)		
 				
@@ -118,7 +106,7 @@ public class CombatSystem implements Listener{
 		
 		// Highest armor rating is 65
 		// Lowest is 10
-		dmg = attackBonus - MathMethods.rnd.nextInt(defenseBonus + 1);
+		dmg = attackBonus - MathMethods.rnd.nextInt(defenseBonus) + 1;
 		if(dmg < 1) dmg = 1;
 		
 		if(attacker instanceof RPG_Character){

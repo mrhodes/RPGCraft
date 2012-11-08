@@ -1,28 +1,21 @@
 package net.tigerstudios.RPGCraft.listeners;
 
-import net.tigerstudios.RPGCraft.RPGCraftTimer;
+
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.mgr_Entity;
 import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.CombatSystem.mgr_Mob;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.vehicle.VehicleCollisionEvent;
-import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
-import org.bukkit.plugin.Plugin;
 
 public class listener_Entity implements Listener{	
-	
-	
+		
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event)
 	{	

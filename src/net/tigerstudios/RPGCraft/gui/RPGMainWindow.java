@@ -52,7 +52,7 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 	// Create the window for the player to interact with
 	public void init()	
 	{
-		int width = 180; int height = 150;
+		int width = 250; int height = 175;
 		int x = screenXCenter - (width / 2);
 		int y = screenYCenter - (height / 2);
 		int btnPosX = x - 80;  int btnPosY = y;

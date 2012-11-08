@@ -19,8 +19,9 @@ import org.getspout.spoutapi.gui.GenericListWidget;
 import org.getspout.spoutapi.gui.GenericPopup;
 import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.gui.ListWidgetItem;
+import org.getspout.spoutapi.gui.Orientation;
 import org.getspout.spoutapi.gui.RenderPriority;
-import org.getspout.spoutapi.gui.Widget;
+import org.getspout.spoutapi.gui.ScrollBarPolicy;
 import org.getspout.spoutapi.gui.WidgetAnchor;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
@@ -76,7 +77,7 @@ public class RaceSelection extends GenericPopup{
 			@Override
 			public void onSelected(int item, boolean dbl)
 			{	// Get the race name and populate the info box below
-				String race = lstRaces.getSelectedItem().getTitle();
+			//	choosenRace = lstRaces.getSelectedItem().getTitle();
 							
 			} // public void onSelected(int item, boolean dbl)
 			
@@ -92,12 +93,16 @@ public class RaceSelection extends GenericPopup{
 			lstRaces.addItem(new ListWidgetItem(r.Name, r.Description));
 		}
 		lstRaces.setSelection(0);
-		lstRaces.setWidth(100).setHeight(55);
-		lstRaces.setX(x+30).setY(y+40);			
+		lstRaces.setWidth(100).setHeight(60);
+		lstRaces.setX(x+30).setY(y+40);	
+		lstRaces.setScrollBarPolicy(Orientation.VERTICAL, ScrollBarPolicy.SHOW_IF_NEEDED);
 		
 		btnSelect = new GenericButton("Select Race")
 		{	@Override
-			public void onButtonClick(ButtonClickEvent event){selectRace();}			
+			public void onButtonClick(ButtonClickEvent event)
+			{
+				selectRace(lstRaces.getSelectedItem().getTitle());
+			}			
 		};
 		btnSelect.setWidth(50).setHeight(15);
 		btnSelect.setX(x + (width - 45)).setY(y + (height - 15));
@@ -108,15 +113,9 @@ public class RaceSelection extends GenericPopup{
 		sPlayer.getMainScreen().attachPopupScreen(this);
 	} // private void init()
 		
-	public void selectRace()
+	public void selectRace(String race )
 	{
-		// Get character info.
-		String race = null;
-		Widget [] w = getAttachedWidgets();
-		for(Widget wi: w)
-		{	if(wi instanceof GenericListWidget)
-				race = ((GenericListWidget)wi).getSelectedItem().getTitle();
-		}		
+		// Get character info.				
 		
 		RPG_Player play = mgr_Player.getPlayer(sPlayer.getName().hashCode());
 		RPG_Character rc = new RPG_Character(RaceSystem.getRace(race), play.getAccountID());

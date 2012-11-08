@@ -3,6 +3,7 @@ package net.tigerstudios.RPGCraft;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+
 import net.tigerstudios.RPGCraft.CombatSystem.RPG_Entity;
 import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
@@ -18,6 +19,7 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 public class RPG_Character extends RPG_Entity
 {
 	private static int[] expTable;	
+	
 	int CharacterID = 0;		// ID for this particular rpg character
 	int AccountID = 0;			// Account of player that owns this character
 	
@@ -76,8 +78,9 @@ public class RPG_Character extends RPG_Entity
 		constitution 		+= r.con_mod;
 		strength			+= r.str_mod;
 		intelligence		+= r.int_mod;
-		EntID = mgr_Player.getMCPlayer(acc_id).getEntityId();
-		RPGCraft.log.info("[CONSTRUCTOR] Player Entity ID: "+this.EntID);
+		level				= 1;
+		setEntityID(mgr_Player.getMCPlayer(acc_id).getEntityId());
+		RPGCraft.log.info("[CONSTRUCTOR] Player Entity ID: "+this.getEntityID());
 		setSpeed(r.speed);		
 				
 		saveCharacter();
@@ -93,8 +96,8 @@ public class RPG_Character extends RPG_Entity
 		if(spd > 0)
 			this.speed = spd;
 		
-		RPGCraft.log.info("[SETSPEED] Player Entity ID: "+this.EntID);
-		SpoutManager.getPlayerFromId(EntID).setWalkingMultiplier(this.speed);
+		RPGCraft.log.info("[SETSPEED] Player Entity ID: "+this.getEntityID());
+		SpoutManager.getPlayerFromId(getEntityID()).setWalkingMultiplier(this.speed);
 	}
 	public int getAccountID() { return AccountID; }
 	public String getName() { return Name; }
@@ -230,5 +233,5 @@ public class RPG_Character extends RPG_Entity
 		for(int i=1; i <= 50; i++)
 			expTable[i] = (int)Math.pow((2 * i), 2) * 50;
 	}
-	
+
 } // public class RPG_Character

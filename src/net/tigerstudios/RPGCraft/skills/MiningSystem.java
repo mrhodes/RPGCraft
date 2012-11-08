@@ -1,6 +1,5 @@
 package net.tigerstudios.RPGCraft.skills;
 
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
@@ -13,6 +12,7 @@ import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.RaceSystem;
 import net.tigerstudios.RPGCraft.mgr_Player;
+import net.tigerstudios.RPGCraft.utils.RandomGen;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,8 +21,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
-import org.getspout.spoutapi.SpoutManager;
-import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class MiningSystem {
 	private static Random randomizer = new Random();
@@ -181,9 +179,6 @@ public class MiningSystem {
 		float dropPercent = 1.0f;
 		if(!iPickaxe.getEnchantments().isEmpty())
 		{
-			// Need to get a random number.
-			int chance = randomizer.nextInt(10000 + 1);
-			
 			boolean bDmgTool = false;
 			
 			// Fortune Enchantment - Somewhat modified
@@ -200,11 +195,15 @@ public class MiningSystem {
 			// Unbreaking
 			if(iPickaxe.containsEnchantment(Enchantment.DURABILITY))
 			{	int encLevel = iPickaxe.getEnchantmentLevel(Enchantment.DURABILITY);
+			
+				// Need to get a random number.
+				byte chance = RandomGen.getRandom((byte)100);
+							
 				switch(encLevel)
 				{ 
-				case 1: if(chance <= 5000) bDmgTool = true; // 50 %
-				case 2: if(chance <= 3300) bDmgTool = true;// 33 %
-				case 3: if(chance <= 2500) bDmgTool = true;// 25%
+				case 1: if(chance <= 50) bDmgTool = true; // 50 %
+				case 2: if(chance <= 33) bDmgTool = true;// 33 %
+				case 3: if(chance <= 25) bDmgTool = true;// 25%
 				} // switch(encLevel)
 			} // if(iPickaxe.containsEnchantment(Enchantment.DURABILITY))
 			

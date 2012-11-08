@@ -243,11 +243,6 @@ public class AdminConfig extends GenericPopup{
 		label.setX(10).setY(10);
 		categoryConfig.addChild(label);			
 		
-		catInput = new GenericTextField();
-		catInput.setPlaceholder("<Enter New Category>");
-		catInput.setX(10).setY(40).setWidth(80).setHeight(10);
-		categoryConfig.addChild(catInput);
-				
 		catList = new GenericComboBox(){
 			@Override
 			public void onSelectionChanged(int i, String text)
@@ -258,7 +253,7 @@ public class AdminConfig extends GenericPopup{
 		// Here we need to load the categories from the RPGClass
 		// and populate the box with them, if any.
 		if(!RPGCraft.itemCategories.isEmpty())
-		{	catList.setItems((List<String>) RPGCraft.itemCategories);			
+		{	catList.setItems((List<String>) RPGCraft.itemCategories.values());			
 		}else
 		{
 			catList.setText("Nothing Here Yet");
@@ -266,8 +261,14 @@ public class AdminConfig extends GenericPopup{
 		catList.setSelection(0);
 		catList.setWidth(80).setHeight(15);
 		catList.setX(10).setY(30);
-		categoryConfig.addChild(catList);	
+		categoryConfig.addChild(catList);
 		
+		catInput = new GenericTextField();
+		catInput.setPlaceholder("<Enter New Category>");
+		catInput.setX(10).setY(catList.getHeight() + catList.getY() + 1).setWidth(80).setHeight(15);
+		categoryConfig.addChild(catInput);
+			
+				
 		categoryConfig.setVisible(false);
 		this.attachWidgets(rpgPlugin, categoryConfig.getChildren());
 	}

@@ -20,7 +20,6 @@ public class RPG_Player{
 	private int AccountID = 0;			// unique account ID.  Value stored in Database
 		
 	private String mcName = null;					// Players Minecraft Name
-	private Player player = null;					// Minecraft Player class
 	private RPG_Character rpgCharacter = null;		// This players rpg character	
 	private boolean bCharLoaded = false;
 	
@@ -36,19 +35,17 @@ public class RPG_Player{
 	{		
 		mcName = minecraftName;
 		AccountID = id;
-		player = Bukkit.getPlayer(minecraftName);
 		if(loadCharacterData())
 			bCharLoaded = true;		
 	} // public void RPG_Player(Player p)
 	
 		
-	public SpoutPlayer getSpoutPlayer() { return SpoutManager.getPlayer(this.player);} // public SpoutPlayer getSpoutPlayer() 
+	public SpoutPlayer getSpoutPlayer() { return SpoutManager.getPlayer(getPlayer());} // public SpoutPlayer getSpoutPlayer() 
 	
 	public RPG_Character getCharacter() { if(bCharLoaded) return rpgCharacter; return null;}
 	public void setCharacter(RPG_Character character) { rpgCharacter = character; bCharLoaded = true; } 
-	public Player getPlayer() { return player; }
-	public void setPlayer(Player p) { player = p; }
-			
+	public Player getPlayer() { return Bukkit.getPlayer(mcName); }
+				
 	public int getAccountID() { return AccountID; }
 	public long getTimer() { return lTimer; }
 	public void setTimer(long tMs) { lTimer = tMs; }
@@ -69,7 +66,7 @@ public class RPG_Player{
 			{
 				RPG_Character character = new RPG_Character();				
 				
-				character.EntID			= player.getEntityId();
+				character.setEntityID(getPlayer().getEntityId());
 				character.AccountID 	= AccountID;
 				character.CharacterID	= rs.getInt("char_id");
 				character.setName(rs.getString("name"));
@@ -98,7 +95,6 @@ public class RPG_Player{
 				character.setSpeed(RaceSystem.getRace(character.race).speed);
 				rs.close();
 									
-				character.updateExpBar();				
 				setCharacter(character);				
 				
 				return true;
@@ -107,5 +103,6 @@ public class RPG_Player{
 		
 		return false;
 	} // public void loadCharacterData()	
+	public boolean isLoaded() {return this.bCharLoaded;	}
 	
 } // public class RPG_Player

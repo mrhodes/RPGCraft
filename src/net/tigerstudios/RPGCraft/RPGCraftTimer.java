@@ -1,7 +1,5 @@
 package net.tigerstudios.RPGCraft;
 
-import org.bukkit.Bukkit;
-
 
 public class RPGCraftTimer implements Runnable {
 		

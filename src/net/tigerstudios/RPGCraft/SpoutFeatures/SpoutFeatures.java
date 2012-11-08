@@ -37,7 +37,7 @@ public class SpoutFeatures {
 		if (enabled == true) return true;
 		enabled = true;
 
-		RPGCraft.log.info("[RPGCraft] ---> Found and will use features of "+plugin.getDescription().getFullName());
+		RPGCraft.log.info("---> Found and will use features of "+plugin.getDescription().getFullName());
 		
 		// Set the files to be preloaded for new players.
 		preLoadResources();		
@@ -46,8 +46,8 @@ public class SpoutFeatures {
 		
 	@ClientOnly
 	public static void preLoadResources()
-	{	// Precache all needed reources for the plugin.
-		SpoutManager.getFileManager().addToPreLoginCache(rpgPlugin, "http://tigerstudios.net/guiWindow.png");
+	{	// Precache all needed resources for the plugin.
+		SpoutManager.getFileManager().addToPreLoginCache(rpgPlugin, "http://tigerstudios.net/minecraft/textures/guiWindow.png");
 		SpoutManager.getFileManager().addToPreLoginCache(rpgPlugin, "http://tigerstudios.net/minecraft/textures/copper.png");
 		SpoutManager.getFileManager().addToPreLoginCache(rpgPlugin, "http://tigerstudios.net/minecraft/textures/silver.png");
 		SpoutManager.getFileManager().addToPreLoginCache(rpgPlugin, "http://tigerstudios.net/minecraft/textures/gold.png");

@@ -1,7 +1,5 @@
 package net.tigerstudios.RPGCraft.listeners;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
@@ -9,7 +7,6 @@ import net.tigerstudios.RPGCraft.RPG_Player;
 import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
-import net.tigerstudios.RPGCraft.utils.SQLManager;
 
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
@@ -119,8 +116,7 @@ public class listener_Player implements Listener {
 		} // if(event.getRightClicked() instanceof Animals)
 	
 		if(event.getRightClicked() instanceof Villager)
-		{
-			
+		{			
 			
 		} // if(event.getRightClicked() instanceof Villager)
 		
@@ -129,26 +125,9 @@ public class listener_Player implements Listener {
 	@EventHandler
 	public void onPlayerJoin(final PlayerJoinEvent event)
 	{
-		Player p = event.getPlayer();
-		ResultSet rs = null;
-		
-		// See if this player is in the database.
-		String query = "SELECT * from Accounts WHERE mc_Name='"+p.getName()+"'";
-		rs = SQLManager.SQLQuery(query);
-		
-		try {
-			if(!rs.next())
-			{	// New player.  Need to register this as a new player before logging in.
-				mgr_Player.playerRegister(p);
-				rs.close();
-			}			
-		} catch (SQLException e) { e.printStackTrace();	}
-		
+		Player p = event.getPlayer();		
 		mgr_Player.playerLogin(p);
 		
-		// Update the Weapon and Armor stats for this player
-		CombatSystem.updateArmorStats(p);
-		CombatSystem.updateWeaponStats(p);
 		return;		
 	} // public void onPlayerJoin(final PlayerJoinEvent event)
 	

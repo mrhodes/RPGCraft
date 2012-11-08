@@ -29,7 +29,9 @@ import java.util.logging.Logger;
 
 import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.CombatSystem.mgr_Mob;
+import net.tigerstudios.RPGCraft.SpoutFeatures.GUIListener;
 import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
+import net.tigerstudios.RPGCraft.gui.RPGMainWindow;
 import net.tigerstudios.RPGCraft.listeners.listener_Block;
 import net.tigerstudios.RPGCraft.listeners.listener_Entity;
 import net.tigerstudios.RPGCraft.listeners.listener_Player;
@@ -37,6 +39,8 @@ import net.tigerstudios.RPGCraft.skills.FarmSystem;
 import net.tigerstudios.RPGCraft.skills.MiningSystem;
 import net.tigerstudios.RPGCraft.utils.MathMethods;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
+import net.tigerstudios.RPGCraft.utils.custom.CCoin;
+import net.tigerstudios.RPGCraft.utils.custom.CFood;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -50,6 +54,9 @@ import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.keyboard.KeyBindingManager;
+import org.getspout.spoutapi.keyboard.Keyboard;
 import org.getspout.spoutapi.material.CustomItem;
 import org.getspout.spoutapi.material.item.GenericCustomFood;
 
@@ -137,19 +144,18 @@ public class RPGCraft extends JavaPlugin{
 		
 		SpoutFeatures.setup(this);
 		
-		/*copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
+		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
 		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
 		goldCoin = new CCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
 		aleMug = new CFood(this, "Cider Ale", webBase+"textures/mug1.png", 0);
 						
 		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
 		aleID = aleMug.getCustomId();
-		*/
+		
 		setupRecipies();
 		mgr_Entity.initialize();
-		mgr_Player.initialize(this);
-		
 		RPG_Character.initialize();
+		mgr_Player.initialize(this);		
 						
 		currencyListener = new listener_Currency();
 									
@@ -161,13 +167,13 @@ public class RPGCraft extends JavaPlugin{
 		pm.registerEvents(new listener_Entity(), this);
 		pm.registerEvents(new FarmSystem(), this);
 		pm.registerEvents(new CombatSystem(), this);
-		//pm.registerEvents(new GUIListener(rpgPlugin), this);					
+		pm.registerEvents(new GUIListener(rpgPlugin), this);					
 		
-	/*	// Bind the 'R' key to the RPGMainWindow interface.
+		// Bind the 'R' key to the RPGMainWindow interface.
 		KeyBindingManager kMan = SpoutManager.getKeyBindingManager();
 		kMan.registerBinding("net.tigerstudios.rpgcraft.mainwin",
 			Keyboard.KEY_R, "Load the RPGCraft Main Window", new RPGMainWindow(), RPGCraft.getPlugin());
-	*/			
+				
 		// Set up the repeating 'tick listener'
 		timer = new RPGCraftTimer();
 		mcServer.getScheduler().scheduleSyncRepeatingTask(this, timer, 20L, 100L);
