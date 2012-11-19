@@ -80,7 +80,6 @@ public class RPG_Character extends RPG_Entity
 		intelligence		+= r.int_mod;
 		level				= 1;
 		setEntityID(mgr_Player.getMCPlayer(acc_id).getEntityId());
-		RPGCraft.log.info("[CONSTRUCTOR] Player Entity ID: "+this.getEntityID());
 		setSpeed(r.speed);		
 				
 		saveCharacter();
@@ -88,16 +87,15 @@ public class RPG_Character extends RPG_Entity
 	
 	public RPG_Character() {}
 
-	@Override
+	@Override 
 	public void setSpeed(float spd)
 	{
 		if(SpoutFeatures.isEnabled() != true) return;
 		
 		if(spd > 0)
-			this.speed = spd;
+			speed = spd;
 		
-		RPGCraft.log.info("[SETSPEED] Player Entity ID: "+this.getEntityID());
-		SpoutManager.getPlayerFromId(getEntityID()).setWalkingMultiplier(this.speed);
+		SpoutManager.getPlayer(mgr_Player.getMCPlayer(AccountID)).setWalkingMultiplier(speed);
 	}
 	public int getAccountID() { return AccountID; }
 	public String getName() { return Name; }

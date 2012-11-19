@@ -105,16 +105,7 @@ public class listener_Block implements Listener {
 			return;
 		}		
 	} // public void onBlockPlace(BlockPlaceEvent event)
-		
-	
-	@EventHandler
-	public void onSignChange(SignChangeEvent event)
-	{
-		
-		
-		
-	}
-	
+
 	
 	public listener_Block()	{	} // public listener_Player(Plugin p)
 }

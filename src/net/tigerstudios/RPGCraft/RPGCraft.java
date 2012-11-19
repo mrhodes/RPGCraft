@@ -23,12 +23,9 @@ package net.tigerstudios.RPGCraft;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
-import net.tigerstudios.RPGCraft.CombatSystem.mgr_Mob;
 import net.tigerstudios.RPGCraft.SpoutFeatures.GUIListener;
 import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
 import net.tigerstudios.RPGCraft.gui.RPGMainWindow;
@@ -38,6 +35,7 @@ import net.tigerstudios.RPGCraft.listeners.listener_Player;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 import net.tigerstudios.RPGCraft.skills.MiningSystem;
 import net.tigerstudios.RPGCraft.utils.MathMethods;
+import net.tigerstudios.RPGCraft.utils.RandomGen;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 import net.tigerstudios.RPGCraft.utils.custom.CCoin;
 import net.tigerstudios.RPGCraft.utils.custom.CFood;
@@ -67,13 +65,14 @@ public class RPGCraft extends JavaPlugin{
 	private static String name;
 	private static String version;
 	private static Plugin rpgPlugin;
-	public static Logger log = null;	
 	private static Server mcServer;	
 	private static int timerID = 0;
-	private static RPGCraftTimer timer;
+	private static RPGCraftTimer timer;	
+	
+	public static Logger log = null;		
 			
 	// Listener Classes to handle the events
-	private static listener_Currency currencyListener = null;	
+	public static listener_Currency currencyListener = null;	
 	public static CustomItem copperCoin, silverCoin, goldCoin;
 	public static GenericCustomFood aleMug;
 	public static int cp, sp, gp, aleID;
@@ -83,18 +82,14 @@ public class RPGCraft extends JavaPlugin{
 	public static String divider = "§5***************************************************************";
 	public static String webBase = "http://tigerstudios.net/minecraft/";
 	
-	public static PermissionManager pexMan = null;
+	public static PermissionManager pexMan = null;		
+	public static FileConfiguration config = null;
 	
-	// All items that need to have some sort of category associated to them.
-	public static Map<String, String> itemCategories = new HashMap<String,String>();
-		
-	static FileConfiguration config = null;				
-
+	
 	@Override
 	public void onDisable() {		
 		// Shutdown all Manager classes
 		try {
-			mgr_Mob.shutdown();
 			mgr_Player.SaveAllData();
 			mgr_Player.logoutAllPlayers();
 			MiningSystem.shutDown();
@@ -110,7 +105,6 @@ public class RPGCraft extends JavaPlugin{
 	
 	@Override
 	public void onEnable() {	
-		super.onEnable();
 		name = getDescription().getName();
 		version = getDescription().getVersion();
 					
@@ -120,7 +114,9 @@ public class RPGCraft extends JavaPlugin{
 			log.info(name + " is not loaded.");
 			log = null;
 			this.setEnabled(false);
-		}		
+			return;
+		}	
+		super.onEnable();	
 	} // public void onEnable()	
 	
 	private boolean initializeRPGCraft()
@@ -161,6 +157,8 @@ public class RPGCraft extends JavaPlugin{
 									
 		rpgPlugin = this;
 		MathMethods.setup();
+		RandomGen.initialize(System.currentTimeMillis());
+		
 		PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new listener_Player(), this);
 		pm.registerEvents(new listener_Block(), this);

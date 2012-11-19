@@ -1,6 +1,5 @@
 package net.tigerstudios.RPGCraft.gui;
 
-import java.util.List;
 
 import net.tigerstudios.RPGCraft.RPGCraft;
 
@@ -28,6 +27,8 @@ public class AdminConfig extends GenericPopup{
 	GenericComboBox catList = null;
 	GenericLabel label = null;
 	GenericButton btnBack = null; GenericButton btnClose = null;
+	
+	GenericContainer currentContainer = null;
 	
 	GenericContainer categoryConfig = null;
 	GenericContainer playerConfig = null;
@@ -71,16 +72,17 @@ public class AdminConfig extends GenericPopup{
 		// Setup the 3 Containers to hold the GUI
 // --------------------------
 		mainScreen = new GenericContainer();
-		mainScreen.setX(x + 3).setY(y);
+		mainScreen.setX(x).setY(y);
 		mainScreen.setWidth(width).setHeight(height);
 		mainScreen.setLayout(ContainerType.OVERLAY);
+		
 		//Set up the windows background image
 		GenericTexture texture = new GenericTexture(RPGCraft.webBase+"textures/guiWindow.png");
 		texture.setX(0).setY(0).setWidth(width).setHeight(height).setPriority(RenderPriority.Highest);
 		label = new GenericLabel("Admin Control Panel");
 		label.setTooltip("title");
 		label.setWidth((int)(width * 0.8f)).setHeight(30);
-		label.setX(5).setY(-10);
+		label.setX(0).setY(-10);
 		
 		btnBack = new GenericButton("Back"){
 			@Override
@@ -89,11 +91,7 @@ public class AdminConfig extends GenericPopup{
 				if(subButtons != null)
 					if(subButtons.isVisible())
 						subButtons.setVisible(false);
-				// Clear all widgets but the main label
-				/*for(Widget w: mainScreen.getChildren())
-				{	if(!w.getTooltip().equalsIgnoreCase("title"))
-						w.setVisible(false);
-				}*/
+				
 				mainScreen.setVisible(true);
 				btnBack.setEnabled(false);							
 			} // public void onButtonClick(ButtonClickEvent ev) 
@@ -129,8 +127,8 @@ public class AdminConfig extends GenericPopup{
 		optionButtons.addChild(button);		
 		
 		button = new GenericButton("Player Config"){
-			/*@Override
-			public void onButtonClick(ButtonClickEvent ev)	{ playerConfig(); }		*/
+			@Override
+			public void onButtonClick(ButtonClickEvent ev)	{  }		
 		};
 		button.setX(0).setY(20);
 		button.setWidth(75).setHeight(15);
@@ -243,6 +241,9 @@ public class AdminConfig extends GenericPopup{
 		label.setX(10).setY(10);
 		categoryConfig.addChild(label);			
 		
+		catInput = new GenericTextField();
+		catInput.setPlaceholder("<Enter New Category>");
+		
 		catList = new GenericComboBox(){
 			@Override
 			public void onSelectionChanged(int i, String text)
@@ -250,23 +251,23 @@ public class AdminConfig extends GenericPopup{
 			}			
 		};
 		
+		catInput.setX(10).setY(catList.getHeight() + catList.getY() + 1).setWidth(80).setHeight(15);
+		categoryConfig.addChild(catInput);
+		
 		// Here we need to load the categories from the RPGClass
 		// and populate the box with them, if any.
-		if(!RPGCraft.itemCategories.isEmpty())
+		/*if(!RPGCraft.itemCategories.isEmpty())
 		{	catList.setItems((List<String>) RPGCraft.itemCategories.values());			
 		}else
 		{
 			catList.setText("Nothing Here Yet");
-		}
+		}*/
 		catList.setSelection(0);
 		catList.setWidth(80).setHeight(15);
 		catList.setX(10).setY(30);
 		categoryConfig.addChild(catList);
 		
-		catInput = new GenericTextField();
-		catInput.setPlaceholder("<Enter New Category>");
-		catInput.setX(10).setY(catList.getHeight() + catList.getY() + 1).setWidth(80).setHeight(15);
-		categoryConfig.addChild(catInput);
+		
 			
 				
 		categoryConfig.setVisible(false);

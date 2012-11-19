@@ -122,23 +122,20 @@ public class listener_Player implements Listener {
 		
 	} // public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
 	
+	
 	@EventHandler
 	public void onPlayerJoin(final PlayerJoinEvent event)
 	{
-		Player p = event.getPlayer();		
-		mgr_Player.playerLogin(p);
-		
+		mgr_Player.playerLogin(event.getPlayer());		
 		return;		
 	} // public void onPlayerJoin(final PlayerJoinEvent event)
 	
 	@EventHandler
 	public void onPlayerQuit(final PlayerQuitEvent event)
 	{
-		Player p = event.getPlayer();
-		mgr_Player.playerLogout(p);
+		mgr_Player.playerLogout(event.getPlayer());
 		return;
 	} // public void onPlayerQuit(PlayerEvent event)
 	
-	public listener_Player(){} // public listener_Player(Plugin p)
-			
+	public listener_Player(){} // public listener_Player(Plugin p)			
 } // public class listener_Player implements Listener

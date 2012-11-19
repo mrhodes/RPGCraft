@@ -43,6 +43,7 @@ public class CommandProcessor{
 				} // if(rc == null)
 				else
 				{	sender.sendMessage("§l§2Level §f"+rc.getLevel()+" §2"+rc.race);
+					sender.sendMessage("§aArmor Rating§f: "+rc.getArmorClass()+"§f, §aCurrent Weapon Rating§f: "+rc.getWeaponDamage());
 					sender.sendMessage("§aStrength§f: "+rc.getStrength()+"§f,  §aDexterity§f: "+rc.getDexterity()+"§f,  §aConstitution§f: "+rc.getConstitution()+"§f,  §aIntelligence§f: "+rc.getIntelligence());			
 					sender.sendMessage("§aAttack§f: "+rc.getAttack()+"§f,  §aDefense§f: "+rc.getDefense()+"§f,  §aParry§f: "+rc.getParry());
 					sender.sendMessage("§aFarming§f: "+rc.farming+"§f,  §aMining§f: "+rc.mining+"§f,  §aEnchanting§f: "+rc.enchanting+"§f, §aAlchemy§f: "+rc.alchemy);

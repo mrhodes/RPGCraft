@@ -5,7 +5,6 @@ import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-//import org.getspout.spoutapi.inventory.SpoutItemStack;
 
 public class listener_Currency{
 	private RPG_Player rpgPlayer = null;
@@ -25,6 +24,7 @@ public class listener_Currency{
 			p.sendMessage("[§2RPG§f] Select a race with the '/rpg reset' command.");
 			return true;
 		}
+		
 		if(command.getName().equalsIgnoreCase("balance") || command.getName().equalsIgnoreCase("bal"))
 		{	if(!(RPGCraft.pexMan.has(p, "rpgcraft.money")))
 			{
@@ -123,7 +123,7 @@ public class listener_Currency{
 
 				return true;
 			} // if(RPGCraft.econ.getBalance(p.getName()) < ( cp + (sp * 100) + (gp * 10000)))
-			/*if(cp > 0)
+			if(cp > 0)
 				p.getWorld().dropItem(p.getLocation(), new SpoutItemStack(RPGCraft.copperCoin, cp));
 			if(sp > 0)
 				p.getWorld().dropItem(p.getLocation(), new SpoutItemStack(RPGCraft.silverCoin, sp));
@@ -142,8 +142,5 @@ public class listener_Currency{
 		return false;
 	} // public boolean currencyProcessor(CommandSender sender, Command command, String label, String[] cmd)	
 	
-	public listener_Currency()
-	{
-		
-	} // public listener_Currency(Plugin p)
+	public listener_Currency() {} // public listener_Currency(Plugin p)
 }

@@ -197,7 +197,7 @@ public class MiningSystem {
 			{	int encLevel = iPickaxe.getEnchantmentLevel(Enchantment.DURABILITY);
 			
 				// Need to get a random number.
-				byte chance = RandomGen.getRandom((byte)100);
+				byte chance = RandomGen.rollDice(100, 1, 0);
 							
 				switch(encLevel)
 				{ 

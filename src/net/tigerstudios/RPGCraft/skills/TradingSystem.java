@@ -4,7 +4,7 @@ package net.tigerstudios.RPGCraft.skills;
 public class TradingSystem {
 	private static purchaseHistory ph = null;
 	
-	// need tp keep a running list of average sales for every item sold.
+	// need to keep a running list of average sales for every item sold.
 	// When a traders Window load, it will communicate with this system
 	// It will send an item, and expect a return price.
 	
@@ -32,7 +32,7 @@ public class TradingSystem {
 
 class purchaseHistory
 {
-	public int totalSale[];			// Total amount of items item has been sold.
+	public int totalSale[];		// Total amount of items item has been sold.
 	public long totalCopper[];	// All time copper paid for this item
 	
 }

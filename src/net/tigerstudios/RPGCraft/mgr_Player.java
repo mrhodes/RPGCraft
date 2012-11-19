@@ -149,5 +149,12 @@ public class mgr_Player {
 	{		
 		rpgPlayers.clear();
 	} // public static void initialize(Plugin p)
+	
+	
+	
+	public static void update()
+	{
+		
+	}
 
 } // public class mgr_Player {
