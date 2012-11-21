@@ -5,7 +5,6 @@ import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.RPG_Player;
 import net.tigerstudios.RPGCraft.mgr_Player;
-import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 
 import org.bukkit.entity.Animals;
@@ -13,57 +12,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class listener_Player implements Listener {		
-			
-	
-	@EventHandler
-	public void onInventoryClose(InventoryCloseEvent event)
-	{
-		if(mgr_Player.getCharacter((Player) event.getPlayer()) != null)
-		{
-			CombatSystem.updateArmorStats((Player) event.getPlayer());
-			CombatSystem.updateWeaponStats((Player) event.getPlayer());
-			return;
-		}
-		Player p = (Player)event.getPlayer();
-		if(p != null)
-		{	p.sendMessage(RPGCraft.divider);
-			p.sendMessage("Please select a race for yourself.");
-			p.sendMessage("Type /§arpg list §fto see race choices.");
-			p.sendMessage("and then type /§arpg choose §f<§drace§f> to choose the race.");
-			p.sendMessage(RPGCraft.divider);
-		}		
-	} // public void onInventoryClose(InventoryCloseEvent event)
-	
-	@EventHandler
-	public void onPlayerItemBreak(PlayerItemBreakEvent event)
-	{
-		// When an Item breaks, update the players armor and weapon
-		// values to reflect the changes.
-		if(mgr_Player.getCharacter(event.getPlayer()) != null)
-		{	CombatSystem.updateArmorStats(event.getPlayer());
-			CombatSystem.updateWeaponStats(event.getPlayer());
-			return;
-		}
-		Player p = (Player)event.getPlayer();
-		if(p != null)
-		{	p.sendMessage(RPGCraft.divider);
-			p.sendMessage("Please select a race for yourself.");
-			p.sendMessage("Type /§arpg list §fto see race choices.");
-			p.sendMessage("and then type /§arpg choose §f<§drace§f> to choose the race.");
-			p.sendMessage(RPGCraft.divider);
-		}		
-	}// public void onPlayerItemBreak(PlayerItemBreakEvent event)
-	
-	
+				
 	@EventHandler
 	public void onPlayerInteract(final PlayerInteractEvent event)
 	{
@@ -79,8 +35,7 @@ public class listener_Player implements Listener {
 			RPG_Character character = mgr_Player.getCharacter(p);
 			
 			if(character != null)
-			{													
-				short id = item.getDurability();
+			{	short id = item.getDurability();
 					
 				RPG_Player rpgPlayer = mgr_Player.getPlayer(p.getName().hashCode());
 				// Important, only do this if within the 10 second timer.

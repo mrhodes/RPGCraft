@@ -18,7 +18,6 @@ import org.bukkit.inventory.ItemStack;
 // 
 public class CombatSystem implements Listener{
 	private Player mcPlayer = null;
-	
 		
 	@EventHandler
 	public void onEntityDamageByEntity(final EntityDamageByEntityEvent event)
@@ -94,15 +93,16 @@ public class CombatSystem implements Listener{
 		if(type == 1) attackBonus+=attacker.getAttack();	// Ranged
 		
 		attackBonus+=attacker.getWeaponDamage();		
-								
-		if(attackRoll == 20)
-		{	// Chance of Critical hit
-			if(RandomGen.rollDice(100, 1, 0) <= 10);		// 10 % chance to crit
-				attackBonus*=1.75;						
-		} // if(attackRoll == 20)		
-				
+		
 		// Add Code to detect a Villager being attacked, animals 2
 		float defenseBonus = defender.getArmorClass() + defender.getDefense();
+		
+		if(attackRoll == 20)
+		{	// Chance of Critical hit
+			if( (RandomGen.rollDice(20, 1, 0) + attackBonus) > defenseBonus);		// 10 % chance to crit
+				attackBonus*=1.75;	
+		
+		} // if(attackRoll == 20)	
 		
 		dmg = attackBonus - RandomGen.rollDice(8, 1, (int) (defenseBonus/2));
 		

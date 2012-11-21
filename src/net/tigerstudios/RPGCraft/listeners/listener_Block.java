@@ -14,12 +14,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
-
-public class listener_Block implements Listener {
-		
+public class listener_Block implements Listener {		
 				
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event)
@@ -87,6 +84,9 @@ public class listener_Block implements Listener {
 				event.setCancelled(true);
 				return;
 			} // if(item != null)
+			
+			
+			
 		}				
 		return;
 	} // public void onBlockBreak(BlockBreakEvent event)
@@ -105,7 +105,6 @@ public class listener_Block implements Listener {
 			return;
 		}		
 	} // public void onBlockPlace(BlockPlaceEvent event)
-
 	
 	public listener_Block()	{	} // public listener_Player(Plugin p)
 }

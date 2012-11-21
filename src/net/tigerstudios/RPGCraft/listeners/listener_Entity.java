@@ -60,6 +60,5 @@ public class listener_Entity implements Listener{
 		{	event.setCancelled(true);	}		
 	}
 	
-	
 	public listener_Entity(){	} // public listener_Entity(Plugin p)	
 } // public class listener_Entity implements Listener

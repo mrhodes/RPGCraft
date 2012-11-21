@@ -142,7 +142,7 @@ public class RPG_Character extends RPG_Entity
 		displayPrefix = "";	
 		setDisplaySuffix("");	
 				
-		race = "unknown"; level = 1; experience = 0; 
+		race = ""; level = 1; experience = 0; 
 		dexterity = 3; constitution = 3; strength = 3; intelligence = 3;
 		attack = 1; defense = 1; parry = 1;
 		
