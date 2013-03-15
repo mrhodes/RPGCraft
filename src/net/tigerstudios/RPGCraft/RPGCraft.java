@@ -23,6 +23,7 @@ package net.tigerstudios.RPGCraft;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
@@ -83,41 +84,14 @@ public class RPGCraft extends JavaPlugin{
 	public static String webBase = "http://tigerstudios.net/minecraft/";
 	
 	public static PermissionManager pexMan = null;		
-	public static FileConfiguration config = null;
+	public static FileConfiguration config = null;	
 	
+	public static Server getBukkitServer() { return mcServer; }	
 	
-	@Override
-	public void onDisable() {		
-		// Shutdown all Manager classes
-		try {
-			mgr_Player.SaveAllData();
-			mgr_Player.logoutAllPlayers();
-			MiningSystem.shutDown();
-			SQLManager.closeConnection("RPGCraft");
-		} catch (SQLException e1) { e1.printStackTrace();}		
+	public static Plugin getPlugin() { return rpgPlugin; }
 	
-		log.info(name + " " + version + " disabled.");
-		log = null;
-		this.setEnabled(false);
-		super.onDisable();
-	} // public void onDisable()
+	public static FileConfiguration getRPGConfig() { return config; }
 	
-	
-	@Override
-	public void onEnable() {	
-		name = getDescription().getName();
-		version = getDescription().getVersion();
-					
-		if(initializeRPGCraft() == false)
-		{ 	// An error occurred while initiailizing the plugin.
-			log.info(name + " " + version + " did not initialize.");
-			log.info(name + " is not loaded.");
-			log = null;
-			this.setEnabled(false);
-			return;
-		}	
-		super.onEnable();	
-	} // public void onEnable()	
 	
 	private boolean initializeRPGCraft()
 	{
@@ -132,7 +106,12 @@ public class RPGCraft extends JavaPlugin{
 					
 		setupPermissions();	
 		if(!SQLManager.setupDatabase())
-			return false;		
+			return false;	
+		
+		if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false)
+		{	log.log(Level.SEVERE, "Citizens 2.0 not found or not enabled");
+		
+		}
 	
 		// Load the Race data files
 		RaceSystem.loadRaceFile("halfling.yml");	RaceSystem.loadRaceFile("human.yml");
@@ -180,6 +159,19 @@ public class RPGCraft extends JavaPlugin{
 	} // private boolean initializeRPGCraft()	
 	
 	
+	public void loadConfig()
+	{	config = this.getConfig();
+				
+		config.createSection("URL Images");
+		config.addDefault("URL Images."+ "copperIcon", webBase+"textures/copper.png");
+		config.addDefault("URL Images." + "silverIcon", webBase+"textures/silver.png");
+		config.addDefault("URL Images." +"goldIcon", webBase+"textures/gold.png");
+						
+		config.options().copyDefaults(true);
+		saveConfig();
+	} // public void loadConfig()
+	
+			
 	@Override
 	public boolean onCommand(CommandSender sender, Command command,	String label, String[] args)
 	{	if(sender instanceof Player)
@@ -194,6 +186,37 @@ public class RPGCraft extends JavaPlugin{
 		return false;
 	} // public boolean onCommand(CommandSender sender, Command command, String label, String[] args)			
 	
+	@Override
+	public void onDisable() {		
+		// Shutdown all Manager classes
+		try {
+			mgr_Player.SaveAllData();
+			mgr_Player.logoutAllPlayers();
+			MiningSystem.shutDown();
+			SQLManager.closeConnection("RPGCraft");
+		} catch (SQLException e1) { e1.printStackTrace();}		
+	
+		log.info(name + " " + version + " disabled.");
+		log = null;
+		this.setEnabled(false);
+		super.onDisable();
+	} // public void onDisable()	
+	
+	@Override
+	public void onEnable() {	
+		name = getDescription().getName();
+		version = getDescription().getVersion();
+					
+		if(initializeRPGCraft() == false)
+		{ 	// An error occurred while initiailizing the plugin.
+			log.info(name + " " + version + " did not initialize.");
+			log.info(name + " is not loaded.");
+			log = null;
+			this.setEnabled(false);
+			return;
+		}	
+		super.onEnable();	
+	} // public void onEnable()	
 	
 	public void setupPermissions() {
 		Plugin permissionsPlugin = this.getServer().getPluginManager().getPlugin("PermissionsEx");
@@ -207,22 +230,6 @@ public class RPGCraft extends JavaPlugin{
 			}
 		}
 	} // public void setupPermissions()	
-	
-			
-	public void loadConfig()
-	{	config = this.getConfig();
-				
-		config.createSection("URL Images");
-		config.addDefault("URL Images."+ "copperIcon", webBase+"textures/copper.png");
-		config.addDefault("URL Images." + "silverIcon", webBase+"textures/silver.png");
-		config.addDefault("URL Images." +"goldIcon", webBase+"textures/gold.png");
-						
-		config.options().copyDefaults(true);
-		saveConfig();
-	} // public void loadConfig()
-	
-	public static FileConfiguration getRPGConfig() { return config; }	
-	
 	private void setupRecipies()
 	{
 		ShapelessRecipe ciderAle = new ShapelessRecipe(new ItemStack(Material.FLINT, 1, (short)aleID));
@@ -233,8 +240,5 @@ public class RPGCraft extends JavaPlugin{
 		ciderAle.addIngredient(Material.SUGAR);
 				
 		Bukkit.addRecipe(ciderAle);		
-	} // private void setupRecipies()
-	
-	public static Plugin getPlugin() { return rpgPlugin; }
-	public static Server getBukkitServer() { return mcServer; }	
+	} // private void setupRecipies()	
 } // public class RPGCraft extends JavaPlugin{

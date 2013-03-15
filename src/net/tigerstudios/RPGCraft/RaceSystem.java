@@ -10,22 +10,6 @@ import org.bukkit.entity.Player;
 public class RaceSystem {
 	public static Map<String, Race> races = new HashMap<String, Race>();
 	
-	public static void listRaces(Player p)
-	{
-		for(Race race: races.values())
-			p.sendMessage("[§2RPG§f] "+race.Name +": "+race.Description);
-		
-		return;
-	} // public static void listRaces(Player p)
-	
-	public static Race getRace(String name)
-	{
-		if(races.isEmpty() ||(name == null))
-			return null;
-		
-		return races.get(name.toLowerCase());
-	} // public static Race getRace(String name)
-	
 	// Get the Races modifier for a givin skill
 	// This will need to be optimized later to not use
 	// strings.
@@ -41,6 +25,22 @@ public class RaceSystem {
 		
 		return 1.0f;
 	} // public static float getModifier(String race, String mod)
+	
+	public static Race getRace(String name)
+	{
+		if(races.isEmpty() ||(name == null))
+			return null;
+		
+		return races.get(name.toLowerCase());
+	} // public static Race getRace(String name)
+	
+	public static void listRaces(Player p)
+	{
+		for(Race race: races.values())
+			p.sendMessage("[§2RPG§f] "+race.Name +": "+race.Description);
+		
+		return;
+	} // public static void listRaces(Player p)
 	
 	// The following method will load the data from a Race configuration file.
 	// TODO: Add error detection code here.

@@ -6,6 +6,5 @@
 	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/ebean-2.7.7/ebean-2.7.7.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spoutplugin"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/citizensapi"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

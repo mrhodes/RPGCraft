@@ -4,7 +4,6 @@ import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 import net.tigerstudios.RPGCraft.skills.MiningSystem;
 
-
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -18,6 +17,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class listener_Block implements Listener {		
 				
+	public listener_Block()	{	} // public listener_Player(Plugin p)
+	
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event)
 	{		
@@ -105,6 +106,4 @@ public class listener_Block implements Listener {
 			return;
 		}		
 	} // public void onBlockPlace(BlockPlaceEvent event)
-	
-	public listener_Block()	{	} // public listener_Player(Plugin p)
 }

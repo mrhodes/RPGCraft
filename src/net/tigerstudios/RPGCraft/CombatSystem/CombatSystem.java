@@ -3,7 +3,6 @@ package net.tigerstudios.RPGCraft.CombatSystem;
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.mgr_Entity;
 import net.tigerstudios.RPGCraft.mgr_Player;
-
 import net.tigerstudios.RPGCraft.utils.RandomGen;
 
 import org.bukkit.Bukkit;
@@ -17,53 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 // 
 public class CombatSystem implements Listener{
-	private Player mcPlayer = null;
-		
-	@EventHandler
-	public void onEntityDamageByEntity(final EntityDamageByEntityEvent event)
-	{
-		// If a player is not involved, exit now
-		if(!(event.getEntity() instanceof Player) && !(event.getDamager() instanceof Player))
-			return;			
-				
-		// Get the Attacker and Defender
-		RPG_Entity attacker = null, defender = null;
-		
-		if(event.getDamager() instanceof Player) 
-		{	attacker = mgr_Player.getCharacter((Player)event.getDamager());	}	
-		if(event.getDamager() instanceof Monster)
-		{	attacker = mgr_Entity.getMonster(event.getDamager().getEntityId());		}
-				
-		if(event.getEntity() instanceof Player)	{defender = mgr_Player.getCharacter((Player)event.getEntity());}
-		if(event.getEntity() instanceof Monster){defender = mgr_Entity.getMonster(event.getEntity().getEntityId());}
-				
-		event.setDamage(calculateDamage(attacker, defender, 0));	
-		
-	} // public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
-	
-	
-	@EventHandler
-	public void onEntityShootBow(EntityShootBowEvent event)
-	{	// Find out if this is a player 
-		if(event.getEntity() instanceof Player)
-		{	mcPlayer = (Player) event.getEntity();
-			RPG_Character rpgChar = mgr_Player.getCharacter(mcPlayer);
-			if(rpgChar != null)
-			{	if(rpgChar.race.equalsIgnoreCase("elf"))	// TODO: Remove Race specific reference
-				{	event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(1.5f));
-					return;
-				}
-				
-				if(!event.getBow().getEnchantments().isEmpty())
-				{	mcPlayer.sendMessage("[§2RPG§f] Only Elves are able to use enchanted bows.");
-					event.setCancelled(true);
-					return;
-				}
-			} // if(rpgChar != null)			
-		} // if(event.getEntity() instanceof Player)
-	} // public void onEntityShootBow(EntityShootBowEvent event)
-	
-	
 	// ------------------------------------------------------------------------------------
 	// This method will be used to determine the amount of damage dealt by the attacker
 	// and return the amount to the calling method.
@@ -131,32 +83,7 @@ public class CombatSystem implements Listener{
 		
 		return dmg;
 	} // public void calculateDamage(RPG_Character rpgChar, RPG_Mob mob, boolean bcharHit)
-	
-	
-	public static void updateWeaponStats(Player p)
-	{
-		float DamageValue = 1;
-		// Find out if the player has switched to a weapon
-		// and update their weaponDamage value accordingly.  If not using 
-		// a weapon, then weaponDamage must be set to 1
-		int typeID = 0;	int dur = 0;
 		
-		if(p.getItemInHand() != null) 
-		{	typeID = p.getItemInHand().getTypeId();
-			dur = p.getItemInHand().getDurability();
-		}
-		// Set the Dmg value based on the sword the player is now
-		// holding and the damage value of the sword
-		if(typeID == 268) DamageValue = 10 * (60 - dur) / 60;	// Wooden Sword
-		if(typeID == 283) DamageValue = 10 * (33 - dur) / 33;	// Gold Sword
-		if(typeID == 272) DamageValue = 15 * (132 - dur) / 132;	// Stone Sword
-		if(typeID == 267) DamageValue = 20 * (251 - dur) / 251;	// Iron Sword
-		if(typeID == 276) DamageValue = 35 * (1562 - dur) / 1562;	// Diamond Sword
-		
-		// Put in error detection to make sure player has a character made
-		mgr_Player.getCharacter(p).setWeaponDamage(DamageValue);		
-	} // public static void updateWeaponStats(Player p, int slot)
-	
 	public static void updateArmorStats(Player p)
 	{
 		float ac = 0;	// Default for wearing nothing
@@ -221,6 +148,78 @@ Diamond		364		529			496			430
 		p.sendMessage("DEBUG: Armor Rating: "+ac);		
 	} // public static void updateArmorStats(Player p)
 	
+	
+	public static void updateWeaponStats(Player p)
+	{
+		float DamageValue = 1;
+		// Find out if the player has switched to a weapon
+		// and update their weaponDamage value accordingly.  If not using 
+		// a weapon, then weaponDamage must be set to 1
+		int typeID = 0;	int dur = 0;
+		
+		if(p.getItemInHand() != null) 
+		{	typeID = p.getItemInHand().getTypeId();
+			dur = p.getItemInHand().getDurability();
+		}
+		// Set the Dmg value based on the sword the player is now
+		// holding and the damage value of the sword
+		if(typeID == 268) DamageValue = 10 * (60 - dur) / 60;	// Wooden Sword
+		if(typeID == 283) DamageValue = 10 * (33 - dur) / 33;	// Gold Sword
+		if(typeID == 272) DamageValue = 15 * (132 - dur) / 132;	// Stone Sword
+		if(typeID == 267) DamageValue = 20 * (251 - dur) / 251;	// Iron Sword
+		if(typeID == 276) DamageValue = 35 * (1562 - dur) / 1562;	// Diamond Sword
+		
+		// Put in error detection to make sure player has a character made
+		mgr_Player.getCharacter(p).setWeaponDamage(DamageValue);		
+	} // public static void updateWeaponStats(Player p, int slot)
+	
+	
+	private Player mcPlayer = null;
+	
+	
 	public CombatSystem(){	} // public CombatSystem()	
+	
+	@EventHandler
+	public void onEntityDamageByEntity(final EntityDamageByEntityEvent event)
+	{
+		// If a player is not involved, exit now
+		if(!(event.getEntity() instanceof Player) && !(event.getDamager() instanceof Player))
+			return;			
+				
+		// Get the Attacker and Defender
+		RPG_Entity attacker = null, defender = null;
+		
+		if(event.getDamager() instanceof Player) 
+		{	attacker = mgr_Player.getCharacter((Player)event.getDamager());	}	
+		if(event.getDamager() instanceof Monster)
+		{	attacker = mgr_Entity.getMonster(event.getDamager().getEntityId());		}
+				
+		if(event.getEntity() instanceof Player)	{defender = mgr_Player.getCharacter((Player)event.getEntity());}
+		if(event.getEntity() instanceof Monster){defender = mgr_Entity.getMonster(event.getEntity().getEntityId());}
+				
+		event.setDamage(calculateDamage(attacker, defender, 0));	
+		
+	} // public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
+	
+	@EventHandler
+	public void onEntityShootBow(EntityShootBowEvent event)
+	{	// Find out if this is a player 
+		if(event.getEntity() instanceof Player)
+		{	mcPlayer = (Player) event.getEntity();
+			RPG_Character rpgChar = mgr_Player.getCharacter(mcPlayer);
+			if(rpgChar != null)
+			{	if(rpgChar.race.equalsIgnoreCase("elf"))	// TODO: Remove Race specific reference
+				{	event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(1.5f));
+					return;
+				}
+				
+				if(!event.getBow().getEnchantments().isEmpty())
+				{	mcPlayer.sendMessage("[§2RPG§f] Only Elves are able to use enchanted bows.");
+					event.setCancelled(true);
+					return;
+				}
+			} // if(rpgChar != null)			
+		} // if(event.getEntity() instanceof Player)
+	} // public void onEntityShootBow(EntityShootBowEvent event)
 	
 } // public class CombatSystem implements Listener

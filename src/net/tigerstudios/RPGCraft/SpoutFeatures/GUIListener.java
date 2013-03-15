@@ -25,6 +25,61 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 public class GUIListener implements Listener {
 	private static Plugin rpgPlugin = null;			
 	
+	public static void fullTwoWay(Player player)
+	{
+		SpoutFeatures.updateTitleShortly(player, null);
+		SpoutFeatures.updateTitleShortly(null, player);
+	}
+	
+	public static void possiblyUpdateHealthBar(Entity entity)
+	{
+		if ( ! (entity instanceof Player)) return;
+		Player player = (Player)entity;
+		SpoutFeatures.updateTitle(player, null);			
+	}	
+	
+	public GUIListener(Plugin p)
+	{	rpgPlugin = p;			
+	}
+	
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void monitorEntityDamageEvent(EntityDamageEvent event)
+	{
+		possiblyUpdateHealthBar(event.getEntity());
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void monitorEntityRegainHealthEvent(EntityRegainHealthEvent event)
+	{
+		possiblyUpdateHealthBar(event.getEntity());
+	}	
+	
+	
+	// -------------------------------------------- //
+	// HEALTH BAR
+	// -------------------------------------------- //
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void monitorPlayerRespawnEvent(PlayerRespawnEvent event)
+	{
+		possiblyUpdateHealthBar(event.getPlayer());
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void onPlayerRespawn(PlayerRespawnEvent event)
+	{
+		fullTwoWay(event.getPlayer());
+		mgr_Player.getCharacter(event.getPlayer()).setSpeed(0);		
+	}
+
+	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+	public void onPlayerTeleport(PlayerTeleportEvent event)
+	{
+		if (event.getFrom().getWorld().equals(event.getTo().getWorld())) return;
+		fullTwoWay(event.getPlayer());
+		mgr_Player.getCharacter(event.getPlayer()).setSpeed(0);
+	}
+
 	@EventHandler
 	public void onSpoutCraftEnable(final SpoutCraftEnableEvent event)
 	{
@@ -42,7 +97,8 @@ public class GUIListener implements Listener {
 			}, 10);			
 			onSpoutCraftPlayer(event.getPlayer());
 		} // if(event.getPlayer().isSpoutCraftEnabled())
-	} // public void onSpoutCraftEnable(final SpoutCraftEnableEvent event)
+	} // public void onSpoutCraftEnable(final SpoutCraftEnableEvent event)	
+		
 	
 	public void onSpoutCraftPlayer(SpoutPlayer player)
 	{
@@ -50,7 +106,7 @@ public class GUIListener implements Listener {
 		Color bottom = new Color(1.0F, 1.0F, 1.0F, 0.75F);		
 		
 		Screen screen = player.getMainScreen();
-		screen.removeWidgets(rpgPlugin);
+		//screen.removeWidgets(rpgPlugin);
 		
 		// Set the black title bar on screen
 		screen.attachWidget(rpgPlugin, new GenericGradient()
@@ -74,61 +130,5 @@ public class GUIListener implements Listener {
 		.setX(20).setY(1).setWidth(20).setHeight(9)
 		.setPriority(RenderPriority.Highest).setFixed(true).setMargin(0, 3).setAnchor(WidgetAnchor.TOP_LEFT)
 		.setDirty(true);*/
-	}	
-	
-	public static void fullTwoWay(Player player)
-	{
-		SpoutFeatures.updateTitleShortly(player, null);
-		SpoutFeatures.updateTitleShortly(null, player);
-	}
-	
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void onPlayerTeleport(PlayerTeleportEvent event)
-	{
-		if (event.getFrom().getWorld().equals(event.getTo().getWorld())) return;
-		fullTwoWay(event.getPlayer());
-		mgr_Player.getCharacter(event.getPlayer()).setSpeed(0);
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR)
-	public void onPlayerRespawn(PlayerRespawnEvent event)
-	{
-		fullTwoWay(event.getPlayer());
-		mgr_Player.getCharacter(event.getPlayer()).setSpeed(0);		
-	}	
-	
-	
-	// -------------------------------------------- //
-	// HEALTH BAR
-	// -------------------------------------------- //
-
-	public static void possiblyUpdateHealthBar(Entity entity)
-	{
-		if ( ! (entity instanceof Player)) return;
-		Player player = (Player)entity;
-		SpoutFeatures.updateTitle(player, null);			
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void monitorEntityDamageEvent(EntityDamageEvent event)
-	{
-		possiblyUpdateHealthBar(event.getEntity());
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void monitorEntityRegainHealthEvent(EntityRegainHealthEvent event)
-	{
-		possiblyUpdateHealthBar(event.getEntity());
-	}
-
-	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-	public void monitorPlayerRespawnEvent(PlayerRespawnEvent event)
-	{
-		possiblyUpdateHealthBar(event.getPlayer());
-	}	
-		
-	
-	public GUIListener(Plugin p)
-	{	rpgPlugin = p;			
 	}	
 }

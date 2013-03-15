@@ -21,20 +21,20 @@ public abstract class RPG_Entity {
 		
 	private int EntID = -1;
 	
-	// Getters and Setters
-	public int getLevel() { return level; } 	public void setLevel(final int lvl) { level = lvl;}
-	public float getSpeed() {return speed;}		public void setSpeed(final float spd) { this.speed = spd; }
+	public float getArmorClass() {return armorClass; } 	public int getAttack() { return attack; }
+	public int getConstitution() { return constitution; }		public int getDefense() { return this.defense; }
 	
-	public int getHealth() {return this.health; }			public void setHealth(final int hp) { this.health = hp; }
-	public int getDefense() { return this.defense; }		public void setDefense(final int def) { this.defense = def; }
-	public int getAttack() { return attack; }				public void setAttack(final int atk) { this.attack = atk; }
-	public int getParry() { return parry; }					public void setParry(final int par) { this.parry = par; }
-	public float getArmorClass() {return armorClass; }		public void setArmorClass(final float ac) { this.armorClass = ac; }
-	public float getWeaponDamage() {return weaponDamage;}	public void setWeaponDamage(final float damageValue) {this.weaponDamage = damageValue; }
-	public int getStrength() { return strength; }			public void setStrength(final int str) { this.strength = str; }
-	public int getIntelligence() { return intelligence; }	public void setIntelligence(final int intel) { this.intelligence = intel; }
-	public int getDexterity() { return dexterity; }			public void setDexterity(final int dex) { this.dexterity = dex; }
-	public int getConstitution() { return constitution; }	public void setConstitution(int con) { this.constitution = con; }
-	public int getEntityID() {	return EntID;}				public void setEntityID(int entID) {EntID = entID; }
+	public int getDexterity() { return dexterity; }			public int getEntityID() {	return EntID;}
+	public int getHealth() {return this.health; }		public int getIntelligence() { return intelligence; }
+	// Getters and Setters
+	public int getLevel() { return level; }				public int getParry() { return parry; }
+	public float getSpeed() {return speed;}					public int getStrength() { return strength; }
+	public float getWeaponDamage() {return weaponDamage;}		public void setArmorClass(final float ac) { this.armorClass = ac; }
+	public void setAttack(final int atk) { this.attack = atk; }	public void setConstitution(int con) { this.constitution = con; }
+	public void setDefense(final int def) { this.defense = def; }			public void setDexterity(final int dex) { this.dexterity = dex; }
+	public void setEntityID(int entID) {EntID = entID; }	public void setHealth(final int hp) { this.health = hp; }
+	public void setIntelligence(final int intel) { this.intelligence = intel; }			public void setLevel(final int lvl) { level = lvl;}
+	public void setParry(final int par) { this.parry = par; }	public void setSpeed(final float spd) { this.speed = spd; }
+	public void setStrength(final int str) { this.strength = str; }				public void setWeaponDamage(final float damageValue) {this.weaponDamage = damageValue; }
 	
 } // public abstract class RPG_Entity

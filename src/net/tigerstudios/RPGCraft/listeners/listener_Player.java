@@ -7,6 +7,7 @@ import net.tigerstudios.RPGCraft.RPG_Player;
 import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
@@ -20,6 +21,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class listener_Player implements Listener {		
 				
+	public listener_Player(){} // public listener_Player(Plugin p)			
+		
+		
 	@EventHandler
 	public void onPlayerInteract(final PlayerInteractEvent event)
 	{
@@ -60,8 +64,8 @@ public class listener_Player implements Listener {
 			} // if(character != null)
 		 }// if(item.getDurability() > 1023)
 	} // public void onPlayerInteract(final PlayerInteractEvent event)
-		
-		
+	
+	
 	@EventHandler
 	public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
 	{	if(event.getRightClicked() instanceof Animals)
@@ -77,11 +81,10 @@ public class listener_Player implements Listener {
 		
 	} // public void onPlayerInteractEntity(PlayerInteractEntityEvent event)
 	
-	
 	@EventHandler
 	public void onPlayerJoin(final PlayerJoinEvent event)
 	{
-		mgr_Player.playerLogin(event.getPlayer());		
+		mgr_Player.playerLogin(event.getPlayer());
 		return;		
 	} // public void onPlayerJoin(final PlayerJoinEvent event)
 	
@@ -91,6 +94,4 @@ public class listener_Player implements Listener {
 		mgr_Player.playerLogout(event.getPlayer());
 		return;
 	} // public void onPlayerQuit(PlayerEvent event)
-	
-	public listener_Player(){} // public listener_Player(Plugin p)			
 } // public class listener_Player implements Listener

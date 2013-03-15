@@ -19,33 +19,33 @@ import org.getspout.spoutapi.gui.RenderPriority;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class AdminConfig extends GenericPopup{
-	Plugin rpgPlugin = null;
-	SpoutPlayer sPlayer = null;
-	
-	GenericButton button = null;
-	GenericTextField catInput = null;
-	GenericComboBox catList = null;
-	GenericLabel label = null;
-	GenericButton btnBack = null; GenericButton btnClose = null;
-	
-	GenericContainer currentContainer = null;
-	
-	GenericContainer categoryConfig = null;
-	GenericContainer playerConfig = null;
-	GenericContainer rpgStats = null;
-	
-	GenericContainer optionButtons = null;
-	GenericContainer mainScreen = null;
-	GenericContainer subButtons = null;
-	
-	int screenWidth, screenHeight;
-	int width, height;
-	int x, y;	
-	
 	public static void create(Plugin plug, Player p)
 	{	AdminConfig gui = new AdminConfig(plug, p);
 		gui.init();
 	} // public static void create(RPGCraft plug, Player p)
+	Plugin rpgPlugin = null;
+	
+	SpoutPlayer sPlayer = null;
+	GenericButton button = null;
+	GenericTextField catInput = null;
+	GenericComboBox catList = null;
+	GenericLabel label = null; GenericButton btnBack = null;
+	
+	GenericButton btnClose = null;
+	
+	GenericContainer currentContainer = null;
+	GenericContainer categoryConfig = null;
+	GenericContainer playerConfig = null;
+	
+	GenericContainer rpgStats = null;
+	GenericContainer optionButtons = null;
+	GenericContainer mainScreen = null;
+	
+	GenericContainer subButtons = null;
+	int screenWidth, screenHeight;
+	int width, height;	
+	
+	int x, y;
 	
 	public AdminConfig(Plugin instance, Player p)
 	{
@@ -58,6 +58,9 @@ public class AdminConfig extends GenericPopup{
 	} // public AdminConfig(Plugin instance, Player p)
 	
 		
+	public void exit(){	sPlayer.getMainScreen().closePopup(); }
+	
+	
 	// Create the window for the player to interact with
 	public void init()
 	{	
@@ -158,6 +161,70 @@ public class AdminConfig extends GenericPopup{
 	} // public void init()
 	
 	
+	public void openContainer(GenericContainer con)
+	{	if(con.isVisible())
+			return;
+	
+	/*	for(Widget w: mainScreen.getChildren())
+		{	if( (w.getTooltip().equalsIgnoreCase("title")) || (w instanceof Texture))
+				w.setVisible(false);
+		}*/
+		
+		// Now open the container we want to open
+		con.setVisible(true);		
+		btnBack.setEnabled(true);		
+	} // public void openContainer(GenericContainer con)
+	
+	// Setup Methods for individual admin pages.
+	// A page will be a Container that is simply 
+	// switch from on to off.
+	private void setupCategoryConfig()
+	{
+		categoryConfig = new GenericContainer();
+		categoryConfig.setLayout(ContainerType.OVERLAY);
+		categoryConfig.setWidth(width - 10).setHeight(height - 25);
+		//categoryConfig.setPriority(RenderPriority.Highest);
+		categoryConfig.setX(x + 5).setY(y);
+		
+		label = new GenericLabel("Item Types Creation");
+		label.setWidth(width).setHeight(15);	
+		label.setX(10).setY(10);
+		categoryConfig.addChild(label);			
+		
+		catInput = new GenericTextField();
+		catInput.setPlaceholder("<Enter New Category>");
+		
+		catList = new GenericComboBox(){
+			@Override
+			public void onSelectionChanged(int i, String text)
+			{	catInput.setText(text);				
+			}			
+		};
+		
+		catInput.setX(10).setY(catList.getHeight() + catList.getY() + 1).setWidth(80).setHeight(15);
+		categoryConfig.addChild(catInput);
+		
+		// Here we need to load the categories from the RPGClass
+		// and populate the box with them, if any.
+		/*if(!RPGCraft.itemCategories.isEmpty())
+		{	catList.setItems((List<String>) RPGCraft.itemCategories.values());			
+		}else
+		{
+			catList.setText("Nothing Here Yet");
+		}*/
+		catList.setSelection(0);
+		catList.setWidth(80).setHeight(15);
+		catList.setX(10).setY(30);
+		categoryConfig.addChild(catList);
+		
+		
+			
+				
+		categoryConfig.setVisible(false);
+		this.attachWidgets(rpgPlugin, categoryConfig.getChildren());
+	}
+	
+	
 	private void skillsConfig()
 	{
 		subButtons = new GenericContainer();
@@ -223,71 +290,4 @@ public class AdminConfig extends GenericPopup{
 		this.attachWidgets(rpgPlugin, subButtons.getChildren());		
 		return;
 	} // private void skillsConfig()
-	
-	
-	// Setup Methods for individual admin pages.
-	// A page will be a Container that is simply 
-	// switch from on to off.
-	private void setupCategoryConfig()
-	{
-		categoryConfig = new GenericContainer();
-		categoryConfig.setLayout(ContainerType.OVERLAY);
-		categoryConfig.setWidth(width - 10).setHeight(height - 25);
-		//categoryConfig.setPriority(RenderPriority.Highest);
-		categoryConfig.setX(x + 5).setY(y);
-		
-		label = new GenericLabel("Item Types Creation");
-		label.setWidth(width).setHeight(15);	
-		label.setX(10).setY(10);
-		categoryConfig.addChild(label);			
-		
-		catInput = new GenericTextField();
-		catInput.setPlaceholder("<Enter New Category>");
-		
-		catList = new GenericComboBox(){
-			@Override
-			public void onSelectionChanged(int i, String text)
-			{	catInput.setText(text);				
-			}			
-		};
-		
-		catInput.setX(10).setY(catList.getHeight() + catList.getY() + 1).setWidth(80).setHeight(15);
-		categoryConfig.addChild(catInput);
-		
-		// Here we need to load the categories from the RPGClass
-		// and populate the box with them, if any.
-		/*if(!RPGCraft.itemCategories.isEmpty())
-		{	catList.setItems((List<String>) RPGCraft.itemCategories.values());			
-		}else
-		{
-			catList.setText("Nothing Here Yet");
-		}*/
-		catList.setSelection(0);
-		catList.setWidth(80).setHeight(15);
-		catList.setX(10).setY(30);
-		categoryConfig.addChild(catList);
-		
-		
-			
-				
-		categoryConfig.setVisible(false);
-		this.attachWidgets(rpgPlugin, categoryConfig.getChildren());
-	}
-	
-	public void openContainer(GenericContainer con)
-	{	if(con.isVisible())
-			return;
-	
-	/*	for(Widget w: mainScreen.getChildren())
-		{	if( (w.getTooltip().equalsIgnoreCase("title")) || (w instanceof Texture))
-				w.setVisible(false);
-		}*/
-		
-		// Now open the container we want to open
-		con.setVisible(true);		
-		btnBack.setEnabled(true);		
-	} // public void openContainer(GenericContainer con)
-	
-	
-	public void exit(){	sPlayer.getMainScreen().closePopup(); }
 } // public class AdminConfig extends GenericPopup

@@ -3,7 +3,6 @@ package net.tigerstudios.RPGCraft;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 import net.tigerstudios.RPGCraft.CombatSystem.RPG_Entity;
 import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
@@ -20,48 +19,58 @@ public class RPG_Character extends RPG_Entity
 {
 	private static int[] expTable;	
 	
+	public static void initialize()
+	{
+		expTable = new int[51];
+		expTable[0]=0;
+		for(int i=1; i <= 50; i++)
+			expTable[i] = (int)Math.pow((2 * i), 2) * 50;
+	}
 	int CharacterID = 0;		// ID for this particular rpg character
-	int AccountID = 0;			// Account of player that owns this character
 	
+	int AccountID = 0;			// Account of player that owns this character
 	String Name;				// Players Role Play name
 	String displayPrefix;		// Choosen Title
-	String displaySuffix;		// Suffix
 	
+	String displaySuffix;		// Suffix
 	// Race Stats
 	public String race;			// Race of this character
-	public float experience;		// Players total experience
 		
 	//public ItemStack itemInHand;
 		
-	// Character Stats
-	int statPtsUsed, statPtsTotal;	
+	public float experience;		// Players total experience	
 	
-	int alcoholTolerance;	int drunkenLevel;
+	// Character Stats
+	int statPtsUsed, statPtsTotal;	int alcoholTolerance;
 			
+	int drunkenLevel;
 	// Character Ablities
 	public int mining;
 	public int farming;
 	int blacksmithing;
 	int enchanting, alchemy, cooking;
-	int fishing, trading;
 	
+	int fishing, trading;
 	public float mineSkillBar;
 	public float farmSkillBar;
 	float blacksmithSkillBar;
 	float enchantSkillBar, alchemySkillBar, cookSkillBar;
-	float fishSkillBar, tradeSkillBar;
 	
+	float fishSkillBar, tradeSkillBar;
 	// Modifier values
 	public float fSwimSpeed;
-	public float fJumpMult, fGravityMult;
 	
+	public float fJumpMult, fGravityMult;
 	// debuging info.
 	float totalLootBonus, totalHarvestBonus, totalSkillIncrease;
 	int loot, harvest, skill, count;
 	float avgLootBonus, avgHarvestBonus, avgSkillIncrease;
+	
+	
 	int totalSeeds, totalWheat;
 	
-	
+	public RPG_Character() {}
+
 	// This Method only gets called when a New character is created.
 	// Otherwise, if the character already exists then the empty constructor is called
 	public RPG_Character(Race r, int acc_id)
@@ -84,22 +93,6 @@ public class RPG_Character extends RPG_Entity
 				
 		saveCharacter();
 	} // public RPG_Character(Race r)
-	
-	public RPG_Character() {}
-
-	@Override 
-	public void setSpeed(float spd)
-	{
-		if(SpoutFeatures.isEnabled() != true) return;
-		
-		if(spd > 0)
-			speed = spd;
-		
-		SpoutManager.getPlayer(mgr_Player.getMCPlayer(AccountID)).setWalkingMultiplier(speed);
-	}
-	public int getAccountID() { return AccountID; }
-	public String getName() { return Name; }
-	public void setName(String name) { Name = name;  }
 	public void addExperience(float exp, Player p)
 	{				
 		experience += exp;
@@ -122,19 +115,11 @@ public class RPG_Character extends RPG_Entity
 		} // if(exp_to_level <= 0)		
 		updateExpBar();			
 	} // public void addExperience(float exp, SpoutPlayer p)
-	
-	
-	public void updateExpBar()
-	{
-		Player p = mgr_Player.getMCPlayer(AccountID);
-		if(p == null)
-			return;
-		p.setLevel(level);
-		p.setTotalExperience((int)experience);	
-		p.setExp((experience - expTable[level-1]) / (expTable[level] - expTable[level-1]));				
-	} // public void updateExpBar()
+	public int getAccountID() { return AccountID; }
 	public String getDisplaySuffix() {return displaySuffix;}
-	public void setDisplaySuffix(String displaySuffix) { this.displaySuffix = displaySuffix; }
+	public String getName() { return Name; }
+	
+	
 	public void initialize(int acc_id)
 	{	
 		Name = "Commoner";
@@ -224,12 +209,26 @@ public class RPG_Character extends RPG_Entity
 		
 		return CharacterID;
 	} // public boolean savePlayerData()
-	public static void initialize()
+	public void setDisplaySuffix(String displaySuffix) { this.displaySuffix = displaySuffix; }
+	public void setName(String name) { Name = name;  }
+	@Override 
+	public void setSpeed(float spd)
 	{
-		expTable = new int[51];
-		expTable[0]=0;
-		for(int i=1; i <= 50; i++)
-			expTable[i] = (int)Math.pow((2 * i), 2) * 50;
+		if(SpoutFeatures.isEnabled() != true) return;
+		
+		if(spd > 0)
+			speed = spd;
+		
+		SpoutManager.getPlayer(mgr_Player.getMCPlayer(AccountID)).setWalkingMultiplier(speed);
 	}
+	public void updateExpBar()
+	{
+		Player p = mgr_Player.getMCPlayer(AccountID);
+		if(p == null)
+			return;
+		p.setLevel(level);
+		p.setTotalExperience((int)experience);	
+		p.setExp((experience - expTable[level-1]) / (expTable[level] - expTable[level-1]));				
+	} // public void updateExpBar()
 
 } // public class RPG_Character

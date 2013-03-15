@@ -10,6 +10,8 @@ public class listener_Currency{
 	private RPG_Player rpgPlayer = null;
 	private RPG_Character rpgChar = null;
 		
+	public listener_Currency() {} // public listener_Currency(Plugin p)
+	
 	public boolean currencyProcessor(CommandSender sender, Command command, String label, String[] cmd)
 	{
 		Player p = Bukkit.getPlayer(sender.getName());
@@ -141,6 +143,4 @@ public class listener_Currency{
 			
 		return false;
 	} // public boolean currencyProcessor(CommandSender sender, Command command, String label, String[] cmd)	
-	
-	public listener_Currency() {} // public listener_Currency(Plugin p)
 }

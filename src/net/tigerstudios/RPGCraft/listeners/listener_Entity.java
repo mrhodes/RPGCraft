@@ -17,6 +17,9 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 public class listener_Entity implements Listener{	
 		
+	public listener_Entity(){	} // public listener_Entity(Plugin p)	
+	
+		
 	@EventHandler
 	public void onCreatureSpawn(CreatureSpawnEvent event)
 	{	
@@ -29,8 +32,16 @@ public class listener_Entity implements Listener{
 		} // if(mgr_Entity.bControlAllSpawns)
 		
 	} // public void onCreatureSpawn(CreatureSpawnEvent event)
-	
 		
+	
+	@EventHandler
+	public void onEntityCombust(EntityCombustEvent event)
+	{
+		// Find out if this is a skeleton or zombie
+		if( (event.getEntityType().equals(EntityType.ZOMBIE)) || event.getEntityType().equals(EntityType.SKELETON))
+		{	event.setCancelled(true);	}		
+	}
+	
 	@EventHandler
 	public void onEntityDeath(final EntityDeathEvent event)
 	{	
@@ -50,15 +61,4 @@ public class listener_Entity implements Listener{
 		
 		event.setDroppedExp(0);
 	} // public void onEntityDeath(final EntityDeathEvent event)
-		
-	
-	@EventHandler
-	public void onEntityCombust(EntityCombustEvent event)
-	{
-		// Find out if this is a skeleton or zombie
-		if( (event.getEntityType().equals(EntityType.ZOMBIE)) || event.getEntityType().equals(EntityType.SKELETON))
-		{	event.setCancelled(true);	}		
-	}
-	
-	public listener_Entity(){	} // public listener_Entity(Plugin p)	
 } // public class listener_Entity implements Listener

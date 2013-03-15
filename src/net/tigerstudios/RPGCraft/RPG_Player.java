@@ -28,34 +28,25 @@ public class RPG_Player{
 							// qValue will be the end time of a time
 							// length		
 		
-	public String getMCName() { return mcName; }		
-	public void setMCName(String name) { mcName = name; }					
-	
 	public RPG_Player(String minecraftName, int id)
 	{		
 		mcName = minecraftName;
 		AccountID = id;
 		if(loadCharacterData())
 			bCharLoaded = true;		
-	} // public void RPG_Player(Player p)
-	
-		
-	public SpoutPlayer getSpoutPlayer() { return SpoutManager.getPlayer(getPlayer());} // public SpoutPlayer getSpoutPlayer() 
+	} // public void RPG_Player(Player p)		
+	public int getAccountID() { return AccountID; }					
 	
 	public RPG_Character getCharacter() { if(bCharLoaded) return rpgCharacter; return null;}
-	public void setCharacter(RPG_Character character) { rpgCharacter = character; bCharLoaded = true; } 
-	public Player getPlayer() { return Bukkit.getPlayer(mcName); }
-				
-	public int getAccountID() { return AccountID; }
-	public long getTimer() { return lTimer; }
-	public void setTimer(long tMs) { lTimer = tMs; }
+	
 		
-	public void saveCharacterData()
-	{
-		// Make sure play has a character to save
-		if(rpgCharacter != null)
-			rpgCharacter.saveCharacter();		
-	} // public void saveCharacterData()
+	public String getMCName() { return mcName; }
+	
+	public Player getPlayer() { return Bukkit.getPlayer(mcName); }
+	public SpoutPlayer getSpoutPlayer() { return SpoutManager.getPlayer(getPlayer());} // public SpoutPlayer getSpoutPlayer()  
+	public long getTimer() { return lTimer; }
+				
+	public boolean isLoaded() {return this.bCharLoaded;	}
 	public boolean loadCharacterData()
 	{
 		String query = "SELECT * FROM Characters WHERE account_id = "+this.AccountID+";";
@@ -103,6 +94,15 @@ public class RPG_Player{
 		
 		return false;
 	} // public void loadCharacterData()	
-	public boolean isLoaded() {return this.bCharLoaded;	}
+	public void saveCharacterData()
+	{
+		// Make sure play has a character to save
+		if(rpgCharacter != null)
+			rpgCharacter.saveCharacter();		
+	} // public void saveCharacterData()
+		
+	public void setCharacter(RPG_Character character) { rpgCharacter = character; bCharLoaded = true; }
+	public void setMCName(String name) { mcName = name; }
+	public void setTimer(long tMs) { lTimer = tMs; }
 	
 } // public class RPG_Player

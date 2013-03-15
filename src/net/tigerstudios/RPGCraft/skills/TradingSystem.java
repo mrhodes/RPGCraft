@@ -1,6 +1,13 @@
 package net.tigerstudios.RPGCraft.skills;
 
 
+class purchaseHistory
+{
+	public int totalSale[];		// Total amount of items item has been sold.
+	public long totalCopper[];	// All time copper paid for this item
+	
+}
+
 public class TradingSystem {
 	private static purchaseHistory ph = null;
 	
@@ -12,16 +19,16 @@ public class TradingSystem {
 	// Trading.  Once a sale is complete then a skill increase, or decrease will happen.
 	// This is based on the average/actual sale price.
 	
-	public static void soldItem(int id, long price)
-	{	ph.totalSale[id]++;
-		ph.totalCopper[id] += price;
-	} // public static void soldItem(int id, long price)
-	
-	
 	public static long getAverageSale(int id)
 	{	long avg = ph.totalSale[id] / ph.totalCopper[id];
 		return avg;
 	} // public long getAverageSale(int id)	
+	
+	
+	public static void soldItem(int id, long price)
+	{	ph.totalSale[id]++;
+		ph.totalCopper[id] += price;
+	} // public static void soldItem(int id, long price)
 	
 	
 	public TradingSystem()
@@ -29,10 +36,3 @@ public class TradingSystem {
 		
 	}
 } // public class TradingSystem
-
-class purchaseHistory
-{
-	public int totalSale[];		// Total amount of items item has been sold.
-	public long totalCopper[];	// All time copper paid for this item
-	
-}

@@ -10,8 +10,18 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class PropertiesFile {
+	private class PropertiesEntry {
+		public String value;
+		public String comment;
+
+		public PropertiesEntry(String value, String comment) {
+			this.value = value;
+			this.comment = comment;
+		}
+	}
 	private HashMap<String, PropertiesEntry> map;
 	private File file;
+
 	private boolean modified;
 
 	public PropertiesFile(String string) {
@@ -58,25 +68,20 @@ public class PropertiesFile {
 			return defaultValue;
 		}
 	}
-
-	public String getString(String key, String defaultValue, String defaultComment) {
+	
+	public double getDouble(String key, Double defaultValue, String defaultComment) {
 		if (map.containsKey(key)) {
-			return map.get(key).value;
+			try {
+				return Double.parseDouble(map.get(key).value);
+			} catch (Exception e) {
+				return 0;
+			}
 		} else {
 			map.put(key, new PropertiesEntry(defaultValue.toString(), defaultComment));
 			modified = true;
 			return defaultValue;
 		}
 	}
-	
-	public void setString(String key, String value, String defaultComment)
-	{
-		if(key==null || key.equals(""))
-			return;
-		map.put(key, new PropertiesEntry(value, defaultComment));
-		modified = true;
-		return;		
-	} // public void setString(String key, String value, String defaultComment)
 
 	public int getInt(String key, Integer defaultValue, String defaultComment) {
 		if (map.containsKey(key)) {
@@ -88,22 +93,9 @@ public class PropertiesFile {
 					return defaultValue; }
 	}
 	
-	public void setInt(String key, Integer value, String defaultComment)
-	{
-		if(key==null || key.equals(""))
-			return;
-		map.put(key, new PropertiesEntry(value.toString(), defaultComment));
-		modified = true;
-		return;				
-	}
-
-	public double getDouble(String key, Double defaultValue, String defaultComment) {
+	public String getString(String key, String defaultValue, String defaultComment) {
 		if (map.containsKey(key)) {
-			try {
-				return Double.parseDouble(map.get(key).value);
-			} catch (Exception e) {
-				return 0;
-			}
+			return map.get(key).value;
 		} else {
 			map.put(key, new PropertiesEntry(defaultValue.toString(), defaultComment));
 			modified = true;
@@ -150,13 +142,21 @@ public class PropertiesFile {
 
 	}
 
-	private class PropertiesEntry {
-		public String value;
-		public String comment;
-
-		public PropertiesEntry(String value, String comment) {
-			this.value = value;
-			this.comment = comment;
-		}
+	public void setInt(String key, Integer value, String defaultComment)
+	{
+		if(key==null || key.equals(""))
+			return;
+		map.put(key, new PropertiesEntry(value.toString(), defaultComment));
+		modified = true;
+		return;				
 	}
+
+	public void setString(String key, String value, String defaultComment)
+	{
+		if(key==null || key.equals(""))
+			return;
+		map.put(key, new PropertiesEntry(value, defaultComment));
+		modified = true;
+		return;		
+	} // public void setString(String key, String value, String defaultComment)
 }

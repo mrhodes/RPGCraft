@@ -154,7 +154,7 @@ public class MiningSystem {
 			bNoExp = false;
 		
 		// Figure out how much loot should drop
-		int lootDrop = (int) (randomizer.nextInt(lootMax + 1));			
+		int lootDrop = (randomizer.nextInt(lootMax + 1));			
 		lootBonus = (float)lootDrop / lootMax;
 		
 		// Prepare and drop loot
@@ -254,17 +254,6 @@ public class MiningSystem {
 	} // public static boolean mine(Block bTarget, Player pMiner, ItemStack iPickaxe)
 	
 	
-	public MiningSystem(Plugin p)
-	{	randomizer.setSeed(System.nanoTime());
-		placedBlocks = loadPlacedBlocks();
-	} // public MiningSystem(Plugin p)
-	
-	
-	public static void shutDown()
-	{
-		if(!placedBlocks.isEmpty())
-			save((HashMap<Location, Integer>) placedBlocks);		
-	} // public static void shutDown()
 	// --------------------------------------------------------------
 	// Save and load the Map of player placed blocks.  This is to 
 	// prevent players from cheating by placing blocks and rebreaking
@@ -280,6 +269,17 @@ public class MiningSystem {
 		catch(Exception e)
 		{	e.printStackTrace();	}
 	} // public void save(HashMap<Location,Integer> map, String path)
+	
+	
+	public static void shutDown()
+	{
+		if(!placedBlocks.isEmpty())
+			save((HashMap<Location, Integer>) placedBlocks);		
+	} // public static void shutDown()
+	public MiningSystem(Plugin p)
+	{	randomizer.setSeed(System.nanoTime());
+		placedBlocks = loadPlacedBlocks();
+	} // public MiningSystem(Plugin p)
 	
 	@SuppressWarnings(value = {"resource", "unchecked" })
 	public HashMap<Location,Integer> loadPlacedBlocks()

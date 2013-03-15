@@ -9,13 +9,6 @@ public class CTextFileWriter{
 	private FileWriter fWriter = null;
 	
 	
-	public void writeLine(String line)
-	{
-		try {
-			fWriter.append(line);
-		} catch (IOException e) { e.printStackTrace(); }		
-	}
-	
 	public CTextFileWriter(String filename)
 	{	fName = new File(filename);
 		
@@ -28,4 +21,11 @@ public class CTextFileWriter{
 		} catch (IOException e) { e.printStackTrace(); }
 		
 	} // public CTextFileWriter(String filename)
+	
+	public void writeLine(String line)
+	{
+		try {
+			fWriter.append(line);
+		} catch (IOException e) { e.printStackTrace(); }		
+	}
 } // public class CTextFileWriter

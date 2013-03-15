@@ -3,11 +3,11 @@ package net.tigerstudios.RPGCraft;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.bukkit.Bukkit;
-
 import net.tigerstudios.RPGCraft.CombatSystem.RPG_Animal;
 import net.tigerstudios.RPGCraft.CombatSystem.RPG_Entity;
 import net.tigerstudios.RPGCraft.CombatSystem.RPG_Mob;
+
+import org.bukkit.Bukkit;
 
 
 public class mgr_Entity {
@@ -16,18 +16,6 @@ public class mgr_Entity {
 	private static Map<Integer, RPG_Animal> animalList = new HashMap<Integer, RPG_Animal>();
 	
 	private static int maxAnimals, maxMonsters;
-	
-	public static RPG_Mob getMonster(int entID)
-	{	if(mobList.containsKey(entID))
-			return mobList.get(entID);
-		return null;
-	} // public static RPG_Mob getMonster(int entID)
-	
-	public static RPG_Animal getAnimal(int entID)
-	{	if(animalList.containsKey(entID))
-			return animalList.get(entID);
-		return null;
-	} // public static RPG_Animal getAnimal(int entID)
 	
 	private static boolean addEntity(RPG_Entity ent, int type)
 	{
@@ -56,12 +44,18 @@ public class mgr_Entity {
 		
 		return true;
 	} // public boolean addEntity(RPG_Entity ent, int type)
-	public static void removeEntity(int entID)
-	{		
-		
-	} // public void removeEntity(int entID)
 	
-		
+	public static RPG_Animal getAnimal(int entID)
+	{	if(animalList.containsKey(entID))
+			return animalList.get(entID);
+		return null;
+	} // public static RPG_Animal getAnimal(int entID)
+	
+	public static RPG_Mob getMonster(int entID)
+	{	if(mobList.containsKey(entID))
+			return mobList.get(entID);
+		return null;
+	} // public static RPG_Mob getMonster(int entID)
 	public static void initialize()
 	{	// Get the options about 
 		if(RPGCraft.config.getBoolean("SpawnControl.All"))
@@ -73,6 +67,12 @@ public class mgr_Entity {
 		mobList.clear();
 		animalList.clear();		
 	} // public void initialize() 
+	
+		
+	public static void removeEntity(int entID)
+	{		
+		
+	} // public void removeEntity(int entID)
 	
 	
 	/* ------------------------------------------------------------

@@ -9,14 +9,14 @@ import org.getspout.spoutapi.gui.GenericTexture;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class EnchantTable extends GenericPopup{
-	RPGCraft rpgPlugin = null;
-	SpoutPlayer sPlayer = null;	
-	
 	public static void create(RPGCraft plug, Player p)
 	{
 		EnchantTable gui = new EnchantTable(plug, p);
 		gui.init();
 	} // public static void create(RPGCraft plug, Player p)
+	RPGCraft rpgPlugin = null;	
+	
+	SpoutPlayer sPlayer = null;
 	
 	public EnchantTable(RPGCraft instance, Player p)
 	{
@@ -26,6 +26,9 @@ public class EnchantTable extends GenericPopup{
 		if(sPlayer == null)
 			return;
 	} // public EnchantTable(RPGCraft instance, Player p)
+	
+	public void exit(){	sPlayer.getMainScreen().closePopup(); }
+	
 	
 	// Create the window for the player to interact with
 	public void init()
@@ -46,7 +49,4 @@ public class EnchantTable extends GenericPopup{
 				
 		sPlayer.getMainScreen().attachPopupScreen(this);
 	} // public void init()
-	
-	
-	public void exit(){	sPlayer.getMainScreen().closePopup(); }
 } // public class <ClassName> extends GenericPopup

@@ -27,6 +27,89 @@ import org.getspout.spoutapi.player.SpoutPlayer;
 public class FarmSystem implements Listener {
 	private static Random randomizer = new Random();
 		
+	public static void animalInteractions(Player p, Animals animal)
+	{	
+		// Find out if player is trying to breed animals.
+		if(p.getItemInHand().getType() == Material.WHEAT)
+		{	// Now need to make sure this player has the right farming level
+			// to go ahead with this taming.
+			RPG_Character rpgChar = mgr_Player.getCharacter(p);
+			if(rpgChar == null || !rpgChar.race.equalsIgnoreCase("halfling"))
+			{
+				p.sendMessage("[§2RPG§f] Only Halflings have the skill to breed animals.");
+				return;
+			} // if(rpgChar == null || !rpgChar.race.equalsIgnoreCase("halfling"))
+				
+			
+			if(!animal.canBreed())
+			{	p.sendMessage("[§2RPG§f] This animal is not ready to breed.");
+				if(!animal.isAdult())
+					p.sendMessage("[§2RPG§f] You should wait until this little fella grows up a bit.");
+				SpoutManager.getPlayer(p).sendNotification("Breeding", "Can't breed this animal", Material.WHEAT);
+				return;					
+			} // if(!creature.canBreed())
+				
+			int farmlevel = rpgChar.farming;
+			// Now need to make sure the halfling is a good enough farmer for breeding 
+			// animals.
+			// Chickens, Pigs - level 5
+			// Cows, and Sheep - level 10
+			if(animal.getType().getName().equalsIgnoreCase("Cow"))
+			{
+				if(farmlevel >= 10)
+				{	p.sendMessage("[§2RPG§f] This Cow is now ready to.... get busy");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Cow breeding!", Material.RAW_BEEF);
+					return;
+				}else
+				{	p.sendMessage("[§2RPG§f] This Cow is not ready to breed");
+					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Cow breeding!", Material.RAW_BEEF);
+					return;
+				} // case "Cow":
+			}					
+			if(animal.getType().getName().equalsIgnoreCase("Chicken"))
+			{
+				if(farmlevel >= 5)
+				{	p.sendMessage("[§2RPG§f] This Chicken is now ready to.... get busy");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Chick breeding", Material.RAW_CHICKEN);
+					return;
+				}else
+				{	p.sendMessage("[§2RPG§f] This Chicken is not ready to breed");
+					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Chicken breeding!", Material.RAW_CHICKEN);
+					return;
+				} // case "Chicken":
+			}	
+			if(animal.getType().getName().equalsIgnoreCase("Pig"))
+			{
+				if(farmlevel >= 5)
+				{	p.sendMessage("[§2RPG§f] This Pig is now ready to.... get busy");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Pig breeding!", Material.PORK);
+					return;
+				}else
+				{	p.sendMessage("[§2RPG§f] This Pig is not ready to breed");
+					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Pig breeding!", Material.PORK);
+					return;
+				} // case "Pig":
+			}					
+			if(animal.getType().getName().equalsIgnoreCase("Sheep"))
+			{
+				if(farmlevel >= 10)
+				{	p.sendMessage("[§2RPG§f] This Sheep is now ready to.... get busy");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Sheep breeding!", Material.WOOL);
+					return;
+				}else
+				{	p.sendMessage("[§2RPG§f] This Sheep is not ready to breed");
+					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
+					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Sheep breeding!", Material.WOOL);
+					return;
+				} // case "Sheep":				
+			} // switch(creature.getType().getName())
+		} // if(p.getItemInHand().getType() == Material.WHEAT)	
+	} // public void animalInteractions(PlayerInteractEntityEvent event)
+	
+			
 	public static boolean harvest(Player p, Block bCrops, ItemStack iHoe)
 	{	SpoutPlayer sp = SpoutManager.getPlayer(p);		
 		RPG_Character rpgChar = mgr_Player.getCharacter(p);
@@ -167,91 +250,13 @@ public class FarmSystem implements Listener {
 		}				
 		return true;		
 	} // public static void processHarvest(BlockBreakEvent event)
-	
-			
-	public static void animalInteractions(Player p, Animals animal)
-	{	
-		// Find out if player is trying to breed animals.
-		if(p.getItemInHand().getType() == Material.WHEAT)
-		{	// Now need to make sure this player has the right farming level
-			// to go ahead with this taming.
-			RPG_Character rpgChar = mgr_Player.getCharacter(p);
-			if(rpgChar == null || !rpgChar.race.equalsIgnoreCase("halfling"))
-			{
-				p.sendMessage("[§2RPG§f] Only Halflings have the skill to breed animals.");
-				return;
-			} // if(rpgChar == null || !rpgChar.race.equalsIgnoreCase("halfling"))
-				
-			
-			if(!animal.canBreed())
-			{	p.sendMessage("[§2RPG§f] This animal is not ready to breed.");
-				if(!animal.isAdult())
-					p.sendMessage("[§2RPG§f] You should wait until this little fella grows up a bit.");
-				SpoutManager.getPlayer(p).sendNotification("Breeding", "Can't breed this animal", Material.WHEAT);
-				return;					
-			} // if(!creature.canBreed())
-				
-			int farmlevel = rpgChar.farming;
-			// Now need to make sure the halfling is a good enough farmer for breeding 
-			// animals.
-			// Chickens, Pigs - level 5
-			// Cows, and Sheep - level 10
-			if(animal.getType().getName().equalsIgnoreCase("Cow"))
-			{
-				if(farmlevel >= 10)
-				{	p.sendMessage("[§2RPG§f] This Cow is now ready to.... get busy");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Cow breeding!", Material.RAW_BEEF);
-					return;
-				}else
-				{	p.sendMessage("[§2RPG§f] This Cow is not ready to breed");
-					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Cow breeding!", Material.RAW_BEEF);
-					return;
-				} // case "Cow":
-			}					
-			if(animal.getType().getName().equalsIgnoreCase("Chicken"))
-			{
-				if(farmlevel >= 5)
-				{	p.sendMessage("[§2RPG§f] This Chicken is now ready to.... get busy");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Chick breeding", Material.RAW_CHICKEN);
-					return;
-				}else
-				{	p.sendMessage("[§2RPG§f] This Chicken is not ready to breed");
-					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Chicken breeding!", Material.RAW_CHICKEN);
-					return;
-				} // case "Chicken":
-			}	
-			if(animal.getType().getName().equalsIgnoreCase("Pig"))
-			{
-				if(farmlevel >= 5)
-				{	p.sendMessage("[§2RPG§f] This Pig is now ready to.... get busy");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Pig breeding!", Material.PORK);
-					return;
-				}else
-				{	p.sendMessage("[§2RPG§f] This Pig is not ready to breed");
-					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Pig breeding!", Material.PORK);
-					return;
-				} // case "Pig":
-			}					
-			if(animal.getType().getName().equalsIgnoreCase("Sheep"))
-			{
-				if(farmlevel >= 10)
-				{	p.sendMessage("[§2RPG§f] This Sheep is now ready to.... get busy");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Successful Sheep breeding!", Material.WOOL);
-					return;
-				}else
-				{	p.sendMessage("[§2RPG§f] This Sheep is not ready to breed");
-					p.sendMessage("[§2RPG§f] Perhaps you should train more in farming.");
-					SpoutManager.getPlayer(p).sendNotification("Breeding", "Failed Sheep breeding!", Material.WOOL);
-					return;
-				} // case "Sheep":				
-			} // switch(creature.getType().getName())
-		} // if(p.getItemInHand().getType() == Material.WHEAT)	
-	} // public void animalInteractions(PlayerInteractEntityEvent event)
 		
 	
+	
+	public FarmSystem()
+	{
+		randomizer.setSeed(System.nanoTime());		
+	}
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerShearEntity(PlayerShearEntityEvent event)
@@ -272,9 +277,4 @@ public class FarmSystem implements Listener {
 			return;
 		}	
 	} // public void onPlayerShearEntity(PlayerShearEntityEvent event)
-	
-	public FarmSystem()
-	{
-		randomizer.setSeed(System.nanoTime());		
-	}
 } // public class FarmSystem implements Listener
