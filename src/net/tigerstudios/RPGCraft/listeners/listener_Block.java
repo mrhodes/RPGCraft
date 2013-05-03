@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class listener_Block implements Listener {		
@@ -84,10 +85,7 @@ public class listener_Block implements Listener {
 				p.sendMessage("[§2RPG§f] You can't mine without a pickaxe.");
 				event.setCancelled(true);
 				return;
-			} // if(item != null)
-			
-			
-			
+			} // if(item != null)			
 		}				
 		return;
 	} // public void onBlockBreak(BlockBreakEvent event)
@@ -106,4 +104,22 @@ public class listener_Block implements Listener {
 			return;
 		}		
 	} // public void onBlockPlace(BlockPlaceEvent event)
+	
+	
+	/*	
+	@EventHandler
+	public void onSignChangeEvent(SignChangeEvent event)
+	{
+		// Need to see if this sign is a Marker for RPGCraft
+		// Look for RPGCraft contained in [ ]
+		String line1 = event.getLine(1);
+		if(line1.startsWith("[") && line1.endsWith("]"))
+		{
+			
+			
+		}	
+		
+	} // public void onSignChangeEvent(SignChangeEvent event)
+	*/
+	
 }

@@ -5,14 +5,18 @@ import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.RPG_Player;
 import net.tigerstudios.RPGCraft.mgr_Player;
+import net.tigerstudios.RPGCraft.skills.EnchantingSystem;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 
+
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -26,12 +30,32 @@ public class listener_Player implements Listener {
 		
 	@EventHandler
 	public void onPlayerInteract(final PlayerInteractEvent event)
-	{
-		// I don't do anything if player has empty hand
-		if(event.getItem() == null)
-			return;
+	{		
+		// Is the player right clicking, or left clicking...
+		if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
+		{
+			// Blocks that matter are:
+			//		1. Enchanting Table
+			//		2. Anvil
+			Block b = event.getClickedBlock();
+			if(b != null)
+			{
+				if(b.getType() == Material.ENCHANTMENT_TABLE)
+				{
+					RPG_Character rpgChar = mgr_Player.getCharacter(event.getPlayer());
+					EnchantingSystem.activateTable(rpgChar, b);
+					event.setCancelled(true);				
+				}
+				if(b.getType() == Material.ANVIL)
+				{
+				
+				}
+			}
+		} // if(event.getAction() == Action.RIGHT_CLICK_BLOCK)
 		
+					
 		ItemStack item = event.getItem();
+		
 				
 		if(item.getDurability() > 1023)
 		{	
@@ -55,12 +79,12 @@ public class listener_Player implements Listener {
 				if(id == RPGCraft.gp)	total += item.getAmount() * 10000;
 							
 				p.setItemInHand(null);
-				//RPGCraft.econ.depositPlayer(p.getName(), total);
+				RPGCraft.econ.depositPlayer(p.getName(), total);
 				double g = 0, s = 0, c;
-				//c = RPGCraft.econ.getBalance(p.getName());
-				//while(c >= 100){ s+=1; c-=100;}
+				c = RPGCraft.econ.getBalance(p.getName());
+				while(c >= 100){ s+=1; c-=100;}
 				while(s >= 100){ g+=1; s-=100;}
-				//p.sendMessage("[§2RPG§f] Balance: §6"+g+" Gold§f, §7"+s+" Silver§f, §c"+c+" Copper§f.");	
+				p.sendMessage("[§2RPG§f] Balance: §6"+g+" Gold§f, §7"+s+" Silver§f, §c"+c+" Copper§f.");	
 			} // if(character != null)
 		 }// if(item.getDurability() > 1023)
 	} // public void onPlayerInteract(final PlayerInteractEvent event)

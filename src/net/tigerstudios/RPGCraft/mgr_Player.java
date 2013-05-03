@@ -15,7 +15,6 @@ public class mgr_Player {
 	private static Map<Integer, RPG_Player> rpgPlayers = new HashMap<Integer, RPG_Player>(); 
 	private static Map<Integer, Player> mcPlayers = new HashMap<Integer, Player>();
 		
-	
 	public static RPG_Character getCharacter(Player player)
 	{
 		if(rpgPlayers.isEmpty() || (player == null))

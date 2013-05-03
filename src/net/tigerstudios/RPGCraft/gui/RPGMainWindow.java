@@ -42,10 +42,7 @@ import org.getspout.spoutapi.keyboard.BindingExecutionDelegate;
 import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class RPGMainWindow extends GenericPopup implements BindingExecutionDelegate{
-	public static void create(SpoutPlayer p)
-	{	RPGMainWindow win = new RPGMainWindow(p);		
-		win.init();
-	} // public static void create(RPGCraft plug, Player p)
+	
 	Plugin rpgPlugin = null;
 	SpoutPlayer sPlayer = null;
 	int screenWidth, screenHeight;
@@ -58,15 +55,13 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 	
 	GenericContainer subButtons = null;
 	// Container for each possible window
-	GenericContainer raceSelection = null;
-	
+	GenericContainer raceSelection = null;	
 	GenericContainer characterWindow = null;
 	static int buttonWidth = 65, buttonHeight = 15;
 	
 	int x, y;
 	
-	public RPGMainWindow() {}
-	
+	public RPGMainWindow() {}	
 	public RPGMainWindow(SpoutPlayer p)
 	{	if(p == null)
 			return;
@@ -76,6 +71,11 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 		screenXCenter = screenWidth / 2; screenYCenter = screenHeight / 2;
 	} // public RPGMainWindow(SpoutPlayer p)
 
+	public static void create(SpoutPlayer p)
+	{	RPGMainWindow win = new RPGMainWindow(p);		
+		win.init();
+	} // public static void create(RPGCraft plug, Player p)
+	
 	private void createCharacterWindow()
 	{
 		GenericLabel label;
@@ -223,10 +223,10 @@ public class RPGMainWindow extends GenericPopup implements BindingExecutionDeleg
 		this.setWidth(width).setHeight(height);
 		
 		// Components needed:
-		
 		GenericTexture texture;
 		GenericButton button;
 		GenericLabel label;
+		
 		
 		//Set up the windows background image
 		texture = new GenericTexture(RPGCraft.webBase+"textures/guiWindow.png");

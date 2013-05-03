@@ -1,4 +1,4 @@
-Last Updated: August 14, 2012
+Last Updated: April 19, 2013
 
 RPGCraft Readme
 
@@ -13,10 +13,10 @@ Features implemented so far.
 5. Enchanting is next in line (after some code cleanup and database re organization.
 
 Please see our Wiki for more info
-http://tigerstudios.net/wiki
+http://tigerstudios.net/minecraft/wiki
 
   
-This plugin will require spoutcraft to work properly.  There is very little
+This plugin will require Spoutcraft to work properly.  There is very little
 that will work without it.  
 
 
@@ -24,7 +24,7 @@ As of now the needed config files ARE NOT included in this repository.  I will
 get these added shortly as I continue to work on organizing the code and database.
 
 If anyone is interested in this plugin and would like to help with testing
-please contact me at tigerstudios.mcr2@gmail.com
+please contact me at michael@tigerstudios.net
 
 
 Michael

@@ -35,15 +35,13 @@ public class RPG_Character extends RPG_Entity
 	String displaySuffix;		// Suffix
 	// Race Stats
 	public String race;			// Race of this character
-		
-	//public ItemStack itemInHand;
-		
+			
 	public float experience;		// Players total experience	
 	
 	// Character Stats
 	int statPtsUsed, statPtsTotal;	int alcoholTolerance;
-			
 	int drunkenLevel;
+	
 	// Character Ablities
 	public int mining;
 	public int farming;
@@ -113,7 +111,7 @@ public class RPG_Character extends RPG_Entity
 			p.sendMessage(" See your stats page for more info.");
 			this.statPtsTotal++;
 		} // if(exp_to_level <= 0)		
-		updateExpBar();			
+		updateExpBar(p);			
 	} // public void addExperience(float exp, SpoutPlayer p)
 	public int getAccountID() { return AccountID; }
 	public String getDisplaySuffix() {return displaySuffix;}
@@ -139,7 +137,7 @@ public class RPG_Character extends RPG_Entity
 		// Set to a default speed.  This will be updated when a race is loaded
 		speed = 1.0f;
 		
-		updateExpBar();		
+		updateExpBar(mgr_Player.getMCPlayer(AccountID));		
 	} // public void initialize()
 	public int saveCharacter()
 	{ 		
@@ -221,9 +219,8 @@ public class RPG_Character extends RPG_Entity
 		
 		SpoutManager.getPlayer(mgr_Player.getMCPlayer(AccountID)).setWalkingMultiplier(speed);
 	}
-	public void updateExpBar()
+	public void updateExpBar(Player p)
 	{
-		Player p = mgr_Player.getMCPlayer(AccountID);
 		if(p == null)
 			return;
 		p.setLevel(level);
@@ -231,4 +228,13 @@ public class RPG_Character extends RPG_Entity
 		p.setExp((experience - expTable[level-1]) / (expTable[level] - expTable[level-1]));				
 	} // public void updateExpBar()
 
+	
+	public void sendMessage(String msg)
+	{
+		RPGCraft.log.info(msg);
+		//Player p = mgr_Player.getMCPlayer(  
+		//.sendMessage(msg);	
+	}
+	
+	
 } // public class RPG_Character

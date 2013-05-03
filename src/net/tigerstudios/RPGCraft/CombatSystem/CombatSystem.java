@@ -1,17 +1,13 @@
 package net.tigerstudios.RPGCraft.CombatSystem;
 
+import net.tigerstudios.RPGCraft.RPGCraft;
 import net.tigerstudios.RPGCraft.RPG_Character;
-import net.tigerstudios.RPGCraft.mgr_Entity;
 import net.tigerstudios.RPGCraft.mgr_Player;
 import net.tigerstudios.RPGCraft.utils.RandomGen;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
 
 // 
@@ -24,18 +20,27 @@ public class CombatSystem implements Listener{
 	// type = 0 for a  melee attack, and 1 for range attack.
 	public static int calculateDamage(RPG_Entity attacker, RPG_Entity defender, int type)
 	{
-		if(attacker == null){	System.out.println("Attacker = Null");	return -1;	}
-		if(defender == null){	System.out.println("Defender = Null");	return -1;	}
+		boolean bFail = false;
+		if(attacker == null){	System.out.println("Attacker = Null"); bFail = true; }
+		if(defender == null){	System.out.println("Defender = Null"); bFail = true; }
+		if(bFail)
+		{	RPGCraft.log.info(" Failed to aquire subjects in combat.");
+						
+			if(attacker != null) RPGCraft.log.info("  attacker = "+ attacker.toString());
+			if(defender != null) RPGCraft.log.info("  defender = "+ defender.toString());
+			
+			return -1;
+		}
 		
 		// First make sure the armor and weapons stats are updated
 		if(attacker instanceof RPG_Character)
 			updateWeaponStats(mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()));
 		if(defender instanceof RPG_Character)
-			updateArmorStats(mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()));
+			updateArmorStats(mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID()));
 				
 		// Overall damage to be done to the entity
 		int dmg = 0;
-		int attackBonus = 0;	// This is the entities bonus to their attack based on other skills
+		int attackBonus = 1;	// This is the entities bonus to their attack based on other skills
 		
 		// Attacker rolls a D20, if a 1 auto miss, 20 is auto hit.
 		int attackRoll = RandomGen.rollDice(20, 1, 0);
@@ -44,10 +49,10 @@ public class CombatSystem implements Listener{
 		if(type == 0) attackBonus+=attacker.getAttack();	// Melee
 		if(type == 1) attackBonus+=attacker.getAttack();	// Ranged
 		
-		attackBonus+=attacker.getWeaponDamage();		
+		attackBonus+=attacker.getWeaponDamage() + (attacker.getStrength() * 1.4);
 		
 		// Add Code to detect a Villager being attacked, animals 2
-		float defenseBonus = defender.getArmorClass() + defender.getDefense();
+		float defenseBonus = (float) (defender.getArmorClass() + (defender.getDefense() * defender.getDexterity() * 0.75));
 		
 		if(attackRoll == 20)
 		{	// Chance of Critical hit
@@ -61,13 +66,17 @@ public class CombatSystem implements Listener{
 		// decrease damage a little if player is blocking.
 		if(defender instanceof Player)
 		{	if( ((Player)defender).isBlocking() )
-				dmg =- RandomGen.rollDice(8, 1, defender.getParry());
+			{	int blocking = RandomGen.rollDice(8, 1, defender.getParry());
+				dmg -= blocking;
+				mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID()).sendMessage("Blocking reduced Damage by: "+blocking);
+			}
 		}
-		
-		Bukkit.broadcastMessage("Real Damage: "+dmg);
 		if(dmg < 1) dmg = 1;
 		
 		// Debugging messages
+		
+		Bukkit.broadcastMessage("Real Damage: "+dmg);		
+			
 		if(attacker instanceof RPG_Character){
 			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Your attackBonus is: "+attackBonus);
 			mgr_Player.getMCPlayer(((RPG_Character) attacker).getAccountID()).sendMessage("Defenders defenseBonus is: "+defenseBonus);
@@ -79,7 +88,6 @@ public class CombatSystem implements Listener{
 			mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID()).sendMessage("Your defenseBonus is: "+defenseBonus);
 			mgr_Player.getMCPlayer(((RPG_Character) defender).getAccountID()).sendMessage("Damage taken: "+dmg);
 		}
-		// End debugging
 		
 		return dmg;
 	} // public void calculateDamage(RPG_Character rpgChar, RPG_Mob mob, boolean bcharHit)
@@ -145,6 +153,7 @@ Diamond		364		529			496			430
 		}else ac+=2;
 		
 		mgr_Player.getCharacter(p).setArmorClass(ac);
+		
 		p.sendMessage("DEBUG: Armor Rating: "+ac);		
 	} // public static void updateArmorStats(Player p)
 	
@@ -172,54 +181,10 @@ Diamond		364		529			496			430
 		// Put in error detection to make sure player has a character made
 		mgr_Player.getCharacter(p).setWeaponDamage(DamageValue);		
 	} // public static void updateWeaponStats(Player p, int slot)
-	
-	
-	private Player mcPlayer = null;
-	
+		
 	
 	public CombatSystem(){	} // public CombatSystem()	
-	
-	@EventHandler
-	public void onEntityDamageByEntity(final EntityDamageByEntityEvent event)
-	{
-		// If a player is not involved, exit now
-		if(!(event.getEntity() instanceof Player) && !(event.getDamager() instanceof Player))
-			return;			
-				
-		// Get the Attacker and Defender
-		RPG_Entity attacker = null, defender = null;
 		
-		if(event.getDamager() instanceof Player) 
-		{	attacker = mgr_Player.getCharacter((Player)event.getDamager());	}	
-		if(event.getDamager() instanceof Monster)
-		{	attacker = mgr_Entity.getMonster(event.getDamager().getEntityId());		}
-				
-		if(event.getEntity() instanceof Player)	{defender = mgr_Player.getCharacter((Player)event.getEntity());}
-		if(event.getEntity() instanceof Monster){defender = mgr_Entity.getMonster(event.getEntity().getEntityId());}
-				
-		event.setDamage(calculateDamage(attacker, defender, 0));	
-		
-	} // public void onEntityDamageByEntity(EntityDamageByEntityEvent event)
-	
-	@EventHandler
-	public void onEntityShootBow(EntityShootBowEvent event)
-	{	// Find out if this is a player 
-		if(event.getEntity() instanceof Player)
-		{	mcPlayer = (Player) event.getEntity();
-			RPG_Character rpgChar = mgr_Player.getCharacter(mcPlayer);
-			if(rpgChar != null)
-			{	if(rpgChar.race.equalsIgnoreCase("elf"))	// TODO: Remove Race specific reference
-				{	event.getProjectile().setVelocity(event.getProjectile().getVelocity().multiply(1.5f));
-					return;
-				}
-				
-				if(!event.getBow().getEnchantments().isEmpty())
-				{	mcPlayer.sendMessage("[§2RPG§f] Only Elves are able to use enchanted bows.");
-					event.setCancelled(true);
-					return;
-				}
-			} // if(rpgChar != null)			
-		} // if(event.getEntity() instanceof Player)
-	} // public void onEntityShootBow(EntityShootBowEvent event)
+
 	
 } // public class CombatSystem implements Listener

@@ -1,7 +1,6 @@
 package net.tigerstudios.RPGCraft.utils;
 
 import java.util.Random;
-
 import org.bukkit.entity.Player;
 
 
@@ -24,7 +23,7 @@ public class MathMethods {
 	public static boolean lookingAt(Player p, double x, double y, double z) 
 	{
 		double pX = p.getLocation().getX();
-		double pY = p.getLocation().getY();
+		//double pY = p.getLocation().getY();
 		double pZ = p.getLocation().getZ();	
 		
 		double dx = Math.abs(pX - x);

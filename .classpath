@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/bukkit"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="Z:/Minecraft Servers/Programming Server/plugins/PermissionsEx.jar"/>
 	<classpathentry kind="lib" path="Z:/My Documents/Programming/Java/ebean-2.7.7/ebean-2.7.7.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/spoutplugin"/>
+	<classpathentry kind="lib" path="Z:/My Documents/Programming/common files/snakeyaml-1.12.jar"/>
+	<classpathentry kind="lib" path="Z:/Minecraft Servers/Tigerstudios 2.0/plugins/Vault.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/bukkit"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/craftbukkit"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

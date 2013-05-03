@@ -21,6 +21,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.getspout.spoutapi.SpoutManager;
+import org.getspout.spoutapi.SpoutServer;
+import org.getspout.spoutapi.player.SpoutPlayer;
 
 public class MiningSystem {
 	private static Random randomizer = new Random();
@@ -89,58 +92,25 @@ public class MiningSystem {
 		// gained
 		switch(matBlock)
 		{
-		case STONE:
-			matDrop = Material.COBBLESTONE;	blockValue = 1;	lootMax = 1;	break;			
-		case COBBLESTONE:
-			matDrop = Material.COBBLESTONE;	blockValue = 1;	lootMax = 1;	break;			
-		
-		case COAL_ORE:
-			matDrop = Material.COAL;		blockValue = 5;	lootMax = 2;	break;
-		case NETHERRACK:
-			matDrop = Material.NETHERRACK;	blockValue = 5;	lootMax = 2;	break;
-		
-		case MOSSY_COBBLESTONE:
-			matDrop = Material.MOSSY_COBBLESTONE;	blockValue = 10;lootMax = 2;	break;		
-		
-		case IRON_ORE:
-			matDrop = Material.IRON_ORE;	blockValue = 15;lootMax = 2;	break;
-		case NETHER_BRICK:
-			matDrop = Material.NETHER_BRICK;blockValue = 15;lootMax = 3;	break;	
-			
-		case IRON_BLOCK:
-			matDrop = Material.IRON_BLOCK;	blockValue = 20; lootMax = 1; bNoExp = false; break;
-		case GOLD_ORE:
-			matDrop = Material.GOLD_ORE;	blockValue = 20;lootMax = 3;	break;			
-		case LAPIS_ORE:
-			matDrop = Material.INK_SACK;	blockValue = 20;lootMax = 6;	break;	
-			
-		case GOLD_BLOCK:
-			matDrop = Material.GOLD_BLOCK;	blockValue = 25;lootMax = 1; bNoExp = false; break;
-		
-		case REDSTONE_ORE:
-			matDrop = Material.REDSTONE; blockValue = 25; lootMax = 8; break;
-		case GLOWING_REDSTONE_ORE:
-			matDrop = Material.REDSTONE; blockValue = 25; lootMax = 8; break;
-		
-		case EMERALD_ORE:
-			matDrop = Material.EMERALD;	blockValue = 25; lootMax = 3; break;			
-			
-		case DIAMOND_ORE:
-			matDrop = Material.DIAMOND;		blockValue = 30;lootMax = 3;	break;	
-		
-		case EMERALD_BLOCK:
-			matDrop = Material.EMERALD_BLOCK;
-			blockValue = 30;
-			lootMax = 1;
-			break;	
-			
-		case DIAMOND_BLOCK:
-			matDrop = Material.DIAMOND_BLOCK; blockValue = 35; lootMax = 1; bNoExp = false; break;
-		case OBSIDIAN:
-			matDrop = Material.OBSIDIAN;	blockValue = 35;lootMax = 2;	break;
-			
-			default:
-				blockValue = 0;							
+		case STONE:				matDrop = Material.COBBLESTONE;			blockValue = 1;	lootMax = 1;	break;			
+		case COBBLESTONE:		matDrop = Material.COBBLESTONE;			blockValue = 1;	lootMax = 1;	break;			
+		case COAL_ORE:			matDrop = Material.COAL;				blockValue = 5;	lootMax = 2;	break;
+		case NETHERRACK:		matDrop = Material.NETHERRACK;			blockValue = 5;	lootMax = 2;	break;
+		case MOSSY_COBBLESTONE:	matDrop = Material.MOSSY_COBBLESTONE;	blockValue = 10;lootMax = 2;	break;		
+		case IRON_ORE:			matDrop = Material.IRON_ORE;			blockValue = 15;lootMax = 2;	break;
+		case NETHER_BRICK:		matDrop = Material.NETHER_BRICK;		blockValue = 15;lootMax = 3;	break;	
+		case IRON_BLOCK:		matDrop = Material.IRON_BLOCK;			blockValue = 20; lootMax = 1; bNoExp = false; break;
+		case GOLD_ORE:			matDrop = Material.GOLD_ORE;			blockValue = 20;lootMax = 3;	break;			
+		case LAPIS_ORE:			matDrop = Material.INK_SACK;			blockValue = 20;lootMax = 6;	break;	
+		case GOLD_BLOCK:		matDrop = Material.GOLD_BLOCK;			blockValue = 25;lootMax = 1; bNoExp = false; break;
+		case REDSTONE_ORE:		matDrop = Material.REDSTONE; 			blockValue = 25; lootMax = 8; break;
+		case GLOWING_REDSTONE_ORE:	matDrop = Material.REDSTONE; 		blockValue = 25; lootMax = 8; break;
+		case EMERALD_ORE:		matDrop = Material.EMERALD;				blockValue = 25; lootMax = 3; break;			
+		case DIAMOND_ORE:		matDrop = Material.DIAMOND;				blockValue = 30;lootMax = 3;	break;	
+		case EMERALD_BLOCK:		matDrop = Material.EMERALD_BLOCK;		blockValue = 30;lootMax = 1;	break;	
+		case DIAMOND_BLOCK:		matDrop = Material.DIAMOND_BLOCK; 		blockValue = 35; lootMax = 1; bNoExp = false; break;
+		case OBSIDIAN:			matDrop = Material.OBSIDIAN;			blockValue = 35;lootMax = 2;	break;
+		default:														blockValue = 0;							
 		} // switch(matBlock)
 		
 		// Make sure player can mine this block
@@ -245,7 +215,7 @@ public class MiningSystem {
 				rpgChar.mining += 1;
 				rpgChar.mineSkillBar = 0;
 			
-				//sp.sendNotification("Mining "+rpgChar.mining, "Mining skill increased!", Material.DIAMOND_PICKAXE);
+				SpoutManager.getPlayer(mgr_Player.getMCPlayer(rpgChar.getAccountID())).sendNotification("Mining "+rpgChar.mining, "Mining skill increased!", Material.DIAMOND_PICKAXE);
 				pMiner.sendMessage("[§2RPG§f] Mining is now: "+rpgChar.mining);	
 			} // if(rpgChar.mineSkillBar >= 75)	
 		} // if(!bNoExp)		

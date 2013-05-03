@@ -1,9 +1,12 @@
-package net.tigerstudios.RPGCraft;
+package net.tigerstudios.RPGCraft.utils;
+
+import net.tigerstudios.RPGCraft.mgr_Entity;
+import net.tigerstudios.RPGCraft.mgr_Player;
 
 
 public class RPGCraftTimer implements Runnable {
 		
-	RPGCraftTimer()	{}
+	public RPGCraftTimer()	{}
 	
 	@Override
 	public void run()

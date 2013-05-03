@@ -6,6 +6,7 @@ import net.tigerstudios.RPGCraft.RPG_Character;
 import net.tigerstudios.RPGCraft.RaceSystem;
 import net.tigerstudios.RPGCraft.mgr_Player;
 
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -258,7 +259,7 @@ public class FarmSystem implements Listener {
 		randomizer.setSeed(System.nanoTime());		
 	}
 	
-	@EventHandler(priority = EventPriority.LOW)
+	/*@EventHandler(priority = EventPriority.LOW)
 	public void onPlayerShearEntity(PlayerShearEntityEvent event)
 	{
 		RPG_Character rpgChar = mgr_Player.getCharacter(event.getPlayer());
@@ -276,5 +277,5 @@ public class FarmSystem implements Listener {
 			event.setCancelled(true);
 			return;
 		}	
-	} // public void onPlayerShearEntity(PlayerShearEntityEvent event)
+	} // public void onPlayerShearEntity(PlayerShearEntityEvent event)*/
 } // public class FarmSystem implements Listener

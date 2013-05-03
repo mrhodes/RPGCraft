@@ -23,9 +23,9 @@ package net.tigerstudios.RPGCraft;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.milkbowl.vault.economy.Economy;
 import net.tigerstudios.RPGCraft.CombatSystem.CombatSystem;
 import net.tigerstudios.RPGCraft.SpoutFeatures.GUIListener;
 import net.tigerstudios.RPGCraft.SpoutFeatures.SpoutFeatures;
@@ -36,10 +36,11 @@ import net.tigerstudios.RPGCraft.listeners.listener_Player;
 import net.tigerstudios.RPGCraft.skills.FarmSystem;
 import net.tigerstudios.RPGCraft.skills.MiningSystem;
 import net.tigerstudios.RPGCraft.utils.MathMethods;
+import net.tigerstudios.RPGCraft.utils.RPGCraftTimer;
 import net.tigerstudios.RPGCraft.utils.RandomGen;
 import net.tigerstudios.RPGCraft.utils.SQLManager;
 import net.tigerstudios.RPGCraft.utils.custom.CCoin;
-import net.tigerstudios.RPGCraft.utils.custom.CFood;
+
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -52,6 +53,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapelessRecipe;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.getspout.spoutapi.SpoutManager;
 import org.getspout.spoutapi.keyboard.KeyBindingManager;
@@ -69,6 +71,7 @@ public class RPGCraft extends JavaPlugin{
 	private static Server mcServer;	
 	private static int timerID = 0;
 	private static RPGCraftTimer timer;	
+	public static Economy econ = null;
 	
 	public static Logger log = null;		
 			
@@ -86,13 +89,14 @@ public class RPGCraft extends JavaPlugin{
 	public static PermissionManager pexMan = null;		
 	public static FileConfiguration config = null;	
 	
-	public static Server getBukkitServer() { return mcServer; }	
-	
-	public static Plugin getPlugin() { return rpgPlugin; }
-	
+	public static Server getBukkitServer() { return mcServer; }		
+	public static Plugin getPlugin() { return rpgPlugin; }	
 	public static FileConfiguration getRPGConfig() { return config; }
 	
+	public static boolean bDebugMessages = false;
 	
+	
+	@SuppressWarnings("deprecation")
 	private boolean initializeRPGCraft()
 	{
 		log = this.getLogger();
@@ -101,6 +105,8 @@ public class RPGCraft extends JavaPlugin{
 		// Load the config file before anything else.  This way settings for other systems
 		// can be added to the config
 		loadConfig();
+		bDebugMessages = config.getBoolean("Misc.Debug");
+		log.info("Debug Messages are "+ (bDebugMessages ? "on" :"off" ));
 		
 		new File(logDirectory).mkdirs();		// Make the log Directory
 					
@@ -108,24 +114,29 @@ public class RPGCraft extends JavaPlugin{
 		if(!SQLManager.setupDatabase())
 			return false;	
 		
-		if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false)
+		// Setup the Vault Economy feature
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        if (economyProvider != null) {
+            econ = economyProvider.getProvider();
+        }
+		
+	/*	if(getServer().getPluginManager().getPlugin("Citizens") == null || getServer().getPluginManager().getPlugin("Citizens").isEnabled() == false)
 		{	log.log(Level.SEVERE, "Citizens 2.0 not found or not enabled");
 		
-		}
+		}*/
 	
 		// Load the Race data files
-		RaceSystem.loadRaceFile("halfling.yml");	RaceSystem.loadRaceFile("human.yml");
-		RaceSystem.loadRaceFile("elf.yml");			RaceSystem.loadRaceFile("dwarf.yml");
+		RaceSystem.loadRaces();
 		
 		SpoutFeatures.setup(this);
 		
 		copperCoin = new CCoin(this, "Copper Coin", config.getString("URL Images."+ "copperIcon"));
 		silverCoin = new CCoin(this, "Silver Coin", config.getString("URL Images."+ "silverIcon"));
 		goldCoin = new CCoin(this, "Gold Coin", config.getString("URL Images."+ "goldIcon"));
-		aleMug = new CFood(this, "Cider Ale", webBase+"textures/mug1.png", 0);
+		//aleMug = new CFood(this, "Cider Ale", webBase+"textures/mug1.png", 0);
 						
 		cp = copperCoin.getCustomId(); sp = silverCoin.getCustomId(); gp = goldCoin.getCustomId();
-		aleID = aleMug.getCustomId();
+		//aleID = aleMug.getCustomId();
 		
 		setupRecipies();
 		mgr_Entity.initialize();
@@ -153,7 +164,7 @@ public class RPGCraft extends JavaPlugin{
 				
 		// Set up the repeating 'tick listener'
 		timer = new RPGCraftTimer();
-		mcServer.getScheduler().scheduleSyncRepeatingTask(this, timer, 20L, 100L);
+		mcServer.getScheduler().scheduleAsyncRepeatingTask(this, timer, 20L, 100L);
 		
 		return true;
 	} // private boolean initializeRPGCraft()	
@@ -204,6 +215,8 @@ public class RPGCraft extends JavaPlugin{
 	
 	@Override
 	public void onEnable() {	
+		super.onEnable();
+		
 		name = getDescription().getName();
 		version = getDescription().getVersion();
 					
@@ -214,8 +227,7 @@ public class RPGCraft extends JavaPlugin{
 			log = null;
 			this.setEnabled(false);
 			return;
-		}	
-		super.onEnable();	
+		}		
 	} // public void onEnable()	
 	
 	public void setupPermissions() {

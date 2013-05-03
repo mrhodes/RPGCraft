@@ -155,7 +155,9 @@ public class SQLManager {
 					"id INTEGER PRIMARY KEY AUTOINCREMENT,"+
 					"name VARCHAR(16), description VARCHAR(128));");
 		} // if(SQLManager.TableExists("spawnGroup", "RPGCraft") == false)
-		 
+		
+		
+		
 		
 		
 								
